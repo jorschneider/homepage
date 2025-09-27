@@ -140,6 +140,36 @@
       margin-bottom: 0.75rem;
       line-height: 1.5;
     }
+    .ai-compute-context {
+      margin-top: 2rem;
+      background: rgba(148, 163, 184, 0.12);
+      border-radius: 1rem;
+      padding: 1.5rem 1.75rem;
+      color: #1f2937;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+    .ai-compute-context h2 {
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      font-size: 1.15rem;
+      color: #0f172a;
+    }
+    .ai-compute-context h2:first-child {
+      margin-top: 0;
+    }
+    .ai-compute-context ul {
+      margin: 0 0 1rem;
+      padding-left: 1.25rem;
+    }
+    .ai-compute-context li {
+      margin-bottom: 0.65rem;
+      line-height: 1.55;
+    }
+    .ai-compute-context-summary {
+      margin: 1.25rem 0 0;
+      font-weight: 600;
+      color: #1d4ed8;
+    }
     @media (max-width: 720px) {
       body {
         padding: 1rem;
@@ -238,6 +268,32 @@
         <li>The performance ratio captures software and FLOP differentials between NVIDIA and Huawei accelerators.</li>
       </ul>
     </div>
+
+    <section class="ai-compute-context">
+      <h2>Key Huawei supply assumptions</h2>
+      <ul>
+        <li><strong>Die banks bridge the gap to SMIC maturity.</strong> Huawei tapped roughly 2.9&nbsp;million Ascend die fabricated at TSMC to ship 507k accelerators in 2024 and still has stockpiles to support the 805k-unit 2025 baseline.</li>
+        <li><strong>SMIC allocation is no longer the binding constraint.</strong> SemiAnalysis models SMIC's advanced-node capacity rising from 45k wspm in 2025 to 80k by 2027, enabling millions of die if HBM were unconstrained.</li>
+        <li><strong>HBM availability caps short-term output.</strong> About 13&nbsp;million imported HBM stacks—enough for 1.6&nbsp;million Ascend 910Cs—will be exhausted, leaving Huawei dependent on domestic supply from 2026 onward.</li>
+        <li><strong>Domestic memory ramp is gradual.</strong> CXMT is expected to produce only ~2&nbsp;million HBM stacks next year (250k–300k Ascend packages) before expanding later in the decade; use the sliders to test alternative conversion speeds.</li>
+      </ul>
+
+      <h2>NVIDIA fab outlook</h2>
+      <ul>
+        <li><strong>Licenses unlock near-term shipments.</strong> NVIDIA can move roughly 350k H20/H20E-class units from inventory in 2025, adding close to $10B of revenue even before fresh production ramps.</li>
+        <li><strong>RTX PRO 6000 derivatives extend coverage.</strong> Supply chain plans call for a 4M-unit annual run rate for RTX PRO 6000 variants that comply with export limits.</li>
+        <li><strong>Blackwell-based B30A is the swing factor.</strong> Approval of a B30A-class SKU would narrow the compute gap dramatically; tweak the NVIDIA output slider to represent accelerated fab ramps.</li>
+      </ul>
+
+      <h2>Why enforcement on HBM matters</h2>
+      <ul>
+        <li><strong>Controls triggered a stockpile sprint.</strong> Samsung reportedly shipped 7M HBM stacks in the month between new export controls being announced and enforced, front-loading the current cache.</li>
+        <li><strong>Smuggling routes remain under scrutiny.</strong> Investigations into intermediaries such as CoAsia and Faraday underscore the need for coordination with Korean and Japanese suppliers.</li>
+        <li><strong>Domestic buildout spans the full stack.</strong> CXMT's TSV packaging partnerships plus Huawei-backed tooling efforts (SiCarrier) show how China is localizing memory, packaging, and logic capabilities despite controls.</li>
+      </ul>
+
+      <p class="ai-compute-context-summary">Collectively, these drivers explain why the model shows Huawei dipping in 2026 before rebounding as domestic HBM capacity materializes—and why NVIDIA maintains a lead unless Chinese memory output or export approvals shift materially.</p>
+    </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.30.0"></script>

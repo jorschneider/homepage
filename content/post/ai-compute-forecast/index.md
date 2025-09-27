@@ -84,6 +84,32 @@ All effective compute metrics translate each side’s production into GB200 NVL7
   </ul>
 </div>
 
+<div class="ai-compute-context">
+  <h2>Key Huawei supply assumptions</h2>
+  <ul>
+    <li><strong>Die banks bridge the gap to SMIC maturity.</strong> Huawei drew on roughly 2.9 million Ascend die fabricated at TSMC to ship 507,000 accelerators in 2024 while SMIC’s yields climbed, and retains enough inventory to support 805,000 units in 2025 before stockpiles deplete.【F:content/post/ai-compute-forecast/index.md†L9-L15】【F:content/post/ai-compute-forecast/index.md†L49-L54】</li>
+    <li><strong>SMIC allocation is no longer the binding constraint.</strong> SemiAnalysis expects SMIC’s advanced-node capacity to reach 45,000 wafers per month by the end of 2025, rising to 60,000 in 2026 and 80,000 in 2027, leaving wafer availability sufficient to support millions of Ascend die if memory were available.【F:content/post/ai-compute-forecast/index.md†L54-L63】</li>
+    <li><strong>HBM availability caps short-term output.</strong> Samsung and other suppliers shipped an estimated 13 million HBM stacks into China—enough for 1.6 million Ascend 910C packages—but those inventories will run dry, leaving Huawei reliant on domestic supply for 2026 onward.【F:content/post/ai-compute-forecast/index.md†L12-L17】【F:content/post/ai-compute-forecast/index.md†L83-L95】</li>
+    <li><strong>Domestic memory ramp is gradual.</strong> CXMT is forecast to produce only ~2 million HBM stacks next year, sufficient for 250,000–300,000 Ascend 910Cs, before expanding capacity toward the back half of the decade; the sliders let you test alternative conversion speeds and yields.【F:content/post/ai-compute-forecast/index.md†L95-L109】</li>
+  </ul>
+
+  <h2>NVIDIA fab outlook</h2>
+  <ul>
+    <li><strong>Licenses unlock near-term shipments.</strong> NVIDIA can liquidate roughly 350,000 units of H20- and H20E-class inventory in 2025, generating close to $10 billion of revenue even before any new production ramps commence.【F:content/post/ai-compute-forecast/index.md†L169-L183】</li>
+    <li><strong>RTX PRO 6000 derivatives extend coverage.</strong> Supply chain plans show a 4 million-unit annual run rate for the RTX PRO 6000 family as China-compliant accelerators, providing a cushion if H20 demand softens or remains subject to licensing delays.【F:content/post/ai-compute-forecast/index.md†L183-L192】</li>
+    <li><strong>Blackwell-based B30A is the swing factor.</strong> The rumored B30A would deliver significantly more FLOPs than the H20 while staying within policy guardrails if approved, effectively halving the compute gap Chinese buyers face relative to the B300; use the NVIDIA output slider to reflect faster or slower approvals.【F:content/post/ai-compute-forecast/index.md†L143-L169】</li>
+  </ul>
+
+  <h2>Why enforcement on HBM matters</h2>
+  <ul>
+    <li><strong>Controls triggered the stockpile sprint.</strong> Samsung alone shipped 7 million HBM stacks in the month between new restrictions being announced and enforced in December 2024, contributing to the 13 million-stack cache now winding down.【F:content/post/ai-compute-forecast/index.md†L67-L83】</li>
+    <li><strong>Smuggling routes remain under scrutiny.</strong> Investigations into CoAsia Electronics, Faraday, and other intermediaries highlight the need for tight coordination with Korean and Japanese suppliers to prevent backdoor flows of advanced memory and packaging subsystems.【F:content/post/ai-compute-forecast/index.md†L83-L95】</li>
+    <li><strong>Domestic buildout spans the full stack.</strong> CXMT’s TSV packaging partnerships with JCET and Tong Fu, along with Huawei-owned toolmaker SiCarrier and expanding cleanroom footprints, demonstrate how multiple players are racing to localize each supply chain stage despite controls.【F:content/post/ai-compute-forecast/index.md†L37-L49】【F:content/post/ai-compute-forecast/index.md†L95-L109】</li>
+  </ul>
+
+  <p class="ai-compute-context-summary">Taken together, these dynamics explain why SemiAnalysis expects Huawei’s packaged Ascend output to sag in 2026 before rebounding as domestic HBM comes online—and why NVIDIA retains a sizable compute lead absent a breakthrough in Chinese memory capacity or policy-driven approvals for high-end Blackwell exports.</p>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.30.0"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
@@ -447,6 +473,32 @@ All effective compute metrics translate each side’s production into GB200 NVL7
     padding: 1.25rem;
     border-left: 4px solid var(--primary, #c41e3a);
     background: rgba(196, 30, 58, 0.05);
+  }
+  .ai-compute-context {
+    margin-top: 2rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 0.75rem;
+    background: rgba(0, 0, 0, 0.025);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  }
+  .ai-compute-context h2 {
+    margin-top: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .ai-compute-context h2:first-child {
+    margin-top: 0;
+  }
+  .ai-compute-context ul {
+    padding-left: 1.25rem;
+    margin: 0;
+  }
+  .ai-compute-context li {
+    margin-bottom: 0.65rem;
+    line-height: 1.5;
+  }
+  .ai-compute-context-summary {
+    margin-top: 1.25rem;
+    font-weight: 600;
   }
   .ai-compute-metrics {
     display: grid;
