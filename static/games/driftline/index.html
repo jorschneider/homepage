@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Driftline: A Brothers Size Microgame</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --night: #05080f;
+      --bayou: #0b271f;
+      --bayou-mist: #104036;
+      --deep-indigo: #1b2f6b;
+      --royal-indigo: #24376d;
+      --plum: #3b1f4e;
+      --goldenrod: #f1b34b;
+      --sunset: #f8833c;
+      --aqua: #2fa77c;
+      --foam: #9be9d6;
+      --sand: #f6ede0;
+      --sand-muted: #ddd1c2;
+      --text: #f5f0e6;
+      --text-muted: rgba(245, 240, 230, 0.75);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1.5rem, 4vw, 3rem);
+      background:
+        radial-gradient(circle at 20% 15%, rgba(31, 126, 101, 0.28), transparent 55%),
+        radial-gradient(circle at 80% 12%, rgba(241, 179, 75, 0.18), transparent 60%),
+        linear-gradient(160deg, var(--night) 10%, var(--bayou) 55%, #042237 100%);
+      color: var(--text);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -30vh -20vw;
+      background:
+        radial-gradient(circle at 28% 28%, rgba(60, 189, 165, 0.25), transparent 60%),
+        radial-gradient(circle at 72% 18%, rgba(248, 131, 60, 0.18), transparent 62%),
+        radial-gradient(circle at 60% 72%, rgba(35, 86, 161, 0.24), transparent 65%);
+      filter: blur(6px);
+      opacity: 0.9;
+      pointer-events: none;
+      z-index: -2;
+      animation: tide 36s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(135deg, rgba(241, 179, 75, 0.08) 25%, transparent 25%),
+        linear-gradient(135deg, transparent 75%, rgba(47, 167, 124, 0.12) 75%),
+        linear-gradient(45deg, rgba(6, 26, 25, 0.9), rgba(4, 7, 15, 0.92));
+      background-size: 70px 70px, 70px 70px, cover;
+      background-position: 0 0, 35px 35px, 0 0;
+      mix-blend-mode: screen;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: -3;
+    }
+
+    main {
+      width: min(1080px, 100%);
+      background: linear-gradient(160deg, rgba(12, 45, 38, 0.95), rgba(8, 19, 41, 0.96));
+      border-radius: 30px;
+      padding: clamp(1.8rem, 4vw, 3.2rem);
+      box-shadow: 0 45px 140px rgba(3, 5, 12, 0.7);
+      border: 1px solid rgba(241, 179, 75, 0.24);
+      position: relative;
+      overflow: hidden;
+    }
+
+    main::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at -8% 18%, rgba(241, 179, 75, 0.18), transparent 58%),
+        radial-gradient(circle at 118% 16%, rgba(47, 167, 124, 0.2), transparent 65%);
+      opacity: 0.9;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header.hero {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 280px) 1fr;
+      gap: clamp(1.5rem, 4vw, 3rem);
+      align-items: center;
+      margin-bottom: clamp(2rem, 5vw, 3.5rem);
+    }
+
+    header.hero::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1.5rem;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(241, 179, 75, 0), rgba(241, 179, 75, 0.45) 45%, rgba(47, 167, 124, 0.45) 55%, rgba(47, 167, 124, 0));
+      opacity: 0.75;
+    }
+
+    .hero-poster {
+      margin: 0;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid rgba(27, 47, 107, 0.45);
+      box-shadow: 0 28px 70px rgba(2, 8, 22, 0.65);
+      background: var(--sand);
+      position: relative;
+      isolation: isolate;
+    }
+
+    .hero-poster::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(22, 40, 92, 0.12), transparent 40%, rgba(10, 37, 30, 0.14));
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
+    .hero-poster svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      color: var(--text);
+    }
+
+    .hero-tagline {
+      margin: 0;
+      font-size: clamp(1.05rem, 2.4vw, 1.3rem);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(241, 179, 75, 0.85);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 5vw, 3.1rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sand);
+      text-shadow: 0 12px 28px rgba(2, 6, 18, 0.65);
+    }
+
+    .hero-description {
+      margin: 0;
+      line-height: 1.8;
+      max-width: 46ch;
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.2rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      background: rgba(47, 167, 124, 0.18);
+      border: 1px solid rgba(241, 179, 75, 0.35);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      color: var(--sand);
+    }
+
+    .progress {
+      position: relative;
+      margin: 0 0 clamp(1.8rem, 4vw, 2.8rem);
+      padding-top: 0.4rem;
+      z-index: 1;
+    }
+
+    .progress::before {
+      content: "";
+      position: absolute;
+      left: 1.5rem;
+      right: 1.5rem;
+      top: 1.1rem;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(47, 167, 124, 0.35), rgba(241, 179, 75, 0.2));
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .progress-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.85rem;
+      position: relative;
+    }
+
+    .progress-step {
+      position: relative;
+      background: rgba(6, 26, 25, 0.74);
+      border-radius: 16px;
+      border: 1px solid rgba(241, 179, 75, 0.22);
+      padding: 0.85rem 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      overflow: hidden;
+      isolation: isolate;
+      transition: transform 220ms ease, border 220ms ease, box-shadow 220ms ease, background 220ms ease;
+    }
+
+    .progress-step::before {
+      content: "";
+      position: absolute;
+      inset: -40% -30% 45% -30%;
+      background: radial-gradient(circle, rgba(47, 167, 124, 0.26), transparent 60%);
+      opacity: 0;
+      transition: opacity 220ms ease;
+      z-index: -1;
+    }
+
+    .progress-step[data-status="current"] {
+      border-color: rgba(241, 179, 75, 0.55);
+      color: var(--sand);
+      transform: translateY(-4px);
+      background: rgba(30, 56, 64, 0.85);
+      box-shadow: 0 16px 40px rgba(241, 179, 75, 0.22);
+    }
+
+    .progress-step[data-status="current"]::before,
+    .progress-step[data-status="complete"]::before {
+      opacity: 0.9;
+    }
+
+    .progress-step[data-status="complete"] {
+      border-color: rgba(47, 167, 124, 0.5);
+      color: rgba(155, 233, 214, 0.92);
+      background: rgba(8, 43, 40, 0.85);
+    }
+
+    .progress-step small {
+      display: block;
+      margin-top: 0.4rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: rgba(245, 240, 230, 0.6);
+    }
+
+    .stats {
+      display: grid;
+      gap: 1.2rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      margin-bottom: clamp(2rem, 4vw, 2.8rem);
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat {
+      background: rgba(6, 31, 32, 0.78);
+      border-radius: 18px;
+      border: 1px solid rgba(47, 167, 124, 0.28);
+      padding: 1.2rem 1.35rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(150deg, rgba(241, 179, 75, 0.16), transparent 60%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .stat-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: rgba(244, 233, 209, 0.82);
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-value {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.45rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-delta {
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      color: rgba(244, 233, 209, 0.55);
+      min-width: 2.6ch;
+      text-align: right;
+      transition: color 200ms ease;
+    }
+
+    .stat-delta[data-trend="up"] {
+      color: rgba(155, 233, 214, 0.95);
+    }
+
+    .stat-delta[data-trend="down"] {
+      color: rgba(248, 131, 60, 0.9);
+    }
+
+    .bar {
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(241, 179, 75, 0.18);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      transition: width 240ms ease-out;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .bar-fill[data-stat="bond"] {
+      background: linear-gradient(90deg, #39c5a3, #f1b34b);
+    }
+
+    .bar-fill[data-stat="heat"] {
+      background: linear-gradient(90deg, #f19a3e, #e34f2f);
+    }
+
+    .bar-fill[data-stat="spirit"] {
+      background: linear-gradient(90deg, #3f8bff, #2fa77c);
+    }
+
+    .scene-card {
+      background: rgba(9, 40, 46, 0.72);
+      border-radius: 20px;
+      border: 1px solid rgba(47, 167, 124, 0.28);
+      padding: clamp(1.2rem, 3vw, 2.1rem);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      margin-bottom: 1.6rem;
+    }
+
+    .scene-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(150deg, rgba(241, 179, 75, 0.16), transparent 60%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .scene-title {
+      font-size: clamp(1.1rem, 2.6vw, 1.4rem);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(241, 179, 75, 0.92);
+      margin-bottom: 0.8rem;
+      text-shadow: 0 0 22px rgba(241, 179, 75, 0.25);
+      position: relative;
+    }
+
+    .scene-description {
+      line-height: 1.75;
+      margin: 0;
+      color: var(--text-muted);
+    }
+
+    .options {
+      display: grid;
+      gap: 0.9rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    button.choice {
+      text-align: left;
+      background: rgba(7, 29, 32, 0.88);
+      color: inherit;
+      padding: 1.1rem 1.3rem;
+      border-radius: 16px;
+      border: 1px solid rgba(241, 179, 75, 0.14);
+      font-size: 1rem;
+      line-height: 1.6;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      transition: transform 200ms ease, border 200ms ease, background 200ms ease, box-shadow 200ms ease;
+    }
+
+    button.choice::after {
+      content: "";
+      position: absolute;
+      inset: -30% -30% 40% -30%;
+      background: radial-gradient(circle, rgba(47, 167, 124, 0.35), transparent 60%);
+      opacity: 0;
+      transform: translateY(12%);
+      transition: opacity 220ms ease, transform 220ms ease;
+      z-index: -1;
+    }
+
+    button.choice:hover {
+      transform: translateY(-4px);
+      border-color: rgba(241, 179, 75, 0.4);
+      background: rgba(18, 55, 57, 0.9);
+      box-shadow: 0 20px 40px rgba(2, 10, 18, 0.45);
+    }
+
+    button.choice:hover::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    button.choice.selected {
+      border-color: rgba(241, 179, 75, 0.65);
+      background: rgba(30, 58, 74, 0.88);
+      box-shadow: inset 0 0 0 1px rgba(47, 167, 124, 0.5);
+    }
+
+    button.choice.selected::after {
+      opacity: 1;
+      background: radial-gradient(circle, rgba(155, 233, 214, 0.45), transparent 65%);
+    }
+
+    button.choice[disabled] {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    button.choice:focus-visible {
+      outline: 2px solid rgba(241, 179, 75, 0.85);
+      outline-offset: 4px;
+    }
+
+    .outcome {
+      margin-top: 1.3rem;
+      padding: 1.05rem 1.3rem;
+      border-radius: 16px;
+      background: rgba(8, 25, 33, 0.82);
+      border: 1px solid rgba(241, 179, 75, 0.22);
+      line-height: 1.7;
+      color: var(--sand-muted);
+      position: relative;
+      z-index: 1;
+    }
+
+    .continue-btn,
+    .restart-btn,
+    .interlude-btn {
+      margin-top: 1.6rem;
+      background: linear-gradient(120deg, var(--goldenrod), var(--sunset));
+      color: #1b1a13;
+      border: none;
+      border-radius: 999px;
+      padding: 0.85rem 1.9rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease;
+    }
+
+    .continue-btn:hover,
+    .restart-btn:hover,
+    .interlude-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 38px rgba(241, 179, 75, 0.28);
+      filter: brightness(1.05);
+    }
+
+    .log {
+      margin-top: clamp(2rem, 5vw, 3rem);
+      background: rgba(5, 24, 28, 0.82);
+      border-radius: 20px;
+      border: 1px solid rgba(47, 167, 124, 0.24);
+      padding: clamp(1.1rem, 3vw, 1.9rem);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .log::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg, rgba(241, 179, 75, 0.15), transparent 60%);
+      opacity: 0.75;
+      pointer-events: none;
+    }
+
+    .log h3 {
+      margin: 0 0 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(241, 179, 75, 0.72);
+      font-size: 0.9rem;
+    }
+
+    .log ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.6rem;
+      color: rgba(245, 240, 230, 0.8);
+      font-size: 0.95rem;
+    }
+
+    .log small {
+      display: inline-block;
+      margin-left: 0.6rem;
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      color: rgba(221, 210, 194, 0.65);
+      text-transform: uppercase;
+    }
+
+    .moment {
+      margin-top: 1.3rem;
+      padding: 1.1rem 1.3rem;
+      border-radius: 16px;
+      background: rgba(9, 33, 47, 0.86);
+      border: 1px solid rgba(63, 133, 201, 0.35);
+      line-height: 1.75;
+      color: rgba(223, 214, 197, 0.9);
+      box-shadow: 0 20px 44px rgba(9, 23, 44, 0.4);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .moment::before {
+      content: "";
+      position: absolute;
+      inset: -30% -20% 45% 15%;
+      background: radial-gradient(circle, rgba(63, 133, 201, 0.3), transparent 65%);
+      opacity: 0.85;
+      z-index: -1;
+    }
+
+    .moment strong {
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(155, 233, 214, 0.9);
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: clamp(1.5rem, 4vw, 3rem);
+      background: radial-gradient(circle at top, rgba(12, 42, 40, 0.9), rgba(3, 8, 18, 0.94));
+      backdrop-filter: blur(18px);
+      z-index: 20;
+    }
+
+    .overlay[hidden] {
+      display: none;
+    }
+
+    .overlay-card {
+      max-width: 640px;
+      background: linear-gradient(160deg, rgba(7, 31, 32, 0.92), rgba(9, 23, 44, 0.94));
+      border-radius: 26px;
+      border: 1px solid rgba(241, 179, 75, 0.28);
+      padding: clamp(1.5rem, 4vw, 2.6rem);
+      color: var(--text);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 40px 120px rgba(2, 6, 18, 0.65);
+    }
+
+    .overlay-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(150deg, rgba(241, 179, 75, 0.18), transparent 60%);
+      opacity: 0.75;
+      pointer-events: none;
+    }
+
+    .overlay-card h2 {
+      margin: 0 0 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--sand);
+    }
+
+    .overlay-card p {
+      line-height: 1.75;
+      color: var(--text-muted);
+      margin: 0 0 1.1rem;
+    }
+
+    .overlay-card ul {
+      margin: 0 0 1.5rem;
+      padding-left: 1.2rem;
+      color: rgba(245, 240, 230, 0.85);
+    }
+
+    .approach-fieldset {
+      border: none;
+      margin: 1.5rem 0 1.3rem;
+      padding: 0;
+    }
+
+    .approach-options {
+      display: grid;
+      gap: 1.1rem;
+    }
+
+    .approach-option {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.9rem;
+      align-items: flex-start;
+      cursor: pointer;
+    }
+
+    .approach-option input {
+      margin-top: 0.5rem;
+      accent-color: var(--goldenrod);
+    }
+
+    .approach-copy {
+      border-radius: 18px;
+      border: 1px solid rgba(241, 179, 75, 0.28);
+      padding: 0.95rem 1.1rem;
+      background: rgba(8, 30, 34, 0.85);
+      position: relative;
+      overflow: hidden;
+      transition: border 200ms ease, background 200ms ease, box-shadow 200ms ease;
+    }
+
+    .approach-copy::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(150deg, rgba(47, 167, 124, 0.18), transparent 60%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .approach-option input:checked + .approach-copy {
+      border-color: rgba(241, 179, 75, 0.6);
+      background: rgba(20, 56, 60, 0.85);
+      box-shadow: 0 16px 36px rgba(241, 179, 75, 0.18);
+    }
+
+    .approach-title {
+      display: block;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--sand);
+    }
+
+    .approach-copy p {
+      margin: 0.35rem 0 0;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    .approach-shift {
+      margin-top: 0.55rem;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      color: rgba(155, 233, 214, 0.85);
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 900px) {
+      header.hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .hero-copy {
+        align-items: center;
+      }
+
+      .hero-description {
+        max-width: none;
+      }
+
+      .hero-badges {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 700px) {
+      body {
+        padding: 1.25rem;
+      }
+
+      main {
+        padding: 1.6rem;
+        border-radius: 22px;
+      }
+
+      .progress-list {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+    }
+
+    @keyframes tide {
+      0% {
+        transform: translate3d(-4%, -2%, 0) rotate(0deg) scale(1.04);
+      }
+      50% {
+        transform: translate3d(3%, 2%, 0) rotate(2deg) scale(1.08);
+      }
+      100% {
+        transform: translate3d(-2%, 3%, 0) rotate(-1deg) scale(1.05);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+
+</head>
+<body>
+  <main class="game-card" aria-live="polite" tabindex="-1">
+    <header class="hero">
+      <figure class="hero-poster">
+        <svg
+          viewBox="0 0 480 640"
+          role="img"
+          aria-labelledby="poster-title poster-desc"
+        >
+          <title id="poster-title">The Brothers Size poster portrait</title>
+          <desc id="poster-desc">
+            Duotone illustration of Ogun and Oshoosi Size inspired by the Brothers Size key art.
+          </desc>
+          <rect width="480" height="640" fill="#f6ede0" />
+          <g fill="#1c2f6f14">
+            <path d="M90 430c42 74 120 116 174 106s96-72 98-166c4-122-64-210-156-210S74 236 90 342c4 32 12 60 0 88z" />
+            <path d="M264 454c28 48 72 74 114 64s74-70 68-140c-8-108-82-166-148-150 34 24 56 60 62 116 6 60-10 112-96 110z" />
+          </g>
+          <g
+            fill="none"
+            stroke="#1c2f6f"
+            stroke-width="6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M118 332c-10-142 62-226 160-226s172 94 168 216c-4 120-86 198-170 190-86-8-154-102-158-180z" />
+            <path d="M174 322c8-46 38-78 86-78s76 28 88 78" />
+            <path d="M238 254c2 48-2 92-20 120" />
+            <path d="M214 334c18 12 44 12 66 0" />
+            <path d="M176 274c16 10 34 14 44 8" />
+            <path d="M276 274c16 10 36 14 46 8" />
+            <path d="M110 378c30 62 76 96 132 96s106-38 136-100" />
+            <path d="M288 288c6-42 36-70 70-70s68 32 74 86c6 60-22 108-72 114-36 4-74-30-72-86" />
+            <path d="M320 302c12 10 28 12 38 6" />
+            <path d="M324 344c16 12 34 14 48 6" />
+            <path d="M328 384c20 10 40 10 56 2" />
+          </g>
+          <g stroke="#1c2f6f" stroke-width="3" stroke-linecap="round">
+            <path d="M146 454c28 28 68 38 108 32" />
+            <path d="M138 416c18 22 50 36 82 34" />
+            <path d="M328 448c24 14 46 16 62 4" />
+            <path d="M324 416c20 12 42 12 58 2" />
+          </g>
+          <text
+            x="240"
+            y="598"
+            font-size="44"
+            letter-spacing="12"
+            text-anchor="middle"
+            fill="#1c2f6f"
+            font-family="'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif"
+          >
+            THE BROTHERS SIZE
+          </text>
+        </svg>
+      </figure>
+      <div class="hero-copy">
+        <p class="hero-tagline">Between shop lights and spirit songs</p>
+        <h1>Driftline</h1>
+        <p class="hero-description">
+          Step into a Louisiana bayou night where Ogun's discipline, Oshoosi's longing, and Elegba's mischief braid together.
+          Guided by Yoruba ritual and the blue ink portrait that opens the play, carry the brothers past patrol cars and dream
+          currents toward a dawn of their choosing.
+        </p>
+        <div class="hero-badges">
+          <span class="hero-badge">Bond keeper</span>
+          <span class="hero-badge">Heat watcher</span>
+          <span class="hero-badge">Spirit weaver</span>
+        </div>
+      </div>
+    </header>
+
+
+    <section class="progress" aria-label="Journey progress">
+      <ol class="progress-list" id="progress">
+        <li class="progress-step" data-scene="wake"><strong>Wake</strong><small>Morning at the shop</small></li>
+        <li class="progress-step" data-scene="gift"><strong>Gift</strong><small>Elegba's Monte Carlo</small></li>
+        <li class="progress-step" data-scene="outlet"><strong>Outlet</strong><small>Neon release</small></li>
+        <li class="progress-step" data-scene="drive"><strong>Drive</strong><small>Bayou run</small></li>
+        <li class="progress-step" data-scene="pursuit"><strong>Chase</strong><small>Blue light trap</small></li>
+        <li class="progress-step" data-scene="campfire"><strong>Fire</strong><small>Midnight confession</small></li>
+        <li class="progress-step" data-scene="dawn"><strong>Dawn</strong><small>Final choice</small></li>
+      </ol>
+    </section>
+
+    <section class="stats" aria-label="Current status">
+      <article class="stat">
+        <div class="stat-title">
+          <span>Bond</span>
+          <span class="stat-value"><span id="bond-value">0</span><span class="stat-delta" id="bond-delta" aria-live="polite">±0</span></span>
+        </div>
+        <div class="bar"><div class="bar-fill" data-stat="bond" id="bond-bar"></div></div>
+      </article>
+      <article class="stat">
+        <div class="stat-title">
+          <span>Heat</span>
+          <span class="stat-value"><span id="heat-value">0</span><span class="stat-delta" id="heat-delta" aria-live="polite">±0</span></span>
+        </div>
+        <div class="bar"><div class="bar-fill" data-stat="heat" id="heat-bar"></div></div>
+      </article>
+      <article class="stat">
+        <div class="stat-title">
+          <span>Spirit</span>
+          <span class="stat-value"><span id="spirit-value">0</span><span class="stat-delta" id="spirit-delta" aria-live="polite">±0</span></span>
+        </div>
+        <div class="bar"><div class="bar-fill" data-stat="spirit" id="spirit-bar"></div></div>
+      </article>
+    </section>
+
+    <section class="scene-card" aria-live="polite">
+      <div class="scene-title" id="scene-title"></div>
+      <p class="scene-description" id="scene-description"></p>
+    </section>
+
+    <section>
+      <div class="options" id="options" aria-label="Choices"></div>
+      <div id="outcome" class="outcome" hidden></div>
+      <div id="moment" class="moment" hidden></div>
+      <button class="continue-btn" id="continue-btn" hidden>Continue</button>
+      <button class="restart-btn" id="restart-btn" hidden>Restart Journey</button>
+    </section>
+
+    <section class="log" aria-live="polite">
+      <h3>Memory Ledger</h3>
+      <ul id="log"></ul>
+    </section>
+  </main>
+
+  <section
+    class="overlay"
+    id="intro-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="intro-title"
+    aria-describedby="intro-description"
+  >
+    <article class="overlay-card">
+      <h2 id="intro-title">Set the Driftline</h2>
+      <p id="intro-description">Balance bayou caution, Yoruba ceremony, and brotherly tenderness as you guide Ogun, Oshoosi, and Elegba toward dawn. Every choice you make tilts their shared future.</p>
+      <ul>
+        <li><strong>Bond</strong> keeps the brothers stitched together.</li>
+        <li><strong>Heat</strong> tracks the police pressure closing in.</li>
+        <li><strong>Spirit</strong> flows from dream logic, ritual, and song.</li>
+      </ul>
+      <fieldset class="approach-fieldset">
+        <legend class="visually-hidden">Choose a guiding principle for this run</legend>
+        <div class="approach-options">
+          <label class="approach-option">
+            <input type="radio" name="approach" value="balanced" checked />
+            <div class="approach-copy">
+              <span class="approach-title">Balanced Drift</span>
+              <p>Split attention between Ogun's plans and Elegba's improvisations to keep the road even.</p>
+              <p class="approach-shift">Start shift: Bond ±0 · Heat ±0 · Spirit ±0</p>
+            </div>
+          </label>
+          <label class="approach-option">
+            <input type="radio" name="approach" value="guardian" />
+            <div class="approach-copy">
+              <span class="approach-title">Ogun's Guard</span>
+              <p>Lean into structure—wake-up calls, paperwork, careful routes—to shelter Oshoosi from the system.</p>
+              <p class="approach-shift">Start shift: Bond +8 · Heat -6 · Spirit -4</p>
+            </div>
+          </label>
+          <label class="approach-option">
+            <input type="radio" name="approach" value="dreamer" />
+            <div class="approach-copy">
+              <span class="approach-title">Elegba's Dream</span>
+              <p>Trust the songs, visions, and coincidences that carried you through lockup to spark new futures.</p>
+              <p class="approach-shift">Start shift: Bond -5 · Heat -3 · Spirit +9</p>
+            </div>
+          </label>
+        </div>
+      </fieldset>
+      <button class="continue-btn" id="start-btn">Begin the run</button>
+    </article>
+  </section>
+
+  <section
+    class="overlay"
+    id="interlude-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="interlude-title"
+    aria-describedby="interlude-description"
+    hidden
+  >
+    <article class="overlay-card" id="interlude-card">
+      <h2 id="interlude-title"></h2>
+      <p id="interlude-description"></p>
+      <button class="interlude-btn" id="interlude-btn">Accept the sign</button>
+    </article>
+  </section>
+
+  <script>
+    const baseStats = {
+      bond: 58,
+      heat: 25,
+      spirit: 52,
+    };
+
+    const loadouts = {
+      balanced: {
+        modifiers: { bond: 0, heat: 0, spirit: 0 },
+      },
+      guardian: {
+        modifiers: { bond: 8, heat: -6, spirit: -4 },
+      },
+      dreamer: {
+        modifiers: { bond: -5, heat: -3, spirit: 9 },
+      },
+    };
+
+    let selectedLoadout = "balanced";
+
+    const stats = { ...baseStats };
+
+    function getStartingStats() {
+      const start = { ...baseStats };
+      const loadout = loadouts[selectedLoadout] || loadouts.balanced;
+      Object.entries(loadout.modifiers).forEach(([key, delta]) => {
+        if (start[key] !== undefined) {
+          start[key] += delta;
+        }
+      });
+      return start;
+    }
+
+    const scenes = [
+      {
+        id: "wake",
+        title: "Morning at the Shop",
+        description:
+          "Ogun jolts awake to Elegba humming outside the window. Oshoosi is snoring through the alarm. The parole officer will call within the hour.",
+        options: [
+          {
+            text: "Wake Oshoosi with a steady hand and a joke about Elegba's singing.",
+            impact: { bond: +7, heat: -3, spirit: +4 },
+            log: "You wake him softly; laughter cuts the morning tension.",
+            outcome:
+              "Oshoosi rubs his eyes, amused by your teasing. The warmth lingers as he hurries into his boots, Elegba grinning in the doorway.",
+          },
+          {
+            text: "Rattle the toolbox—discipline first, softness later.",
+            impact: { bond: -4, heat: -6, spirit: -3 },
+            log: "You lead with firmness; Oshoosi stiffens but moves fast.",
+            outcome:
+              "The clamor yanks him upright. He bristles, but the garage is buzzing within minutes and the parole call is met on time.",
+          },
+        ],
+      },
+      {
+        id: "gift",
+        title: "Elegba's Gift",
+        description:
+          "Elegba wheels a busted Monte Carlo into the yard. He swears it fell off a cousin's truck and the cops won't know a thing.",
+        options: [
+          {
+            text: "Test-drive the car around the block—Oshoosi at the wheel, Ogun on lookout.",
+            impact: { bond: +6, heat: +10, spirit: +5 },
+            log: "You taste the road together, hearts in sync with the engine hum.",
+            outcome:
+              "The ride is electric. A patrol cruiser cruises past but keeps going. Oshoosi won't stop smiling, hands glued to the wheel.",
+          },
+          {
+            text: "Pop the hood and make a plan to rebuild before touching asphalt.",
+            impact: { bond: +3, heat: -4, spirit: +2 },
+            log: "You draft a checklist; hope idles beside caution.",
+            outcome:
+              "Tools come alive under Ogun's lead. Oshoosi hums a work song, channeling restless energy into bolts and belts.",
+          },
+          {
+            text: "Send Elegba to stash the car elsewhere until the paperwork clears.",
+            impact: { bond: -6, heat: -10, spirit: -5 },
+            log: "Suspicion cools the yard; Elegba's smile fades.",
+            outcome:
+              "Elegba nods tight-lipped and pushes the car back out. The brothers work in heavy silence as afternoon heat settles in.",
+          },
+        ],
+      },
+      {
+        id: "outlet",
+        title: "Outlet Escape",
+        description:
+          "Neon spill from the outlet mall mirrors the gulf sky. Elegba swears a little celebration will steady Oshoosi's nerves.",
+        options: [
+          {
+            text: "Let Oshoosi dance the jitters out while Ogun scopes exits and security cams.",
+            impact: { bond: +5, heat: +6, spirit: +4 },
+            log: "You make space for joy in stolen minutes; tension eases even as attention drifts.",
+            outcome:
+              "Oshoosi's laughter fills the parking lot. Ogun maps escape routes between steps, promising a quick sprint if blue lights flare.",
+          },
+          {
+            text: "Split up: Elegba distracts shoppers with jokes while the brothers stock up on supplies.",
+            impact: { bond: +3, heat: -5, spirit: +2 },
+            log: "Teamwork turns the outlet into a quiet rehearsal for the border run.",
+            outcome:
+              "Elegba juggles keychains, drawing a crowd. Ogun and Oshoosi snag maps, snacks, and a new burner phone before reconvening at the truck.",
+          },
+          {
+            text: "Skip the outing and rehearse cover stories in the parking lot shadows.",
+            impact: { bond: -4, heat: -8, spirit: -2 },
+            log: "You trade release for readiness; the night tightens around your shoulders.",
+            outcome:
+              "Voices drop to whispers as you run scenarios. Elegba leans against the trunk, restless, promising the fun will have to wait for freedom.",
+          },
+        ],
+      },
+      {
+        id: "drive",
+        title: "Bayou Run",
+        description:
+          "Storm clouds gather over the bayou road. The trio slips onto the interstate toward the border, dashboards glowing.",
+        options: [
+          {
+            text: "Split duties: Ogun watches the scanner, Oshoosi drives, Elegba sings to keep rhythm.",
+            impact: { bond: +8, heat: -5, spirit: +6 },
+            log: "You harmonize over the rumble strips; Elegba's melody shields the truck.",
+            outcome:
+              "The song steadies every breath. A roadblock flashes ahead, but the trio glides off onto a service road before the troopers blink.",
+          },
+          {
+            text: "Gun the engine past the swamp stretch before the storm hits.",
+            impact: { bond: +2, heat: +14, spirit: +1 },
+            log: "You push your luck; wind and sirens nipping your heels.",
+            outcome:
+              "The truck howls across the bridge. You beat the downpour, but a helicopter sweeps the bayou with a spotlight not far behind.",
+          },
+          {
+            text: "Pull over under the overpass and let the dreamscape wash over you.",
+            impact: { bond: +4, heat: -8, spirit: +10 },
+            log: "You trade motion for meditation; the air shimmers with ancestors.",
+            outcome:
+              "In the stillness, Elegba whispers a path through the marsh that only shows itself when eyes are closed.",
+          },
+        ],
+      },
+      {
+        id: "pursuit",
+        title: "Blue Light Pursuit",
+        description:
+          "A patrol car lingers in the rearview, siren off but eager. The planted coke is somewhere behind you—maybe.",
+        options: [
+          {
+            text: "Have Elegba spin a tale about a blown tire while Ogun readies the paperwork.",
+            impact: { bond: +4, heat: -7, spirit: +1 },
+            log: "You weaponize charm and documentation to cool the chase.",
+            outcome:
+              "Elegba jumps out waving a jack, spinning a story so vivid the trooper checks the trunk, shrugs, and rolls on.",
+          },
+          {
+            text: "Peel off down a service road and hide under a stilt house until dawn.",
+            impact: { bond: +2, heat: -10, spirit: +5 },
+            log: "You trust the swamp to swallow your tracks.",
+            outcome:
+              "Mosquitoes swarm, but the patrol tires screech past above you. Oshoosi hums a nervous lullaby until the sirens fade.",
+          },
+          {
+            text: "Gun it across the state line before the cop commits to the chase.",
+            impact: { bond: +1, heat: +12, spirit: +3 },
+            log: "You pick speed over subtlety; adrenaline spikes across the cab.",
+            outcome:
+              "The truck roars, drawing another cruiser. Elegba whoops, but the radio crackle says backup is on the way.",
+          },
+        ],
+      },
+      {
+        id: "campfire",
+        title: "Midnight Confession",
+        description:
+          "Huddled by a roadside fire, Ogun's hands still shake. Oshoosi keeps glancing over his shoulder. Elegba's shadow flickers against the pines.",
+        options: [
+          {
+            text: "Ogun opens up about Mama's death and the weight he's carried alone.",
+            impact: { bond: +10, heat: -3, spirit: +7 },
+            log: "You spill the grief you've locked away; Oshoosi listens, eyes shining.",
+            outcome:
+              "Oshoosi reaches across the flames, fingers squeezing tight. Elegba hums a low harmony that keeps the darkness back.",
+          },
+          {
+            text: "Press Oshoosi for every detail about the planted drugs.",
+            impact: { bond: -5, heat: -6, spirit: -4 },
+            log: "Interrogation creeps in; trust frays even as the plan clarifies.",
+            outcome:
+              "Oshoosi answers, jaw clenched. The truth helps you map tomorrow, but the ache between you grows.",
+          },
+          {
+            text: "Let Elegba lead a call-and-response that folds memories into melody.",
+            impact: { bond: +6, heat: -2, spirit: +9 },
+            log: "Voices intertwine; the night remembers you kindly.",
+            outcome:
+              "Songs braid past and present until even the cicadas fall into rhythm. For a moment, freedom feels inevitable.",
+          },
+        ],
+      },
+      {
+        id: "dawn",
+        title: "Choice at Dawn",
+        description:
+          "Border lights glitter ahead. Ogun's truck is gasping. One final choice decides whether the brothers split or stand together in the open.",
+        options: [
+          {
+            text: "Hand Oshoosi the keys, the cash, and a promise to hold the door if he ever returns.",
+            impact: { bond: +9, heat: 0, spirit: +6 },
+            log: "You choose sacrifice; dawn breaks on a tearful embrace.",
+            outcome:
+              "Oshoosi drives toward the sunrise, whispering thanks. Ogun stands steady, Elegba watching with unreadable eyes.",
+          },
+          {
+            text: "Keep the truck and attempt one last repair so you can flee together tonight.",
+            impact: { bond: +4, heat: +8, spirit: +3 },
+            log: "You gamble on unity over safety.",
+            outcome:
+              "Tools spark in the half-light. Maybe the engine catches, maybe the patrol finds you first—but at least you're side by side.",
+          },
+          {
+            text: "Turn yourselves in, demanding a lawyer and the truth about the planted bag.",
+            impact: { bond: +1, heat: -15, spirit: -8 },
+            log: "You face the system head-on; courage wrestles with dread.",
+            outcome:
+              "Sirens wail closer. Oshoosi squeezes your shoulder, ready to speak what happened no matter the cost.",
+          },
+        ],
+      },
+    ];
+
+    const interludes = [
+      {
+        id: "river",
+        title: "River Dream",
+        description:
+          "In the hush between sirens, Oshoosi floats above the bayou. Elegba's laugh ripples the water, offering a quieter path if you'll trust the current.",
+        effect: { bond: +2, heat: -8, spirit: +5 },
+        condition: ({ heat }) => heat >= 55,
+        log: "The river dream cools the chase; you promise to move like water when danger flashes blue.",
+      },
+      {
+        id: "workshop",
+        title: "Shop Memory",
+        description:
+          "Mama hums in the old workshop, guiding Ogun's hands. She reminds him that love can sound like careful plans, not just sacrifice.",
+        effect: { bond: +5, heat: -2, spirit: +3 },
+        condition: ({ bond }) => bond <= 50,
+        log: "You honor Mama's steadying voice and leave room for planning instead of panic.",
+      },
+      {
+        id: "chorus",
+        title: "Cicada Chorus",
+        description:
+          "The night insects pulse like a drum circle. Elegba coaxes a call-and-response that lifts everyone back into rhythm.",
+        effect: { bond: +3, heat: -1, spirit: +7 },
+        condition: ({ spirit }) => spirit <= 45,
+        log: "Voices braid together; the rhythm keeps despair from taking the wheel.",
+      },
+    ];
+
+    const roadMoments = [
+      {
+        id: "revival",
+        title: "Roadside Revival",
+        description:
+          "A roadside tent church glows in the dark. A choir hums a hymn that sounds like home even as you roll past.",
+        impact: { bond: +2, heat: -6, spirit: +3 },
+        condition: ({ heat }) => heat >= 35,
+      },
+      {
+        id: "gumbo",
+        title: "Truck-Stop Gumbo",
+        description:
+          "A late-night cook slips you bowls of gumbo on the house, muttering that fugitives deserve to eat too.",
+        impact: { bond: +4, heat: -2, spirit: +1 },
+        condition: ({ bond }) => bond <= 70,
+      },
+      {
+        id: "radio",
+        title: "Pirate Radio Dedication",
+        description:
+          "A pirate radio host shouts out 'the Size brothers on the run' and spins a freedom anthem just for you.",
+        impact: { bond: +1, heat: +4, spirit: +5 },
+        condition: ({ spirit }) => spirit <= 70,
+      },
+      {
+        id: "checkpoint",
+        title: "Unexpected Checkpoint",
+        description:
+          "Brake lights bloom ahead. A volunteer checkpoint raises money for hurricane relief—and eyeballs every plate.",
+        impact: { bond: 0, heat: +6, spirit: -3 },
+        condition: ({ heat }) => heat <= 70,
+      },
+      {
+        id: "cicada",
+        title: "Cicada Halo",
+        description:
+          "The cicadas crescendo into a halo of sound. For a breath, the night wraps around you like armor.",
+        impact: { bond: +3, heat: -1, spirit: +4 },
+        condition: () => true,
+      },
+    ];
+
+    let sceneIndex = 0;
+    let awaitingContinue = false;
+    let interludeActive = null;
+
+    const seenInterludes = new Set();
+    const usedMoments = new Set();
+
+    const titleEl = document.getElementById("scene-title");
+    const descriptionEl = document.getElementById("scene-description");
+    const optionsEl = document.getElementById("options");
+    const outcomeEl = document.getElementById("outcome");
+    const momentEl = document.getElementById("moment");
+    const continueBtn = document.getElementById("continue-btn");
+    const restartBtn = document.getElementById("restart-btn");
+    const logEl = document.getElementById("log");
+    const progressSteps = Array.from(document.querySelectorAll(".progress-step"));
+    const introOverlay = document.getElementById("intro-overlay");
+    const startBtn = document.getElementById("start-btn");
+    const approachInputs = Array.from(document.querySelectorAll('input[name="approach"]'));
+    const interludeOverlay = document.getElementById("interlude-overlay");
+    const interludeTitle = document.getElementById("interlude-title");
+    const interludeDescription = document.getElementById("interlude-description");
+    const interludeBtn = document.getElementById("interlude-btn");
+    const mainCard = document.querySelector(".game-card");
+
+    const statElements = {
+      bond: {
+        value: document.getElementById("bond-value"),
+        bar: document.getElementById("bond-bar"),
+        delta: document.getElementById("bond-delta"),
+        last: null,
+      },
+      heat: {
+        value: document.getElementById("heat-value"),
+        bar: document.getElementById("heat-bar"),
+        delta: document.getElementById("heat-delta"),
+        last: null,
+      },
+      spirit: {
+        value: document.getElementById("spirit-value"),
+        bar: document.getElementById("spirit-bar"),
+        delta: document.getElementById("spirit-delta"),
+        last: null,
+      },
+    };
+
+    approachInputs.forEach((input) => {
+      input.addEventListener("change", () => {
+        selectedLoadout = input.value;
+      });
+    });
+
+    function clampStat(value) {
+      return Math.max(0, Math.min(100, Math.round(value)));
+    }
+
+    function updateStatsDisplay({ animateDelta = true } = {}) {
+      Object.entries(stats).forEach(([key, value]) => {
+        const clamped = clampStat(value);
+        const element = statElements[key];
+        const previous = element.last ?? clamped;
+        element.value.textContent = clamped;
+        element.bar.style.width = `${clamped}%`;
+
+        const delta = clamped - previous;
+        if (element.delta) {
+          if (!animateDelta) {
+            element.delta.textContent = "±0";
+            element.delta.dataset.trend = "steady";
+          } else if (delta === 0) {
+            element.delta.textContent = "±0";
+            element.delta.dataset.trend = "steady";
+          } else {
+            element.delta.textContent = `${delta > 0 ? "+" : ""}${delta}`;
+            element.delta.dataset.trend = delta > 0 ? "up" : "down";
+          }
+        }
+
+        element.last = clamped;
+      });
+    }
+
+    function updateProgress() {
+      progressSteps.forEach((step, index) => {
+        if (index < sceneIndex) {
+          step.dataset.status = "complete";
+          step.removeAttribute("aria-current");
+        } else if (index === sceneIndex) {
+          step.dataset.status = "current";
+          step.setAttribute("aria-current", "step");
+        } else {
+          delete step.dataset.status;
+          step.removeAttribute("aria-current");
+        }
+      });
+    }
+
+    function renderScene() {
+      const scene = scenes[sceneIndex];
+      awaitingContinue = false;
+      titleEl.textContent = scene.title;
+      descriptionEl.textContent = scene.description;
+      optionsEl.innerHTML = "";
+      outcomeEl.hidden = true;
+      continueBtn.hidden = true;
+      hideMoment();
+      updateProgress();
+
+      scene.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.className = "choice";
+        button.textContent = option.text;
+        button.addEventListener("click", () => handleChoice(option, button));
+        button.setAttribute("data-option-index", index);
+        optionsEl.appendChild(button);
+      });
+
+      const firstOption = optionsEl.querySelector("button");
+      if (firstOption && introOverlay.hidden) {
+        firstOption.focus({ preventScroll: true });
+      }
+    }
+
+    function escapeHTML(str) {
+      const div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function logEvent(message) {
+      logEl.insertAdjacentHTML("afterbegin", `<li>${message}</li>`);
+    }
+
+    function hideMoment() {
+      momentEl.hidden = true;
+      momentEl.innerHTML = "";
+    }
+
+    function handleChoice(option, button) {
+      if (awaitingContinue) return;
+      awaitingContinue = true;
+      hideMoment();
+
+      Array.from(optionsEl.children).forEach((child) => {
+        child.disabled = true;
+        if (child === button) {
+          child.classList.add("selected");
+        }
+      });
+
+      stats.bond += option.impact.bond || 0;
+      stats.heat += option.impact.heat || 0;
+      stats.spirit += option.impact.spirit || 0;
+      updateStatsDisplay();
+
+      logEvent(`<strong>${scenes[sceneIndex].title}:</strong> ${option.log}`);
+
+      outcomeEl.textContent = option.outcome;
+      outcomeEl.hidden = false;
+
+      if (sceneIndex < scenes.length - 1) {
+        if (!maybeTriggerInterlude()) {
+          maybeTriggerRoadMoment();
+          continueBtn.hidden = false;
+          continueBtn.focus({ preventScroll: true });
+        }
+      } else {
+        showFinale();
+      }
+    }
+
+    function formatEffect(effect) {
+      return Object.entries(effect)
+        .filter(([, value]) => value !== 0)
+        .map(([key, value]) => `${value > 0 ? "+" : ""}${value} ${key.charAt(0).toUpperCase() + key.slice(1)}`)
+        .join(" · ");
+    }
+
+    function showMoment(moment) {
+      const effectText = formatEffect(moment.impact);
+      const segments = [
+        `<strong>${escapeHTML(moment.title)}</strong>`,
+        `<p>${escapeHTML(moment.description)}</p>`,
+      ];
+      if (effectText) {
+        segments.push(`<p class="moment-effect">${escapeHTML(effectText)}</p>`);
+      }
+      momentEl.innerHTML = segments.join("");
+      momentEl.hidden = false;
+    }
+
+    function maybeTriggerRoadMoment() {
+      if (sceneIndex >= scenes.length - 1) return false;
+
+      const available = roadMoments.filter(
+        (moment) => !usedMoments.has(moment.id) && moment.condition(stats)
+      );
+
+      if (available.length === 0) {
+        return false;
+      }
+
+      if (Math.random() > 0.55) {
+        return false;
+      }
+
+      const moment = available[Math.floor(Math.random() * available.length)];
+      usedMoments.add(moment.id);
+
+      Object.entries(moment.impact).forEach(([key, delta]) => {
+        stats[key] += delta;
+      });
+
+      updateStatsDisplay();
+      showMoment(moment);
+      const effectText = formatEffect(moment.impact);
+      logEvent(
+        `<em>${escapeHTML(moment.title)}:</em> ${escapeHTML(moment.description)}${
+          effectText ? ` <small>${escapeHTML(effectText)}</small>` : ""
+        }`
+      );
+      return true;
+    }
+
+    function maybeTriggerInterlude() {
+      if (sceneIndex >= scenes.length - 1) return false;
+
+      const interlude = interludes.find(
+        (entry) => !seenInterludes.has(entry.id) && entry.condition(stats)
+      );
+
+      if (!interlude) {
+        return false;
+      }
+
+      interludeActive = interlude;
+      interludeTitle.textContent = interlude.title;
+      interludeDescription.textContent = interlude.description;
+      interludeBtn.textContent = `Accept the sign (${formatEffect(interlude.effect)})`;
+      interludeOverlay.hidden = false;
+      interludeBtn.focus({ preventScroll: true });
+      return true;
+    }
+
+    function showFinale() {
+      const finale = determineFinale();
+      const immediate = outcomeEl.textContent;
+      outcomeEl.innerHTML = `<p>${escapeHTML(immediate)}</p><p><strong>${escapeHTML(
+        finale.label
+      )}:</strong> ${escapeHTML(finale.summary)}</p>`;
+      logEvent(`<strong>Finale:</strong> ${escapeHTML(finale.label)}`);
+      updateProgress();
+      const currentStep = progressSteps[sceneIndex];
+      if (currentStep) {
+        currentStep.dataset.status = "complete";
+        currentStep.removeAttribute("aria-current");
+      }
+      continueBtn.hidden = true;
+      restartBtn.hidden = false;
+      restartBtn.focus({ preventScroll: true });
+    }
+
+    function determineFinale() {
+      const bond = clampStat(stats.bond);
+      const heat = clampStat(stats.heat);
+      const spirit = clampStat(stats.spirit);
+
+      if (bond >= 75 && heat <= 40 && spirit >= 60) {
+        return {
+          label: "Open Road",
+          summary:
+            "✨ The bond holds, the law looks elsewhere, and the song carries you across the border with room to breathe.",
+        };
+      }
+
+      if (heat >= 75) {
+        return {
+          label: "Blue Lights",
+          summary:
+            "🚨 Sirens crest the hill. Even together, you're forced to kneel—but the story of the planted bag is loud enough to draw witnesses.",
+        };
+      }
+
+      if (spirit <= 35) {
+        return {
+          label: "Hollow Echo",
+          summary:
+            "🌒 Exhaustion hollows everyone out. Ogun's hands shake as Oshoosi drives alone into the gray, Elegba fading into mist.",
+        };
+      }
+
+      if (bond <= 35) {
+        return {
+          label: "Frayed Tether",
+          summary:
+            "🪢 The bond slips. Each brother chooses a different road, haunted by the what-ifs of that night by the fire.",
+        };
+      }
+
+      return {
+        label: "Uncertain Horizon",
+        summary:
+          "🌤️ Dawn arrives with questions. You're still together, but every mile ahead is a delicate negotiation with fate.",
+      };
+    }
+
+    continueBtn.addEventListener("click", () => {
+      if (!awaitingContinue) return;
+      sceneIndex += 1;
+      renderScene();
+    });
+
+    interludeBtn.addEventListener("click", () => {
+      if (!interludeActive) return;
+
+      Object.entries(interludeActive.effect).forEach(([key, delta]) => {
+        stats[key] += delta;
+      });
+
+      updateStatsDisplay();
+      logEvent(
+        `<em>${escapeHTML(interludeActive.title)}:</em> ${escapeHTML(interludeActive.log)}`
+      );
+      seenInterludes.add(interludeActive.id);
+      interludeOverlay.hidden = true;
+      interludeActive = null;
+
+      if (sceneIndex < scenes.length - 1) {
+        continueBtn.hidden = false;
+        continueBtn.focus({ preventScroll: true });
+      } else {
+        showFinale();
+      }
+    });
+
+    restartBtn.addEventListener("click", () => {
+      resetGame();
+    });
+
+    startBtn.addEventListener("click", () => {
+      const checked = approachInputs.find((input) => input.checked);
+      if (checked) {
+        selectedLoadout = checked.value;
+      }
+      introOverlay.hidden = true;
+      resetGame();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (!introOverlay.hidden || !interludeOverlay.hidden) {
+        return;
+      }
+
+      if (event.altKey || event.ctrlKey || event.metaKey) {
+        return;
+      }
+
+      if (event.key === "Enter" && !continueBtn.hidden) {
+        event.preventDefault();
+        continueBtn.click();
+        return;
+      }
+
+      if ((event.key === "r" || event.key === "R") && !restartBtn.hidden) {
+        event.preventDefault();
+        restartBtn.click();
+        return;
+      }
+
+      if (/^[1-9]$/.test(event.key)) {
+        const index = Number(event.key) - 1;
+        const optionButton = optionsEl.querySelector(
+          `button[data-option-index="${index}"]`
+        );
+        if (optionButton && !optionButton.disabled) {
+          event.preventDefault();
+          optionButton.click();
+        }
+      }
+    });
+
+    function resetGame({ preserveIntro = false } = {}) {
+      Object.assign(stats, getStartingStats());
+      sceneIndex = 0;
+      awaitingContinue = false;
+      interludeActive = null;
+      seenInterludes.clear();
+      usedMoments.clear();
+      interludeOverlay.hidden = true;
+      logEl.innerHTML = "";
+      restartBtn.hidden = true;
+      outcomeEl.hidden = true;
+      continueBtn.hidden = true;
+      hideMoment();
+      Object.entries(statElements).forEach(([key, element]) => {
+        element.last = clampStat(stats[key]);
+      });
+      updateStatsDisplay({ animateDelta: false });
+      renderScene();
+      if (!preserveIntro) {
+        if (typeof mainCard.focus === "function") {
+          mainCard.focus({ preventScroll: true });
+        }
+        if (typeof mainCard.scrollIntoView === "function") {
+          mainCard.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    }
+
+    resetGame({ preserveIntro: true });
+  </script>
+</body>
+</html>
