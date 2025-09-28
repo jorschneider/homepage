@@ -97,6 +97,7 @@
       box-shadow: 0 10px 24px rgba(30, 30, 60, 0.18);
       transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
       border: 3px solid transparent;
+      position: relative;
     }
 
     .key-card span.letter {
@@ -134,6 +135,26 @@
       transform: translateY(-6px) scale(1.02);
       box-shadow: 0 16px 32px rgba(30, 30, 60, 0.25);
       border-color: rgba(106, 76, 147, 0.6);
+    }
+
+    .key-card[data-queued="true"] {
+      border-color: rgba(106, 76, 147, 0.35);
+      box-shadow: 0 12px 26px rgba(30, 30, 60, 0.18);
+    }
+
+    .key-card[data-queued="true"]::after {
+      content: 'Next';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(106, 76, 147, 0.16);
+      color: var(--text);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.55rem;
+      border-radius: 999px;
     }
 
     .key-card:active {
@@ -201,7 +222,7 @@
   <main>
     <header>
       <h1>Classical Melody Keyboard</h1>
-      <p class="lead">Every key on your keyboard lights up with a gentle classical riff—press one key or tap a card, then listen all the way through before choosing the next melody.</p>
+      <p class="lead">Every key on your keyboard lights up with a gentle classical riff—press one key or tap a card, then listen all the way through (or line up a few; they patiently wait their turn!).</p>
     </header>
 
     <section class="keys-grid" aria-label="Keyboard melody options"></section>
@@ -211,7 +232,7 @@
     </div>
 
     <footer>
-      Tip: Turn the volume to a comfy level, then explore the melodies together!
+      Tip: Turn the volume to a comfy level, then explore the melodies together—line up as many keys as you like and they'll take turns.
     </footer>
   </main>
 
@@ -667,7 +688,7 @@
       letterSpan.style.background = color;
       card.style.background = gradient;
 
-      const activate = () => triggerMelody(entry.datasetKey);
+      const activate = () => enqueueMelody(entry.datasetKey);
 
       card.addEventListener('click', activate);
       card.addEventListener('keydown', (event) => {
@@ -704,11 +725,12 @@
 
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const masterGain = audioContext.createGain();
-    masterGain.gain.value = 0.3;
+    masterGain.gain.value = 0.28;
     masterGain.connect(audioContext.destination);
 
-    let isPlaying = false;
-    let stopRequested = false;
+    const playbackQueue = [];
+    let isProcessingQueue = false;
+    let cancelCurrent = false;
     let activeNodes = [];
     let currentCard = null;
 
@@ -716,52 +738,17 @@
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async function playSegment(segment) {
-      if (stopRequested) {
-        return;
-      }
-
-      if (segment.note === 'REST') {
-        await wait(segment.duration);
-        return;
-      }
-
-      const frequency = NOTE_FREQUENCIES[segment.note];
-      if (!frequency) {
-        return;
-      }
-
-      const now = audioContext.currentTime;
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(frequency, now);
-      oscillator.connect(gainNode);
-      gainNode.connect(masterGain);
-
-      const attackTime = Math.min(0.08, segment.duration / 1000 / 2);
-      const releaseTime = Math.min(0.12, segment.duration / 1000 / 2);
-      const sustainTime = Math.max(segment.duration / 1000 - attackTime - releaseTime, 0.02);
-
-      gainNode.gain.setValueAtTime(0.0001, now);
-      gainNode.gain.exponentialRampToValueAtTime(0.5, now + attackTime);
-      gainNode.gain.setTargetAtTime(0.35, now + attackTime, sustainTime);
-      gainNode.gain.setTargetAtTime(0.0001, now + attackTime + sustainTime, releaseTime);
-
-      oscillator.start(now);
-      activeNodes.push({ oscillator, gainNode });
-
-      const totalTime = segment.duration;
-      await wait(Math.max(totalTime - 40, 10));
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.04);
-      await wait(40);
-      try {
-        oscillator.stop();
-      } catch (err) {
-        // Oscillator may already be stopped if playback was interrupted.
-      }
-      activeNodes = activeNodes.filter(node => node.oscillator !== oscillator);
+    function updateQueueIndicators() {
+      const cards = document.querySelectorAll('.key-card');
+      const queuedSet = new Set(playbackQueue);
+      const currentKey = currentCard ? currentCard.dataset.key : null;
+      cards.forEach((card) => {
+        if (queuedSet.has(card.dataset.key) && card.dataset.key !== currentKey) {
+          card.dataset.queued = 'true';
+        } else {
+          delete card.dataset.queued;
+        }
+      });
     }
 
     function setActiveCard(key) {
@@ -770,6 +757,7 @@
       if (card) {
         currentCard = card;
         card.dataset.active = 'true';
+        delete card.dataset.queued;
       }
     }
 
@@ -777,58 +765,181 @@
       if (currentCard) {
         currentCard.dataset.active = 'false';
         currentCard = null;
+        updateQueueIndicators();
       }
     }
 
-    async function playMelody(key) {
+    async function playSegment(segment) {
+      if (cancelCurrent) {
+        return;
+      }
+
+      const durationMs = typeof segment.duration === 'number' ? segment.duration : 0;
+      const frequency = NOTE_FREQUENCIES[segment.note];
+      if (!frequency) {
+        await wait(durationMs);
+        return;
+      }
+
+      const now = audioContext.currentTime;
+      const oscillator = audioContext.createOscillator();
+      const overtone = audioContext.createOscillator();
+      const vibrato = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      const overtoneGain = audioContext.createGain();
+      const vibratoGain = audioContext.createGain();
+
+      oscillator.type = 'triangle';
+      oscillator.frequency.setValueAtTime(frequency, now);
+
+      overtone.type = 'sine';
+      overtone.frequency.setValueAtTime(frequency * 2, now);
+      overtoneGain.gain.value = 0.18;
+
+      vibrato.type = 'sine';
+      vibrato.frequency.value = 5.5;
+      vibratoGain.gain.value = Math.max(frequency * 0.008, 1.5);
+
+      oscillator.connect(gainNode);
+      overtone.connect(overtoneGain);
+      overtoneGain.connect(gainNode);
+      vibrato.connect(vibratoGain);
+      vibratoGain.connect(oscillator.frequency);
+      gainNode.connect(masterGain);
+
+      const totalSeconds = Math.max(durationMs / 1000, 0.12);
+      const attack = Math.min(0.09, totalSeconds * 0.3);
+      const decay = Math.min(0.1, totalSeconds * 0.2);
+      const sustainLevel = 0.42;
+      const release = Math.min(0.2, totalSeconds * 0.35);
+      const sustain = Math.max(totalSeconds - attack - decay - release, 0.02);
+
+      gainNode.gain.cancelScheduledValues(now);
+      gainNode.gain.setValueAtTime(0.0001, now);
+      gainNode.gain.exponentialRampToValueAtTime(0.9, now + attack);
+      gainNode.gain.setTargetAtTime(sustainLevel, now + attack, decay);
+      gainNode.gain.setTargetAtTime(0.0001, now + attack + sustain, release);
+
+      oscillator.start(now);
+      overtone.start(now);
+      vibrato.start(now);
+
+      const nodeGroup = { gainNode, oscillators: [oscillator, overtone, vibrato] };
+      activeNodes.push(nodeGroup);
+
+      await wait(Math.max(durationMs - 40, 10));
+      if (!cancelCurrent) {
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.05);
+        await wait(60);
+      }
+
+      nodeGroup.oscillators.forEach((node) => {
+        try {
+          node.stop();
+        } catch (err) {
+          /* oscillator may already be stopped */
+        }
+        try {
+          node.disconnect();
+        } catch (err) {
+          /* ignore */
+        }
+      });
+      [gainNode, overtoneGain, vibratoGain].forEach((node) => {
+        try {
+          node.disconnect();
+        } catch (err) {
+          /* ignore */
+        }
+      });
+
+      activeNodes = activeNodes.filter((entry) => entry !== nodeGroup);
+    }
+
+    async function runMelody(key) {
       const melody = melodies[key];
-      if (!melody || isPlaying) {
+      if (!melody) {
         return;
       }
 
       await audioContext.resume();
-      stopRequested = false;
-      isPlaying = true;
       setActiveCard(key);
 
       for (const segment of melody.notes) {
-        if (stopRequested) {
+        if (cancelCurrent) {
           break;
         }
         await playSegment(segment);
       }
 
-      if (!stopRequested) {
-        isPlaying = false;
+      if (!cancelCurrent) {
+        await wait(140);
         unsetActiveCard();
       }
-      stopRequested = false;
+    }
+
+    async function processQueue() {
+      if (isProcessingQueue) {
+        return;
+      }
+      isProcessingQueue = true;
+      try {
+        while (playbackQueue.length > 0) {
+          if (cancelCurrent) {
+            playbackQueue.length = 0;
+            break;
+          }
+          const nextKey = playbackQueue.shift();
+          updateQueueIndicators();
+          await runMelody(nextKey);
+        }
+      } finally {
+        isProcessingQueue = false;
+        if (!cancelCurrent) {
+          unsetActiveCard();
+        }
+        cancelCurrent = false;
+        updateQueueIndicators();
+      }
+    }
+
+    function enqueueMelody(key) {
+      if (!melodies[key]) {
+        return;
+      }
+      playbackQueue.push(key);
+      updateQueueIndicators();
+      if (!isProcessingQueue) {
+        cancelCurrent = false;
+        processQueue();
+      }
     }
 
     function stopPlayback() {
-      if (!isPlaying && activeNodes.length === 0) {
+      if (!isProcessingQueue && activeNodes.length === 0) {
         return;
       }
-      stopRequested = true;
-      isPlaying = false;
-      activeNodes.forEach(({ oscillator, gainNode }) => {
+      cancelCurrent = true;
+      playbackQueue.length = 0;
+      updateQueueIndicators();
+      const now = audioContext.currentTime;
+      activeNodes.forEach(({ gainNode, oscillators }) => {
         try {
-          const now = audioContext.currentTime;
-          gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
-          oscillator.stop(now + 0.08);
+          gainNode.gain.cancelScheduledValues(now);
+          gainNode.gain.setTargetAtTime(0.0001, now, 0.05);
         } catch (err) {
-          console.warn(err);
+          /* ignore */
         }
+        oscillators.forEach((node) => {
+          try {
+            node.stop(now + 0.05);
+          } catch (err) {
+            /* ignore */
+          }
+        });
       });
       activeNodes = [];
       unsetActiveCard();
-    }
-
-    function triggerMelody(key) {
-      if (isPlaying) {
-        return;
-      }
-      playMelody(key);
     }
 
     document.addEventListener('keydown', (event) => {
@@ -838,7 +949,7 @@
       const datasetKey = keyMatcher[rawKey] || keyMatcher[lowerKey] || keyMatcher[upperKey];
       if (datasetKey) {
         event.preventDefault();
-        triggerMelody(datasetKey);
+        enqueueMelody(datasetKey);
       }
     });
 
