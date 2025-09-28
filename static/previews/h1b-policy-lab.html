@@ -7,21 +7,18 @@
   <style>
     :root {
       color-scheme: light;
-      --ifp-primary: #b18cff;
-      --ifp-primary-dark: #4c2c7f;
-      --ifp-primary-soft: #f4ecff;
-      --ifp-primary-soft-strong: #e5d6ff;
-      --ifp-highlight: #5b21b6;
-      --ifp-highlight-soft: #d9c9ff;
-      --ifp-baseline: #3f3d56;
-      --ifp-ink: #241336;
     }
     body {
       font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       margin: 0;
       padding: 2.5rem;
       background: radial-gradient(120% 120% at 20% 0%, rgba(177, 140, 255, 0.35) 0%, rgba(111, 72, 182, 0.12) 45%, rgba(36, 19, 54, 0.08) 100%), #f7f5ff;
-      color: var(--ifp-ink);
+      color: #241336;
+      transition: background 0.35s ease;
+    }
+    body.civil-war-canvas {
+      background: radial-gradient(115% 120% at 15% -10%, rgba(196, 173, 143, 0.52) 0%, rgba(181, 150, 118, 0.38) 35%, rgba(104, 83, 59, 0.35) 100%), #f3ebe0;
+      color: #2b2118;
     }
     main {
       max-width: 1040px;
@@ -31,6 +28,12 @@
       box-shadow: 0 32px 60px rgba(36, 19, 54, 0.16);
       padding: 3rem 3.5rem;
       border: 1px solid rgba(177, 140, 255, 0.35);
+      transition: border 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    }
+    body.civil-war-canvas main {
+      background: #fdf8f0;
+      border-color: rgba(143, 102, 54, 0.42);
+      box-shadow: 0 32px 60px rgba(59, 45, 34, 0.18);
     }
     header {
       display: flex;
@@ -43,47 +46,184 @@
       height: auto;
       border-radius: 18px;
       box-shadow: 0 18px 32px rgba(76, 44, 127, 0.18);
+      transition: filter 0.3s ease, box-shadow 0.3s ease;
+    }
+    body.civil-war-canvas header img {
+      filter: sepia(0.55) saturate(0.85) contrast(0.95);
+      box-shadow: 0 18px 32px rgba(59, 45, 34, 0.24);
     }
     header h1 {
       margin: 0;
       font-size: 2.5rem;
       letter-spacing: -0.02em;
-      color: var(--ifp-ink);
     }
     p.lede {
       font-size: 1.1rem;
       color: rgba(36, 19, 54, 0.78);
       line-height: 1.7;
+      transition: color 0.3s ease;
+    }
+    body.civil-war-canvas p.lede {
+      color: rgba(72, 56, 42, 0.88);
     }
     section.narrative {
       margin-bottom: 2.5rem;
       line-height: 1.75;
       color: rgba(36, 19, 54, 0.88);
+      transition: color 0.3s ease;
+    }
+    body.civil-war-canvas section.narrative {
+      color: rgba(72, 56, 42, 0.88);
     }
     section.narrative h2 {
       font-size: 1.4rem;
       margin-top: 2rem;
-      color: var(--ifp-primary-dark);
+      margin-bottom: 0.75rem;
+      color: #4c2c7f;
+      transition: color 0.3s ease;
+    }
+    body.civil-war-canvas section.narrative h2 {
+      color: #872f1b;
+    }
+    .h1b-lab {
+      --lab-font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --lab-ink: #241336;
+      --lab-muted: rgba(36, 19, 54, 0.65);
+      --lab-heading-color: #4c2c7f;
+      --lab-summary-border: #b18cff;
+      --lab-summary-bg: rgba(244, 236, 255, 0.88);
+      --lab-panel-bg: linear-gradient(135deg, rgba(244, 236, 255, 0.95), rgba(210, 185, 255, 0.9));
+      --lab-panel-border: rgba(76, 44, 127, 0.2);
+      --lab-panel-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.68);
+      --lab-switch-bg: rgba(255, 255, 255, 0.75);
+      --lab-switch-border: rgba(76, 44, 127, 0.15);
+      --lab-switch-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+      --lab-switch-active-start: #5b21b6;
+      --lab-switch-active-end: #7c3aed;
+      --lab-switch-active-shadow: 0 10px 24px rgba(91, 33, 182, 0.35);
+      --lab-switch-text: #ffffff;
+      --lab-switch-subtext: rgba(255, 255, 255, 0.85);
+      --lab-accent-color: #b18cff;
+      --lab-card-bg: linear-gradient(160deg, rgba(244, 236, 255, 0.98), rgba(210, 185, 255, 0.7));
+      --lab-card-border: rgba(76, 44, 127, 0.18);
+      --lab-card-heading: rgba(76, 44, 127, 0.75);
+      --lab-footnote: rgba(36, 19, 54, 0.7);
+      --lab-chart-bg: rgba(244, 236, 255, 0.9);
+      --lab-chart-border: rgba(177, 140, 255, 0.3);
+      --lab-theme-button-bg: rgba(255, 255, 255, 0.85);
+      --lab-theme-button-border: rgba(76, 44, 127, 0.35);
+      --lab-theme-button-hover: rgba(91, 33, 182, 0.12);
+      --lab-theme-button-color: #241336;
+      --lab-theme-button-subtext: rgba(36, 19, 54, 0.65);
+      --lab-axis-color: rgba(36, 19, 54, 0.75);
+      --lab-axis-strong: rgba(36, 19, 54, 0.85);
+      --lab-axis-line: #cbd5f5;
+      --lab-axis-tick: #94a3b8;
+      --lab-gridline: rgba(148, 163, 184, 0.25);
+      --lab-chart-baseline: #3f3d56;
+      --lab-chart-highlight: #5b21b6;
+      --lab-chart-accent: #7c3aed;
+      --lab-chart-muted: rgba(63, 61, 86, 0.55);
+      --lab-campaign-bg: rgba(255, 255, 255, 0.9);
+      --lab-campaign-border: rgba(177, 140, 255, 0.3);
+      --lab-campaign-heading: #4c2c7f;
+      font-family: var(--lab-font);
+      color: var(--lab-ink);
+      margin-top: 1.75rem;
+    }
+    .h1b-lab.civil-war {
+      --lab-font: 'Libre Baskerville', 'Times New Roman', serif;
+      --lab-ink: #2b2118;
+      --lab-muted: rgba(72, 56, 42, 0.75);
+      --lab-heading-color: #1b3a6b;
+      --lab-summary-border: #872f1b;
+      --lab-summary-bg: rgba(245, 235, 220, 0.9);
+      --lab-panel-bg: linear-gradient(135deg, rgba(246, 236, 220, 0.95), rgba(224, 203, 170, 0.88));
+      --lab-panel-border: rgba(117, 82, 53, 0.35);
+      --lab-panel-shadow: inset 0 1px 0 rgba(255, 247, 235, 0.8);
+      --lab-switch-bg: rgba(252, 246, 235, 0.82);
+      --lab-switch-border: rgba(117, 82, 53, 0.25);
+      --lab-switch-shadow: inset 0 1px 0 rgba(255, 248, 238, 0.9);
+      --lab-switch-active-start: #1b3a6b;
+      --lab-switch-active-end: #872f1b;
+      --lab-switch-active-shadow: 0 12px 28px rgba(59, 45, 34, 0.35);
+      --lab-switch-text: #fff8ec;
+      --lab-switch-subtext: rgba(255, 240, 220, 0.85);
+      --lab-accent-color: #8f4f2a;
+      --lab-card-bg: linear-gradient(160deg, rgba(249, 239, 224, 0.96), rgba(228, 207, 174, 0.76));
+      --lab-card-border: rgba(117, 82, 53, 0.35);
+      --lab-card-heading: rgba(39, 61, 92, 0.85);
+      --lab-footnote: rgba(72, 56, 42, 0.78);
+      --lab-chart-bg: rgba(245, 235, 220, 0.92);
+      --lab-chart-border: rgba(143, 102, 54, 0.35);
+      --lab-theme-button-bg: rgba(236, 223, 205, 0.94);
+      --lab-theme-button-border: rgba(117, 82, 53, 0.45);
+      --lab-theme-button-hover: rgba(137, 104, 64, 0.22);
+      --lab-theme-button-color: #2b2118;
+      --lab-theme-button-subtext: rgba(72, 56, 42, 0.75);
+      --lab-axis-color: rgba(72, 56, 42, 0.78);
+      --lab-axis-strong: rgba(59, 45, 34, 0.85);
+      --lab-axis-line: #d1bfa5;
+      --lab-axis-tick: #a78963;
+      --lab-gridline: rgba(167, 137, 99, 0.3);
+      --lab-chart-baseline: #5b5045;
+      --lab-chart-highlight: #1b3a6b;
+      --lab-chart-accent: #872f1b;
+      --lab-chart-muted: rgba(59, 45, 34, 0.6);
+      --lab-campaign-bg: rgba(241, 229, 210, 0.94);
+      --lab-campaign-border: rgba(143, 102, 54, 0.42);
+      --lab-campaign-heading: #872f1b;
+    }
+    .theme-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .theme-toggle {
+      border: 1px solid var(--lab-theme-button-border);
+      background: var(--lab-theme-button-bg);
+      border-radius: 0.95rem;
+      padding: 0.75rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.35rem;
+      cursor: pointer;
+      color: var(--lab-theme-button-color);
+      font-weight: 600;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+      box-shadow: 0 12px 26px rgba(36, 19, 54, 0.1);
+    }
+    .theme-toggle span {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--lab-theme-button-subtext);
+    }
+    .theme-toggle:hover {
+      background: var(--lab-theme-button-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 16px 28px rgba(36, 19, 54, 0.12);
+    }
+    .theme-toggle:active {
+      transform: translateY(0);
+      box-shadow: 0 8px 20px rgba(36, 19, 54, 0.1);
     }
     .h1b-policy-controls {
-      background: linear-gradient(135deg, rgba(244, 236, 255, 0.95), rgba(210, 185, 255, 0.9));
+      background: var(--lab-panel-bg);
       border-radius: 1.35rem;
       padding: 2rem 2.25rem;
       margin: 2.5rem 0 1.75rem;
-      border: 1px solid rgba(76, 44, 127, 0.18);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+      border: 1px solid var(--lab-panel-border);
+      box-shadow: var(--lab-panel-shadow);
     }
     .h1b-policy-controls h2 {
       margin-top: 0;
       margin-bottom: 1.25rem;
       font-size: 1.35rem;
-    }
-    .control-grid {
-      display: grid;
-      grid-template-columns: minmax(220px, 2fr) minmax(180px, 3fr) auto;
-      align-items: center;
-      gap: 1rem 1.5rem;
-      margin-bottom: 1.25rem;
+      color: var(--lab-heading-color);
     }
     .control-stack {
       display: flex;
@@ -96,7 +236,12 @@
       letter-spacing: 0.02em;
       text-transform: uppercase;
       font-size: 0.78rem;
-      color: rgba(36, 19, 54, 0.65);
+      color: var(--lab-muted);
+    }
+    .control-help {
+      font-size: 0.8rem;
+      color: var(--lab-muted);
+      margin: 0;
     }
     .scenario-switch {
       display: grid;
@@ -104,9 +249,9 @@
       gap: 0.5rem;
       padding: 0.4rem;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.75);
-      border: 1px solid rgba(76, 44, 127, 0.15);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+      background: var(--lab-switch-bg);
+      border: 1px solid var(--lab-switch-border);
+      box-shadow: var(--lab-switch-shadow);
     }
     .scenario-switch button {
       border: none;
@@ -116,7 +261,7 @@
       text-align: left;
       cursor: pointer;
       transition: all 0.18s ease-in-out;
-      color: rgba(36, 19, 54, 0.7);
+      color: var(--lab-muted);
       display: flex;
       flex-direction: column;
       gap: 0.15rem;
@@ -125,119 +270,154 @@
     .scenario-switch button strong {
       font-size: 0.95rem;
       letter-spacing: -0.01em;
+      color: var(--lab-ink);
     }
     .scenario-switch button span {
       font-size: 0.75rem;
-      color: rgba(36, 19, 54, 0.6);
     }
     .scenario-switch button.active {
-      background: linear-gradient(135deg, var(--ifp-highlight) 0%, #7c3aed 100%);
-      color: #ffffff;
-      box-shadow: 0 10px 24px rgba(91, 33, 182, 0.35);
+      background: linear-gradient(135deg, var(--lab-switch-active-start) 0%, var(--lab-switch-active-end) 100%);
+      color: var(--lab-switch-text);
+      box-shadow: var(--lab-switch-active-shadow);
     }
+    .scenario-switch button.active strong,
     .scenario-switch button.active span {
-      color: rgba(255, 255, 255, 0.85);
+      color: var(--lab-switch-subtext);
     }
-    .hybrid-row .control-label {
-      margin-bottom: 0.35rem;
-    }
-    .control-help {
-      font-size: 0.8rem;
-      color: rgba(36, 19, 54, 0.65);
-      margin: 0;
-    }
-    .control-grid label {
-      font-weight: 600;
+    .control-grid {
+      display: grid;
+      grid-template-columns: minmax(220px, 2fr) minmax(180px, 3fr) auto;
+      align-items: center;
+      gap: 1rem 1.5rem;
+      margin-bottom: 1.25rem;
     }
     .control-grid input[type="range"] {
       width: 100%;
-      accent-color: var(--ifp-primary);
+      accent-color: var(--lab-accent-color);
     }
     .control-grid .value {
       font-weight: 700;
-      color: var(--ifp-primary-dark);
+      color: var(--lab-heading-color);
     }
     fieldset.policy-toggles {
-      border: 1px solid rgba(76, 44, 127, 0.25);
-      border-radius: 1rem;
-      padding: 1rem 1.5rem 1.25rem;
-      background: rgba(244, 236, 255, 0.75);
-      margin-top: 1.5rem;
+      margin: 0;
+      padding: 1.1rem 1.25rem 1.4rem;
+      border-radius: 1.1rem;
+      border: 1px solid var(--lab-panel-border);
+      display: grid;
+      gap: 0.7rem;
+      background: var(--lab-switch-bg);
     }
     fieldset.policy-toggles legend {
-      font-weight: 700;
-      padding: 0 0.5rem;
+      font-weight: 600;
+      color: var(--lab-heading-color);
+      padding: 0 0.35rem;
     }
     fieldset.policy-toggles label {
-      display: block;
-      margin-top: 0.5rem;
-      font-weight: 500;
-      color: rgba(36, 19, 54, 0.85);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.95rem;
+      color: var(--lab-ink);
     }
     fieldset.policy-toggles input[type="checkbox"] {
-      accent-color: var(--ifp-primary);
+      accent-color: var(--lab-accent-color);
     }
     .h1b-metrics {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1.25rem;
-      margin-bottom: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.15rem;
+      margin: 1.75rem 0;
     }
     .metric-card {
-      padding: 1.25rem 1.5rem;
+      background: var(--lab-card-bg);
       border-radius: 1rem;
-      background: linear-gradient(160deg, rgba(244, 236, 255, 0.98), rgba(210, 185, 255, 0.7));
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-      border: 1px solid rgba(76, 44, 127, 0.16);
+      padding: 1rem 1.2rem;
+      border: 1px solid var(--lab-card-border);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.62);
     }
     .metric-card h4 {
       margin: 0;
       font-size: 0.85rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: rgba(76, 44, 127, 0.78);
+      color: var(--lab-card-heading);
     }
     .metric-value {
-      margin: 0.4rem 0 0;
+      margin: 0.35rem 0 0;
       font-size: 2rem;
       font-weight: 700;
-      color: var(--ifp-ink);
+      color: var(--lab-ink);
     }
     .metric-footnote {
-      margin: 0.25rem 0 0;
+      margin: 0.3rem 0 0;
       font-size: 0.85rem;
-      color: rgba(36, 19, 54, 0.7);
+      color: var(--lab-footnote);
     }
     .chart-card {
-      margin-bottom: 2rem;
-      padding: 1.75rem;
-      border-radius: 1.25rem;
-      background: rgba(244, 236, 255, 0.9);
-      border: 1px solid rgba(177, 140, 255, 0.3);
+      margin-bottom: 1.85rem;
+      padding: 1.4rem 1.55rem 1.7rem;
+      border-radius: 1.2rem;
+      background: var(--lab-chart-bg);
+      border: 1px solid var(--lab-chart-border);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
     }
     .chart-card h3 {
-      margin-top: 0;
-      font-size: 1.2rem;
-      color: var(--ifp-primary-dark);
+      margin: 0 0 0.85rem;
+      font-size: 1.15rem;
+      color: var(--lab-heading-color);
     }
-    svg {
+    .chart-card svg {
       width: 100%;
       height: auto;
-      font-family: inherit;
+      overflow: visible;
     }
     .h1b-summary {
-      margin: 2rem 0 0;
-      padding: 1.5rem 1.75rem;
-      border-left: 5px solid var(--ifp-primary);
-      background: rgba(244, 236, 255, 0.85);
-      border-radius: 0.85rem;
+      margin: 2.2rem 0 1.2rem;
+      padding: 1.5rem 1.7rem;
+      border-left: 5px solid var(--lab-summary-border);
+      background: var(--lab-summary-bg);
+      border-radius: 0.95rem;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
     }
     .h1b-summary h3 {
-      margin-top: 0;
-      margin-bottom: 0.5rem;
-      color: var(--ifp-primary-dark);
+      margin: 0 0 0.65rem;
+      color: var(--lab-heading-color);
+    }
+    .h1b-campaign-log {
+      margin: 0 0 2rem;
+      padding: 1.3rem 1.5rem;
+      border-radius: 0.9rem;
+      border: 1px solid var(--lab-campaign-border);
+      background: var(--lab-campaign-bg);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+    }
+    .h1b-campaign-log h4 {
+      margin: 0 0 0.65rem;
+      font-size: 1rem;
+      color: var(--lab-campaign-heading);
+    }
+    .h1b-campaign-log ul {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: grid;
+      gap: 0.4rem;
+      color: var(--lab-ink);
+    }
+    .lab-notes-heading {
+      font-size: 1.15rem;
+      margin: 0 0 0.75rem;
+      color: var(--lab-heading-color);
+    }
+    .lab-notes {
+      list-style: disc;
+      padding-left: 1.2rem;
+      display: grid;
+      gap: 0.6rem;
+      color: var(--lab-ink);
+    }
+    .lab-notes strong {
+      color: var(--lab-heading-color);
     }
     @media (max-width: 720px) {
       body {
@@ -254,6 +434,13 @@
       }
       .scenario-switch {
         border-radius: 1.25rem;
+      }
+      .theme-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .theme-toggle {
+        width: 100%;
       }
     }
   </style>
@@ -272,638 +459,775 @@
       <p>Using FOIA-linked FY2021–FY2024 records, the lab below shows what happens when you prioritize Wage Levels, real compensation, or hybrids augmented with STEM boosts, outsourcer guardrails, and R&amp;D incentives.</p>
     </section>
 
-    <div class="h1b-policy-controls">
-      <h2>Design an allocation rule</h2>
-      <div class="control-stack">
-        <p class="control-label">Policy template</p>
-        <div class="scenario-switch" role="group" aria-label="Policy template">
-          <button type="button" data-scenario="wage" class="active" aria-pressed="true">
-            <strong>Weighted lottery</strong>
-            <span>DHS proposal</span>
-          </button>
-          <button type="button" data-scenario="statusquo" aria-pressed="false">
-            <strong>Random lottery</strong>
-            <span>Status quo baseline</span>
-          </button>
-          <button type="button" data-scenario="comp" aria-pressed="false">
-            <strong>Compensation ranking</strong>
-            <span>Pay-first selection</span>
-          </button>
-          <button type="button" data-scenario="hybrid" aria-pressed="false">
-            <strong>Build a hybrid</strong>
-            <span>Blend pay &amp; Wage Levels</span>
+    <div class="h1b-lab" id="h1b-lab">
+      <div class="h1b-policy-controls">
+        <div class="theme-toolbar">
+          <div>
+            <p class="control-label">Visual theme</p>
+            <p class="control-help">Flip between modern policy visuals and a Civil War dispatch motif.</p>
+          </div>
+          <button type="button" id="theme-toggle" class="theme-toggle" aria-pressed="false">
+            <strong>Enter Civil War mode</strong>
+            <span>Sepia maps &amp; dispatch styling</span>
           </button>
         </div>
-      </div>
-      <div class="control-grid hybrid-row" id="hybrid-row" hidden>
-        <div>
-          <p class="control-label">Blend weight on actual compensation</p>
-          <p class="control-help">Slide toward 100% to mirror a pure compensation ranking.</p>
+        <h2>Design an allocation rule</h2>
+        <div class="control-stack">
+          <p class="control-label">Policy template</p>
+          <div class="scenario-switch" role="group" aria-label="Policy template">
+            <button type="button" data-scenario="wage" class="active" aria-pressed="true">
+              <strong>Weighted lottery</strong>
+              <span>DHS proposal</span>
+            </button>
+            <button type="button" data-scenario="statusquo" aria-pressed="false">
+              <strong>Random lottery</strong>
+              <span>Status quo baseline</span>
+            </button>
+            <button type="button" data-scenario="comp" aria-pressed="false">
+              <strong>Compensation ranking</strong>
+              <span>Pay-first selection</span>
+            </button>
+            <button type="button" data-scenario="hybrid" aria-pressed="false">
+              <strong>Build a hybrid</strong>
+              <span>Blend pay &amp; Wage Levels</span>
+            </button>
+          </div>
         </div>
-        <input type="range" id="comp-weight" min="0" max="100" value="60" step="5">
-        <span class="value" id="comp-weight-value">60%</span>
+        <div class="control-grid hybrid-row" id="hybrid-row" hidden>
+          <div>
+            <p class="control-label">Blend weight on actual compensation</p>
+            <p class="control-help">Slide toward 100% to mirror a pure compensation ranking.</p>
+          </div>
+          <input type="range" id="comp-weight" min="0" max="100" value="60" step="5">
+          <span class="value" id="comp-weight-value">60%</span>
+        </div>
+        <fieldset class="policy-toggles">
+          <legend>Layer on additional levers</legend>
+          <label><input type="checkbox" id="outsourcer-guardrails" checked> Impose outsourcer fee &amp; L-1 guardrails</label>
+          <label><input type="checkbox" id="stem-boost" checked> Priority for US STEM graduates</label>
+          <label><input type="checkbox" id="phd-credit"> R&amp;D credit for PhD-intensive employers</label>
+        </fieldset>
       </div>
-      <fieldset class="policy-toggles">
-        <legend>Layer on additional levers</legend>
-        <label><input type="checkbox" id="outsourcer-guardrails" checked> Impose outsourcer fee &amp; L-1 guardrails</label>
-        <label><input type="checkbox" id="stem-boost" checked> Priority for US STEM graduates</label>
-        <label><input type="checkbox" id="phd-credit"> R&amp;D credit for PhD-intensive employers</label>
-      </fieldset>
-    </div>
 
-    <div class="h1b-metrics">
-      <div class="metric-card">
-        <h4>Median salary</h4>
-        <p class="metric-value" id="metric-median">--</p>
-        <p class="metric-footnote">2024 petition median (thousands USD)</p>
+      <div class="h1b-metrics">
+        <div class="metric-card">
+          <h4>Median salary</h4>
+          <p class="metric-value" id="metric-median">--</p>
+          <p class="metric-footnote">2024 petition median (thousands USD)</p>
+        </div>
+        <div class="metric-card">
+          <h4>Opportunity floor</h4>
+          <p class="metric-value" id="metric-p10">--</p>
+          <p class="metric-footnote">10th percentile salary in 2024</p>
+        </div>
+        <div class="metric-card">
+          <h4>Outsourcer share</h4>
+          <p class="metric-value" id="metric-outsourcers">--</p>
+          <p class="metric-footnote">Share of visas to large outsourcers</p>
+        </div>
+        <div class="metric-card">
+          <h4>Innovation index</h4>
+          <p class="metric-value" id="metric-innovation">--</p>
+          <p class="metric-footnote">Composite of wages, PhDs, and outsourcer shifts</p>
+        </div>
+        <div class="metric-card">
+          <h4>F-1 talent pipeline</h4>
+          <p class="metric-value" id="metric-f1">--</p>
+          <p class="metric-footnote">Share of visas to US-educated graduates</p>
+        </div>
+        <div class="metric-card">
+          <h4>PhD share</h4>
+          <p class="metric-value" id="metric-phd">--</p>
+          <p class="metric-footnote">Share of visas to PhD holders</p>
+        </div>
       </div>
-      <div class="metric-card">
-        <h4>Opportunity floor</h4>
-        <p class="metric-value" id="metric-p10">--</p>
-        <p class="metric-footnote">10th percentile salary in 2024</p>
-      </div>
-      <div class="metric-card">
-        <h4>Outsourcer share</h4>
-        <p class="metric-value" id="metric-outsourcers">--</p>
-        <p class="metric-footnote">Share of visas to large outsourcers</p>
-      </div>
-      <div class="metric-card">
-        <h4>Innovation index</h4>
-        <p class="metric-value" id="metric-innovation">--</p>
-        <p class="metric-footnote">Composite of wages, PhDs, and outsourcer shifts</p>
-      </div>
-      <div class="metric-card">
-        <h4>F-1 talent pipeline</h4>
-        <p class="metric-value" id="metric-f1">--</p>
-        <p class="metric-footnote">Share of visas to US-educated graduates</p>
-      </div>
-      <div class="metric-card">
-        <h4>PhD share</h4>
-        <p class="metric-value" id="metric-phd">--</p>
-        <p class="metric-footnote">Share of visas to PhD holders</p>
-      </div>
-    </div>
 
-    <div class="chart-card">
-      <h3>Wage outcomes under your rule</h3>
-      <svg id="wage-chart" viewBox="0 0 720 360" role="img" aria-labelledby="wage-chart-title wage-chart-desc">
-        <title id="wage-chart-title">Wage outcomes under your rule</title>
-        <desc id="wage-chart-desc">Line chart comparing the baseline status quo lottery with your selected rule for median wages and 10th percentile wages from 2021 to 2024.</desc>
-      </svg>
-    </div>
+      <div class="chart-card">
+        <h3>Wage outcomes under your rule</h3>
+        <svg id="wage-chart" viewBox="0 0 720 360" role="img" aria-labelledby="wage-chart-title wage-chart-desc">
+          <title id="wage-chart-title">Wage outcomes under your rule</title>
+          <desc id="wage-chart-desc">Line chart comparing the baseline status quo lottery with your selected rule for median wages and 10th percentile wages from 2021 to 2024.</desc>
+        </svg>
+      </div>
 
-    <div class="chart-card">
-      <h3>Who receives visas in 2024</h3>
-      <svg id="share-chart" viewBox="0 0 720 280" role="img" aria-labelledby="share-chart-title share-chart-desc">
-        <title id="share-chart-title">Visa shares for key groups</title>
-        <desc id="share-chart-desc">Grouped horizontal bars comparing the status quo lottery with your selected rule for outsourcers, F-1 graduates, and PhD holders.</desc>
-      </svg>
-    </div>
+      <div class="chart-card">
+        <h3>Who receives visas in 2024</h3>
+        <svg id="share-chart" viewBox="0 0 720 280" role="img" aria-labelledby="share-chart-title share-chart-desc">
+          <title id="share-chart-title">Visa shares for key groups</title>
+          <desc id="share-chart-desc">Grouped horizontal bars comparing the status quo lottery with your selected rule for outsourcers, F-1 graduates, and PhD holders.</desc>
+        </svg>
+      </div>
 
-    <div class="chart-card">
-      <h3>Innovation &amp; productivity index</h3>
-      <svg id="productivity-chart" viewBox="0 0 720 320" role="img" aria-labelledby="productivity-chart-title productivity-chart-desc">
-        <title id="productivity-chart-title">Innovation index comparison</title>
-        <desc id="productivity-chart-desc">Scatter plot showing baseline and scenario innovation index versus 2024 median wages.</desc>
-      </svg>
-    </div>
+      <div class="chart-card">
+        <h3>Innovation &amp; productivity index</h3>
+        <svg id="productivity-chart" viewBox="0 0 720 320" role="img" aria-labelledby="productivity-chart-title productivity-chart-desc">
+          <title id="productivity-chart-title">Innovation index comparison</title>
+          <desc id="productivity-chart-desc">Scatter plot showing baseline and scenario innovation index versus 2024 median wages.</desc>
+        </svg>
+      </div>
 
-    <div class="h1b-summary" id="h1b-summary">
-      <h3>Scenario summary</h3>
-      <p>Adjust the controls above to generate a narrative summary.</p>
+      <div id="h1b-summary" class="h1b-summary" aria-live="polite">
+        <h3>Scenario summary</h3>
+        <p class="control-help">Adjust the controls above to generate a narrative summary.</p>
+      </div>
+      <div id="h1b-campaign-log" class="h1b-campaign-log" aria-live="polite"></div>
+
+      <h3 class="lab-notes-heading">What the levers imply</h3>
+      <ul class="lab-notes">
+        <li><strong>Outsourcer guardrails</strong> apply a combination of targeted fees and tighter L-1 conversions, shaving 20% off large outsourcers’ visa capture and nudging wages higher as employers swap in higher-paying roles.</li>
+        <li><strong>STEM boost</strong> simulates a small reserved pool for US STEM graduates plus optional early filing flexibility, translating into a 1.5 percentage-point lift in F-1 share and a modest wage bump at the bottom.</li>
+        <li><strong>PhD credit</strong> mimics a research tax credit or points-based reserve focused on deep research teams. The lever boosts PhD selection by 25% but also pushes employers toward higher-salary offers to stay competitive.</li>
+      </ul>
     </div>
   </main>
 
   <script>
-    const years = [2021, 2022, 2023, 2024];
+    (function() {
+      const lab = document.getElementById('h1b-lab');
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeToggleText = themeToggle.querySelector('strong');
+      const themeToggleHint = themeToggle.querySelector('span');
+      const campaignLogEl = document.getElementById('h1b-campaign-log');
 
-    const scenarios = {
-      statusquo: {
-        label: 'Status quo lottery',
-        median: [88, 91, 93, 95],
-        p10: [55, 58, 60, 62],
-        outsourcerShare: [0.21, 0.2, 0.19, 0.19],
-        f1Share: [0.18, 0.19, 0.19, 0.2],
-        phdShare: [0.09, 0.095, 0.1, 0.105]
-      },
-      wage: {
-        label: 'Weighted lottery (Wage Levels)',
-        median: [90, 93, 95, 98],
-        p10: [57, 60, 63, 70],
-        outsourcerShare: [0.227, 0.216, 0.205, 0.205],
-        f1Share: [0.167, 0.177, 0.177, 0.186],
-        phdShare: [0.11, 0.116, 0.122, 0.128]
-      },
-      comp: {
-        label: 'Compensation ranking (actual pay)',
-        median: [130, 138, 145, 159],
-        p10: [95, 110, 120, 130],
-        outsourcerShare: [0.084, 0.081, 0.077, 0.075],
-        f1Share: [0.193, 0.203, 0.204, 0.214],
-        phdShare: [0.22, 0.235, 0.249, 0.26]
-      }
-    };
+      const years = [2021, 2022, 2023, 2024];
 
-    const baseline = scenarios.statusquo;
-    const baselineLabel = baseline.label;
-
-    const hybridRow = document.getElementById('hybrid-row');
-    const compWeightSlider = document.getElementById('comp-weight');
-    const compWeightValue = document.getElementById('comp-weight-value');
-    const scenarioButtons = document.querySelectorAll('.scenario-switch button');
-    let currentPolicy = 'wage';
-
-    const outsourcerToggle = document.getElementById('outsourcer-guardrails');
-    const stemToggle = document.getElementById('stem-boost');
-    const phdToggle = document.getElementById('phd-credit');
-
-    const medianEl = document.getElementById('metric-median');
-    const p10El = document.getElementById('metric-p10');
-    const outsourcerEl = document.getElementById('metric-outsourcers');
-    const innovationEl = document.getElementById('metric-innovation');
-    const f1El = document.getElementById('metric-f1');
-    const phdEl = document.getElementById('metric-phd');
-    const summaryEl = document.getElementById('h1b-summary');
-
-    const wageChart = document.getElementById('wage-chart');
-    const shareChart = document.getElementById('share-chart');
-    const productivityChart = document.getElementById('productivity-chart');
-
-    function blendArrays(a, b, weight) {
-      return a.map((val, idx) => val + (b[idx] - val) * weight);
-    }
-
-    function applyToggles(metrics) {
-      const adjusted = JSON.parse(JSON.stringify(metrics));
-
-      if (outsourcerToggle.checked) {
-        adjusted.outsourcerShare = adjusted.outsourcerShare.map(v => v * 0.8);
-        adjusted.median = adjusted.median.map(v => v + 2);
-      }
-
-      if (stemToggle.checked) {
-        adjusted.f1Share = adjusted.f1Share.map(v => Math.min(0.35, v + 0.015));
-        adjusted.median = adjusted.median.map(v => v + 1.5);
-        adjusted.p10 = adjusted.p10.map(v => v + 2);
-      }
-
-      if (phdToggle.checked) {
-        adjusted.phdShare = adjusted.phdShare.map(v => Math.min(0.4, v * 1.25));
-        adjusted.median = adjusted.median.map(v => v + 3);
-      }
-
-      return adjusted;
-    }
-
-    function getScenarioMetrics() {
-      const policy = currentPolicy;
-      let baseMetrics;
-
-      if (policy === 'hybrid') {
-        const weight = Number(compWeightSlider.value) / 100;
-        baseMetrics = {
-          label: `Hybrid weighting (${Math.round(weight * 100)}% compensation)`,
-          median: blendArrays(scenarios.wage.median, scenarios.comp.median, weight),
-          p10: blendArrays(scenarios.wage.p10, scenarios.comp.p10, weight),
-          outsourcerShare: blendArrays(scenarios.wage.outsourcerShare, scenarios.comp.outsourcerShare, weight),
-          f1Share: blendArrays(scenarios.wage.f1Share, scenarios.comp.f1Share, weight),
-          phdShare: blendArrays(scenarios.wage.phdShare, scenarios.comp.phdShare, weight)
-        };
-      } else {
-        baseMetrics = scenarios[policy];
-      }
-
-      const adjustedMetrics = applyToggles(baseMetrics);
-      adjustedMetrics.label = baseMetrics.label;
-      return adjustedMetrics;
-    }
-
-    function computeIndex(metrics) {
-      const salaryFactor = metrics.median[3] / baseline.median[3];
-      const phdFactor = metrics.phdShare[3] / baseline.phdShare[3];
-      const outsourcerFactor = baseline.outsourcerShare[3] / metrics.outsourcerShare[3];
-      return Math.round(100 * (0.6 * salaryFactor + 0.25 * phdFactor + 0.15 * outsourcerFactor));
-    }
-
-    function computeGrowth(metrics) {
-      const wageLift = metrics.median.reduce((acc, val, idx) => acc + (val - baseline.median[idx]), 0);
-      const phdLift = metrics.phdShare.reduce((acc, val, idx) => acc + (val - baseline.phdShare[idx]), 0);
-      const outsourcerReduction = baseline.outsourcerShare.reduce((acc, val, idx) => acc + (val - metrics.outsourcerShare[idx]), 0);
-      return (wageLift * 0.4) + (phdLift * 250) + (outsourcerReduction * 120);
-    }
-
-    function formatThousands(value) {
-      return `$${value.toFixed(0)}k`;
-    }
-
-    function createLinePath(points) {
-      return points.map((point, idx) => `${idx === 0 ? 'M' : 'L'}${point[0]} ${point[1]}`).join(' ');
-    }
-
-    function drawWageChart(metrics) {
-      const viewBox = wageChart.getAttribute('viewBox').split(' ').map(Number);
-      const width = viewBox[2];
-      const height = viewBox[3];
-      const margin = { top: 40, right: 40, bottom: 60, left: 70 };
-      const plotWidth = width - margin.left - margin.right;
-      const plotHeight = height - margin.top - margin.bottom;
-
-      const values = [...baseline.median, ...metrics.median, ...metrics.p10];
-      const yMin = Math.min(...values) * 0.9;
-      const yMax = Math.max(...values) * 1.05;
-
-      const pointsX = years.map((_, idx) => margin.left + (plotWidth / (years.length - 1)) * idx);
-      const scaleY = value => margin.top + plotHeight - ((value - yMin) / (yMax - yMin)) * plotHeight;
-
-      wageChart.innerHTML = '';
-
-      const axisGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      axisGroup.setAttribute('stroke', '#cbd5f5');
-      axisGroup.setAttribute('stroke-width', '1');
-      axisGroup.innerHTML = `
-        <line x1="${margin.left}" y1="${margin.top + plotHeight}" x2="${margin.left + plotWidth}" y2="${margin.top + plotHeight}" />
-        <line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${margin.top + plotHeight}" />
-      `;
-      wageChart.appendChild(axisGroup);
-
-      const ticks = 5;
-      for (let i = 0; i <= ticks; i++) {
-        const value = yMin + ((yMax - yMin) / ticks) * i;
-        const y = scaleY(value);
-        const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        tick.setAttribute('x1', margin.left - 6);
-        tick.setAttribute('x2', margin.left);
-        tick.setAttribute('y1', y);
-        tick.setAttribute('y2', y);
-        tick.setAttribute('stroke', '#94a3b8');
-        wageChart.appendChild(tick);
-
-        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        label.setAttribute('x', margin.left - 12);
-        label.setAttribute('y', y + 4);
-        label.setAttribute('text-anchor', 'end');
-        label.setAttribute('font-size', '12');
-        label.textContent = `$${Math.round(value)}k`;
-        wageChart.appendChild(label);
-
-        const grid = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        grid.setAttribute('x1', margin.left);
-        grid.setAttribute('x2', margin.left + plotWidth);
-        grid.setAttribute('y1', y);
-        grid.setAttribute('y2', y);
-        grid.setAttribute('stroke', 'rgba(148, 163, 184, 0.25)');
-        wageChart.appendChild(grid);
-      }
-
-      years.forEach((year, idx) => {
-        const x = pointsX[idx];
-        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        label.setAttribute('x', x);
-        label.setAttribute('y', margin.top + plotHeight + 30);
-        label.setAttribute('text-anchor', 'middle');
-        label.setAttribute('font-size', '12');
-        label.textContent = year;
-        wageChart.appendChild(label);
-      });
-
-      const baselinePoints = baseline.median.map((val, idx) => [pointsX[idx], scaleY(val)]);
-      const scenarioPoints = metrics.median.map((val, idx) => [pointsX[idx], scaleY(val)]);
-      const p10Points = metrics.p10.map((val, idx) => [pointsX[idx], scaleY(val)]);
-
-      const baselinePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      baselinePath.setAttribute('d', createLinePath(baselinePoints));
-      baselinePath.setAttribute('fill', 'none');
-      baselinePath.setAttribute('stroke', 'var(--ifp-baseline)');
-      baselinePath.setAttribute('stroke-width', '2');
-      baselinePath.setAttribute('stroke-dasharray', '6 4');
-      wageChart.appendChild(baselinePath);
-
-      const scenarioPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      scenarioPath.setAttribute('d', createLinePath(scenarioPoints));
-      scenarioPath.setAttribute('fill', 'none');
-      scenarioPath.setAttribute('stroke', 'var(--ifp-highlight)');
-      scenarioPath.setAttribute('stroke-width', '3');
-      wageChart.appendChild(scenarioPath);
-
-      const p10Path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      p10Path.setAttribute('d', createLinePath(p10Points));
-      p10Path.setAttribute('fill', 'none');
-      p10Path.setAttribute('stroke', '#7c3aed');
-      p10Path.setAttribute('stroke-width', '2');
-      p10Path.setAttribute('stroke-dasharray', '4 4');
-      wageChart.appendChild(p10Path);
-
-      const legend = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      legend.setAttribute('transform', `translate(${margin.left}, ${margin.top - 15})`);
-      const entries = [
-        { label: `${baselineLabel} median salary`, color: 'var(--ifp-baseline)', dash: '6 4', width: 2 },
-        { label: `${metrics.label} median salary`, color: 'var(--ifp-highlight)', dash: null, width: 3 },
-        { label: `${metrics.label} 10th percentile`, color: '#7c3aed', dash: '4 4', width: 2 }
-      ];
-      entries.forEach((entry, idx) => {
-        const yOffset = idx * 18;
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', idx * 210);
-        line.setAttribute('x2', idx * 210 + 28);
-        line.setAttribute('y1', yOffset);
-        line.setAttribute('y2', yOffset);
-        line.setAttribute('stroke', entry.color);
-        line.setAttribute('stroke-width', entry.width);
-        if (entry.dash) {
-          line.setAttribute('stroke-dasharray', entry.dash);
+      const scenarios = {
+        statusquo: {
+          label: 'Status quo lottery',
+          median: [88, 91, 93, 95],
+          p10: [55, 58, 60, 62],
+          outsourcerShare: [0.21, 0.2, 0.19, 0.19],
+          f1Share: [0.18, 0.19, 0.19, 0.2],
+          phdShare: [0.09, 0.095, 0.1, 0.105]
+        },
+        wage: {
+          label: 'Weighted lottery (Wage Levels)',
+          median: [90, 93, 95, 98],
+          p10: [57, 60, 63, 70],
+          outsourcerShare: [0.227, 0.216, 0.205, 0.205],
+          f1Share: [0.167, 0.177, 0.177, 0.186],
+          phdShare: [0.11, 0.116, 0.122, 0.128]
+        },
+        comp: {
+          label: 'Compensation ranking (actual pay)',
+          median: [130, 138, 145, 159],
+          p10: [95, 110, 120, 130],
+          outsourcerShare: [0.084, 0.081, 0.077, 0.075],
+          f1Share: [0.193, 0.203, 0.204, 0.214],
+          phdShare: [0.22, 0.235, 0.249, 0.26]
         }
-        legend.appendChild(line);
+      };
 
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', idx * 210 + 36);
-        text.setAttribute('y', yOffset + 4);
-        text.setAttribute('font-size', '12');
-        text.textContent = entry.label;
-        legend.appendChild(text);
-      });
-      wageChart.appendChild(legend);
-    }
+      const baseline = scenarios.statusquo;
+      const baselineLabel = baseline.label;
 
-    function drawShareChart(metrics) {
-      const viewBox = shareChart.getAttribute('viewBox').split(' ').map(Number);
-      const width = viewBox[2];
-      const height = viewBox[3];
-      const margin = { top: 30, right: 40, bottom: 50, left: 190 };
-      const plotWidth = width - margin.left - margin.right;
+      const hybridRow = document.getElementById('hybrid-row');
+      const compWeightSlider = document.getElementById('comp-weight');
+      const compWeightValue = document.getElementById('comp-weight-value');
+      const scenarioButtons = document.querySelectorAll('.scenario-switch button');
+      let currentPolicy = 'wage';
 
-      const categories = ['Large outsourcers', 'F-1 graduates', 'PhD holders'];
-      const shareValues = [
-        metrics.outsourcerShare[3] * 100,
-        metrics.f1Share[3] * 100,
-        metrics.phdShare[3] * 100
-      ];
-      const shareBaseline = [
-        baseline.outsourcerShare[3] * 100,
-        baseline.f1Share[3] * 100,
-        baseline.phdShare[3] * 100
-      ];
+      const outsourcerToggle = document.getElementById('outsourcer-guardrails');
+      const stemToggle = document.getElementById('stem-boost');
+      const phdToggle = document.getElementById('phd-credit');
 
-      const maxValue = Math.max(...shareValues, ...shareBaseline) * 1.15;
-      const scaleX = value => margin.left + (value / maxValue) * plotWidth;
+      const medianEl = document.getElementById('metric-median');
+      const p10El = document.getElementById('metric-p10');
+      const outsourcerEl = document.getElementById('metric-outsourcers');
+      const innovationEl = document.getElementById('metric-innovation');
+      const f1El = document.getElementById('metric-f1');
+      const phdEl = document.getElementById('metric-phd');
+      const summaryEl = document.getElementById('h1b-summary');
 
-      shareChart.innerHTML = '';
+      const wageChart = document.getElementById('wage-chart');
+      const shareChart = document.getElementById('share-chart');
+      const productivityChart = document.getElementById('productivity-chart');
 
-      const axisLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      axisLine.setAttribute('x1', margin.left);
-      axisLine.setAttribute('x2', margin.left + plotWidth);
-      axisLine.setAttribute('y1', height - margin.bottom);
-      axisLine.setAttribute('y2', height - margin.bottom);
-      axisLine.setAttribute('stroke', '#cbd5f5');
-      shareChart.appendChild(axisLine);
+      const readThemePref = () => {
+        try {
+          return window.localStorage.getItem('h1bLabTheme');
+        } catch (error) {
+          return null;
+        }
+      };
 
-      const ticks = 5;
-      for (let i = 0; i <= ticks; i++) {
-        const value = (maxValue / ticks) * i;
-        const x = scaleX(value);
-        const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        tick.setAttribute('x1', x);
-        tick.setAttribute('x2', x);
-        tick.setAttribute('y1', height - margin.bottom);
-        tick.setAttribute('y2', height - margin.bottom + 6);
-        tick.setAttribute('stroke', '#94a3b8');
-        shareChart.appendChild(tick);
+      const persistTheme = value => {
+        try {
+          window.localStorage.setItem('h1bLabTheme', value);
+        } catch (error) {
+          /* ignore storage failures */
+        }
+      };
 
-        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        label.setAttribute('x', x);
-        label.setAttribute('y', height - margin.bottom + 22);
-        label.setAttribute('font-size', '12');
-        label.setAttribute('text-anchor', 'middle');
-        label.textContent = `${value.toFixed(0)}%`;
-        shareChart.appendChild(label);
+      function applyTheme(isCivilWar, persist = true) {
+        lab.classList.toggle('civil-war', isCivilWar);
+        document.body.classList.toggle('civil-war-canvas', isCivilWar);
+        themeToggle.setAttribute('aria-pressed', isCivilWar ? 'true' : 'false');
+        themeToggleText.textContent = isCivilWar ? 'Return to modern theme' : 'Enter Civil War mode';
+        themeToggleHint.textContent = isCivilWar ? 'Restore IFP purples & gradients' : 'Sepia maps & dispatch styling';
+        if (persist) {
+          persistTheme(isCivilWar ? 'civil-war' : 'modern');
+        }
       }
 
-      const barHeight = 18;
-      const barGap = 34;
+      applyTheme(readThemePref() === 'civil-war', false);
 
-      categories.forEach((category, idx) => {
-        const yBase = margin.top + idx * (barHeight * 2 + barGap);
-
-        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        label.setAttribute('x', margin.left - 12);
-        label.setAttribute('y', yBase + barHeight);
-        label.setAttribute('font-size', '13');
-        label.setAttribute('text-anchor', 'end');
-        label.textContent = category;
-        shareChart.appendChild(label);
-
-        const baselineBar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        baselineBar.setAttribute('x', margin.left);
-        baselineBar.setAttribute('y', yBase);
-        baselineBar.setAttribute('height', barHeight);
-        baselineBar.setAttribute('width', Math.max(2, scaleX(shareBaseline[idx]) - margin.left));
-        baselineBar.setAttribute('fill', 'rgba(63, 61, 86, 0.45)');
-        shareChart.appendChild(baselineBar);
-
-        const scenarioBar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        scenarioBar.setAttribute('x', margin.left);
-        scenarioBar.setAttribute('y', yBase + barHeight + 6);
-        scenarioBar.setAttribute('height', barHeight);
-        scenarioBar.setAttribute('width', Math.max(2, scaleX(shareValues[idx]) - margin.left));
-        scenarioBar.setAttribute('fill', 'var(--ifp-highlight)');
-        shareChart.appendChild(scenarioBar);
-
-        const baselineLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        baselineLabel.setAttribute('x', scaleX(shareBaseline[idx]) + 8);
-        baselineLabel.setAttribute('y', yBase + barHeight - 4);
-        baselineLabel.setAttribute('font-size', '11');
-        baselineLabel.textContent = `${shareBaseline[idx].toFixed(1)}%`;
-        shareChart.appendChild(baselineLabel);
-
-        const scenarioLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        scenarioLabel.setAttribute('x', scaleX(shareValues[idx]) + 8);
-        scenarioLabel.setAttribute('y', yBase + barHeight * 2 + 2);
-        scenarioLabel.setAttribute('font-size', '11');
-        scenarioLabel.textContent = `${shareValues[idx].toFixed(1)}%`;
-        shareChart.appendChild(scenarioLabel);
-      });
-
-      const legend = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      legend.setAttribute('transform', `translate(${margin.left}, ${height - margin.bottom - 40})`);
-      const legendData = [
-        { label: baselineLabel, color: 'rgba(63, 61, 86, 0.45)' },
-        { label: metrics.label, color: 'var(--ifp-highlight)' }
-      ];
-      legendData.forEach((item, idx) => {
-        const xOffset = idx * 160;
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect.setAttribute('x', xOffset);
-        rect.setAttribute('y', 0);
-        rect.setAttribute('width', 18);
-        rect.setAttribute('height', 18);
-        rect.setAttribute('fill', item.color);
-        legend.appendChild(rect);
-
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', xOffset + 26);
-        text.setAttribute('y', 14);
-        text.setAttribute('font-size', '12');
-        text.textContent = item.label;
-        legend.appendChild(text);
-      });
-      shareChart.appendChild(legend);
-    }
-
-    function drawProductivityChart(metrics, indexScore) {
-      const viewBox = productivityChart.getAttribute('viewBox').split(' ').map(Number);
-      const width = viewBox[2];
-      const height = viewBox[3];
-      const margin = { top: 30, right: 30, bottom: 60, left: 90 };
-      const plotWidth = width - margin.left - margin.right;
-      const plotHeight = height - margin.top - margin.bottom;
-
-      const xValues = [baseline.median[3], metrics.median[3]];
-      const yValues = [100, indexScore];
-
-      const xMin = Math.min(...xValues) * 0.95;
-      const xMax = Math.max(...xValues) * 1.05;
-      const yMin = Math.min(...yValues) - 5;
-      const yMax = Math.max(...yValues) + 10;
-
-      const scaleX = value => margin.left + ((value - xMin) / (xMax - xMin)) * plotWidth;
-      const scaleY = value => margin.top + plotHeight - ((value - yMin) / (yMax - yMin)) * plotHeight;
-
-      productivityChart.innerHTML = '';
-
-      const axes = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      axes.innerHTML = `
-        <line x1="${margin.left}" y1="${margin.top + plotHeight}" x2="${margin.left + plotWidth}" y2="${margin.top + plotHeight}" stroke="#cbd5f5" />
-        <line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${margin.top + plotHeight}" stroke="#cbd5f5" />
-      `;
-      productivityChart.appendChild(axes);
-
-      const yTicks = 4;
-      for (let i = 0; i <= yTicks; i++) {
-        const value = yMin + ((yMax - yMin) / yTicks) * i;
-        const y = scaleY(value);
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', margin.left - 6);
-        line.setAttribute('x2', margin.left);
-        line.setAttribute('y1', y);
-        line.setAttribute('y2', y);
-        line.setAttribute('stroke', '#94a3b8');
-        productivityChart.appendChild(line);
-
-        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        label.setAttribute('x', margin.left - 10);
-        label.setAttribute('y', y + 4);
-        label.setAttribute('text-anchor', 'end');
-        label.setAttribute('font-size', '12');
-        label.textContent = Math.round(value);
-        productivityChart.appendChild(label);
-
-        const grid = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        grid.setAttribute('x1', margin.left);
-        grid.setAttribute('x2', margin.left + plotWidth);
-        grid.setAttribute('y1', y);
-        grid.setAttribute('y2', y);
-        grid.setAttribute('stroke', 'rgba(148, 163, 184, 0.25)');
-        productivityChart.appendChild(grid);
+      let colors = {};
+      function refreshColors() {
+        const styles = getComputedStyle(lab);
+        const read = (name, fallback) => {
+          const value = styles.getPropertyValue(name);
+          return (value && value.trim()) || fallback;
+        };
+        colors = {
+          baseline: read('--lab-chart-baseline', '#3f3d56'),
+          highlight: read('--lab-chart-highlight', '#5b21b6'),
+          accent: read('--lab-chart-accent', '#7c3aed'),
+          muted: read('--lab-chart-muted', 'rgba(63, 61, 86, 0.55)'),
+          axis: read('--lab-axis-color', 'rgba(36, 19, 54, 0.75)'),
+          axisStrong: read('--lab-axis-strong', 'rgba(36, 19, 54, 0.85)'),
+          axisLine: read('--lab-axis-line', '#cbd5f5'),
+          axisTick: read('--lab-axis-tick', '#94a3b8'),
+          grid: read('--lab-gridline', 'rgba(148, 163, 184, 0.25)'),
+          font: read('--lab-font', "'Inter', system-ui, sans-serif")
+        };
       }
 
-      const xTicks = 4;
-      for (let i = 0; i <= xTicks; i++) {
-        const value = xMin + ((xMax - xMin) / xTicks) * i;
-        const x = scaleX(value);
-        const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        tick.setAttribute('x1', x);
-        tick.setAttribute('x2', x);
-        tick.setAttribute('y1', margin.top + plotHeight);
-        tick.setAttribute('y2', margin.top + plotHeight + 6);
-        tick.setAttribute('stroke', '#94a3b8');
-        productivityChart.appendChild(tick);
+      refreshColors();
 
-        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        label.setAttribute('x', x);
-        label.setAttribute('y', margin.top + plotHeight + 24);
-        label.setAttribute('text-anchor', 'middle');
-        label.setAttribute('font-size', '12');
-        label.textContent = `$${Math.round(value)}k`;
-        productivityChart.appendChild(label);
+      function blendArrays(a, b, weight) {
+        return a.map((val, idx) => val + (b[idx] - val) * weight);
       }
 
-      const points = [
-        { label: baselineLabel, x: baseline.median[3], y: 100, color: 'rgba(63, 61, 86, 0.55)' },
-        { label: metrics.label, x: metrics.median[3], y: indexScore, color: 'var(--ifp-highlight)' }
-      ];
+      function applyToggles(metrics) {
+        const adjusted = JSON.parse(JSON.stringify(metrics));
 
-      points.forEach(point => {
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', scaleX(point.x));
-        circle.setAttribute('cy', scaleY(point.y));
-        circle.setAttribute('r', point.label === baselineLabel ? 12 : 14);
-        circle.setAttribute('fill', point.color);
-        circle.setAttribute('fill-opacity', point.label === baselineLabel ? '0.85' : '1');
-        productivityChart.appendChild(circle);
+        if (outsourcerToggle.checked) {
+          adjusted.outsourcerShare = adjusted.outsourcerShare.map(v => v * 0.8);
+          adjusted.median = adjusted.median.map(v => v + 2);
+        }
 
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', scaleX(point.x));
-        text.setAttribute('y', scaleY(point.y) - (point.label === baselineLabel ? 18 : 20));
-        text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('font-size', '12');
-        text.textContent = `${point.label}: ${Math.round(point.y)}`;
-        productivityChart.appendChild(text);
+        if (stemToggle.checked) {
+          adjusted.f1Share = adjusted.f1Share.map(v => Math.min(0.35, v + 0.015));
+          adjusted.median = adjusted.median.map(v => v + 1.5);
+          adjusted.p10 = adjusted.p10.map(v => v + 2);
+        }
+
+        if (phdToggle.checked) {
+          adjusted.phdShare = adjusted.phdShare.map(v => Math.min(0.4, v * 1.25));
+          adjusted.median = adjusted.median.map(v => v + 3);
+        }
+
+        return adjusted;
+      }
+
+      function getScenarioMetrics() {
+        let baseMetrics;
+
+        if (currentPolicy === 'hybrid') {
+          const weight = Number(compWeightSlider.value) / 100;
+          baseMetrics = {
+            label: `Hybrid weighting (${Math.round(weight * 100)}% compensation)`,
+            median: blendArrays(scenarios.wage.median, scenarios.comp.median, weight),
+            p10: blendArrays(scenarios.wage.p10, scenarios.comp.p10, weight),
+            outsourcerShare: blendArrays(scenarios.wage.outsourcerShare, scenarios.comp.outsourcerShare, weight),
+            f1Share: blendArrays(scenarios.wage.f1Share, scenarios.comp.f1Share, weight),
+            phdShare: blendArrays(scenarios.wage.phdShare, scenarios.comp.phdShare, weight)
+          };
+        } else {
+          baseMetrics = scenarios[currentPolicy];
+        }
+
+        const adjustedMetrics = applyToggles(baseMetrics);
+        adjustedMetrics.label = baseMetrics.label;
+        return adjustedMetrics;
+      }
+
+      function computeIndex(metrics) {
+        const salaryFactor = metrics.median[3] / baseline.median[3];
+        const phdFactor = metrics.phdShare[3] / baseline.phdShare[3];
+        const outsourcerFactor = baseline.outsourcerShare[3] / metrics.outsourcerShare[3];
+        return Math.round(100 * (0.6 * salaryFactor + 0.25 * phdFactor + 0.15 * outsourcerFactor));
+      }
+
+      function computeGrowth(metrics) {
+        const wageLift = metrics.median.reduce((acc, val, idx) => acc + (val - baseline.median[idx]), 0);
+        const phdLift = metrics.phdShare.reduce((acc, val, idx) => acc + (val - baseline.phdShare[idx]), 0);
+        const outsourcerReduction = baseline.outsourcerShare.reduce((acc, val, idx) => acc + (val - metrics.outsourcerShare[idx]), 0);
+        return (wageLift * 0.4) + (phdLift * 250) + (outsourcerReduction * 120);
+      }
+
+      const formatThousands = value => `$${Math.round(value)}k`;
+
+      function setTextStyle(node, fontFamily, color) {
+        node.setAttribute('font-family', fontFamily);
+        if (color) {
+          node.setAttribute('fill', color);
+        }
+      }
+
+      function createLinePath(points) {
+        return points.map((point, idx) => `${idx === 0 ? 'M' : 'L'}${point[0]} ${point[1]}`).join(' ');
+      }
+
+      function drawWageChart(metrics, fontFamily) {
+        const viewBox = wageChart.getAttribute('viewBox').split(' ').map(Number);
+        const width = viewBox[2];
+        const height = viewBox[3];
+        const margin = { top: 40, right: 40, bottom: 60, left: 70 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+
+        const values = [...baseline.median, ...metrics.median, ...metrics.p10];
+        const yMin = Math.min(...values) * 0.9;
+        const yMax = Math.max(...values) * 1.05;
+
+        const pointsX = years.map((_, idx) => margin.left + (plotWidth / (years.length - 1)) * idx);
+        const scaleY = value => margin.top + plotHeight - ((value - yMin) / (yMax - yMin)) * plotHeight;
+
+        wageChart.innerHTML = '';
+
+        const axisGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        axisGroup.setAttribute('stroke', colors.axisLine);
+        axisGroup.setAttribute('stroke-width', '1');
+        axisGroup.innerHTML = `
+          <line x1="${margin.left}" y1="${margin.top + plotHeight}" x2="${margin.left + plotWidth}" y2="${margin.top + plotHeight}" />
+          <line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${margin.top + plotHeight}" />
+        `;
+        wageChart.appendChild(axisGroup);
+
+        const ticks = 5;
+        for (let i = 0; i <= ticks; i++) {
+          const value = yMin + ((yMax - yMin) / ticks) * i;
+          const y = scaleY(value);
+          const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          tick.setAttribute('x1', margin.left - 6);
+          tick.setAttribute('x2', margin.left);
+          tick.setAttribute('y1', y);
+          tick.setAttribute('y2', y);
+          tick.setAttribute('stroke', colors.axisTick);
+          wageChart.appendChild(tick);
+
+          const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          label.setAttribute('x', margin.left - 12);
+          label.setAttribute('y', y + 4);
+          label.setAttribute('text-anchor', 'end');
+          label.setAttribute('font-size', '12');
+          setTextStyle(label, fontFamily, colors.axis);
+          label.textContent = `$${Math.round(value)}k`;
+          wageChart.appendChild(label);
+
+          const grid = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          grid.setAttribute('x1', margin.left);
+          grid.setAttribute('x2', margin.left + plotWidth);
+          grid.setAttribute('y1', y);
+          grid.setAttribute('y2', y);
+          grid.setAttribute('stroke', colors.grid);
+          wageChart.appendChild(grid);
+        }
+
+        years.forEach((year, idx) => {
+          const x = pointsX[idx];
+          const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          label.setAttribute('x', x);
+          label.setAttribute('y', margin.top + plotHeight + 30);
+          label.setAttribute('text-anchor', 'middle');
+          label.setAttribute('font-size', '12');
+          setTextStyle(label, fontFamily, colors.axis);
+          label.textContent = year;
+          wageChart.appendChild(label);
+        });
+
+        const baselinePoints = baseline.median.map((val, idx) => [pointsX[idx], scaleY(val)]);
+        const scenarioPoints = metrics.median.map((val, idx) => [pointsX[idx], scaleY(val)]);
+        const p10Points = metrics.p10.map((val, idx) => [pointsX[idx], scaleY(val)]);
+
+        const baselinePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        baselinePath.setAttribute('d', createLinePath(baselinePoints));
+        baselinePath.setAttribute('fill', 'none');
+        baselinePath.setAttribute('stroke', colors.baseline);
+        baselinePath.setAttribute('stroke-width', '2');
+        baselinePath.setAttribute('stroke-dasharray', '6 4');
+        wageChart.appendChild(baselinePath);
+
+        const scenarioPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        scenarioPath.setAttribute('d', createLinePath(scenarioPoints));
+        scenarioPath.setAttribute('fill', 'none');
+        scenarioPath.setAttribute('stroke', colors.highlight);
+        scenarioPath.setAttribute('stroke-width', '3');
+        wageChart.appendChild(scenarioPath);
+
+        const p10Path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p10Path.setAttribute('d', createLinePath(p10Points));
+        p10Path.setAttribute('fill', 'none');
+        p10Path.setAttribute('stroke', colors.accent);
+        p10Path.setAttribute('stroke-width', '2');
+        p10Path.setAttribute('stroke-dasharray', '4 4');
+        wageChart.appendChild(p10Path);
+
+        const legend = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        legend.setAttribute('transform', `translate(${margin.left}, ${margin.top - 15})`);
+        const entries = [
+          { label: `${baselineLabel} median salary`, color: colors.baseline, dash: '6 4', width: 2 },
+          { label: `${metrics.label} median salary`, color: colors.highlight, dash: null, width: 3 },
+          { label: `${metrics.label} 10th percentile`, color: colors.accent, dash: '4 4', width: 2 }
+        ];
+        entries.forEach((entry, idx) => {
+          const yOffset = idx * 18;
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', idx * 210);
+          line.setAttribute('x2', idx * 210 + 28);
+          line.setAttribute('y1', yOffset);
+          line.setAttribute('y2', yOffset);
+          line.setAttribute('stroke', entry.color);
+          line.setAttribute('stroke-width', entry.width);
+          if (entry.dash) {
+            line.setAttribute('stroke-dasharray', entry.dash);
+          }
+          legend.appendChild(line);
+
+          const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          text.setAttribute('x', idx * 210 + 36);
+          text.setAttribute('y', yOffset + 4);
+          text.setAttribute('font-size', '12');
+          setTextStyle(text, fontFamily, colors.axisStrong);
+          text.textContent = entry.label;
+          legend.appendChild(text);
+        });
+        wageChart.appendChild(legend);
+      }
+
+      function drawShareChart(metrics, fontFamily) {
+        const viewBox = shareChart.getAttribute('viewBox').split(' ').map(Number);
+        const width = viewBox[2];
+        const height = viewBox[3];
+        const margin = { top: 30, right: 40, bottom: 50, left: 190 };
+        const plotWidth = width - margin.left - margin.right;
+
+        const categories = ['Large outsourcers', 'F-1 graduates', 'PhD holders'];
+        const shareValues = [
+          metrics.outsourcerShare[3] * 100,
+          metrics.f1Share[3] * 100,
+          metrics.phdShare[3] * 100
+        ];
+        const shareBaseline = [
+          baseline.outsourcerShare[3] * 100,
+          baseline.f1Share[3] * 100,
+          baseline.phdShare[3] * 100
+        ];
+
+        const maxValue = Math.max(...shareValues, ...shareBaseline) * 1.15;
+        const scaleX = value => margin.left + (value / maxValue) * plotWidth;
+
+        shareChart.innerHTML = '';
+
+        const axisLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        axisLine.setAttribute('x1', margin.left);
+        axisLine.setAttribute('x2', margin.left + plotWidth);
+        axisLine.setAttribute('y1', height - margin.bottom);
+        axisLine.setAttribute('y2', height - margin.bottom);
+        axisLine.setAttribute('stroke', colors.axisLine);
+        shareChart.appendChild(axisLine);
+
+        const ticks = 5;
+        for (let i = 0; i <= ticks; i++) {
+          const value = (maxValue / ticks) * i;
+          const x = scaleX(value);
+          const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          tick.setAttribute('x1', x);
+          tick.setAttribute('x2', x);
+          tick.setAttribute('y1', height - margin.bottom);
+          tick.setAttribute('y2', height - margin.bottom + 6);
+          tick.setAttribute('stroke', colors.axisTick);
+          shareChart.appendChild(tick);
+
+          const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          label.setAttribute('x', x);
+          label.setAttribute('y', height - margin.bottom + 22);
+          label.setAttribute('font-size', '12');
+          label.setAttribute('text-anchor', 'middle');
+          setTextStyle(label, fontFamily, colors.axis);
+          label.textContent = `${value.toFixed(0)}%`;
+          shareChart.appendChild(label);
+        }
+
+        const barHeight = 18;
+        const barGap = 34;
+
+        categories.forEach((category, idx) => {
+          const yBase = margin.top + idx * (barHeight * 2 + barGap);
+
+          const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          label.setAttribute('x', margin.left - 12);
+          label.setAttribute('y', yBase + barHeight);
+          label.setAttribute('font-size', '13');
+          label.setAttribute('text-anchor', 'end');
+          setTextStyle(label, fontFamily, colors.axisStrong);
+          label.textContent = category;
+          shareChart.appendChild(label);
+
+          const baselineBar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          baselineBar.setAttribute('x', margin.left);
+          baselineBar.setAttribute('y', yBase);
+          baselineBar.setAttribute('height', barHeight);
+          baselineBar.setAttribute('width', Math.max(2, scaleX(shareBaseline[idx]) - margin.left));
+          baselineBar.setAttribute('fill', colors.muted);
+          shareChart.appendChild(baselineBar);
+
+          const scenarioBar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          scenarioBar.setAttribute('x', margin.left);
+          scenarioBar.setAttribute('y', yBase + barHeight + 6);
+          scenarioBar.setAttribute('height', barHeight);
+          scenarioBar.setAttribute('width', Math.max(2, scaleX(shareValues[idx]) - margin.left));
+          scenarioBar.setAttribute('fill', colors.highlight);
+          shareChart.appendChild(scenarioBar);
+
+          const baselineLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          baselineLabel.setAttribute('x', scaleX(shareBaseline[idx]) + 8);
+          baselineLabel.setAttribute('y', yBase + barHeight - 4);
+          baselineLabel.setAttribute('font-size', '11');
+          setTextStyle(baselineLabel, fontFamily, colors.axis);
+          baselineLabel.textContent = `${shareBaseline[idx].toFixed(1)}%`;
+          shareChart.appendChild(baselineLabel);
+
+          const scenarioLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          scenarioLabel.setAttribute('x', scaleX(shareValues[idx]) + 8);
+          scenarioLabel.setAttribute('y', yBase + barHeight * 2 + 2);
+          scenarioLabel.setAttribute('font-size', '11');
+          setTextStyle(scenarioLabel, fontFamily, colors.axisStrong);
+          scenarioLabel.textContent = `${shareValues[idx].toFixed(1)}%`;
+          shareChart.appendChild(scenarioLabel);
+        });
+
+        const legend = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        legend.setAttribute('transform', `translate(${margin.left}, ${height - margin.bottom - 40})`);
+        const legendData = [
+          { label: baselineLabel, color: colors.muted },
+          { label: metrics.label, color: colors.highlight }
+        ];
+        legendData.forEach((item, idx) => {
+          const xOffset = idx * 160;
+          const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rect.setAttribute('x', xOffset);
+          rect.setAttribute('y', 0);
+          rect.setAttribute('width', 18);
+          rect.setAttribute('height', 18);
+          rect.setAttribute('fill', item.color);
+          legend.appendChild(rect);
+
+          const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          text.setAttribute('x', xOffset + 26);
+          text.setAttribute('y', 14);
+          text.setAttribute('font-size', '12');
+          setTextStyle(text, fontFamily, colors.axisStrong);
+          text.textContent = item.label;
+          legend.appendChild(text);
+        });
+        shareChart.appendChild(legend);
+      }
+
+      function drawProductivityChart(metrics, indexScore, fontFamily) {
+        const viewBox = productivityChart.getAttribute('viewBox').split(' ').map(Number);
+        const width = viewBox[2];
+        const height = viewBox[3];
+        const margin = { top: 30, right: 30, bottom: 60, left: 90 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+
+        const xValues = [baseline.median[3], metrics.median[3]];
+        const yValues = [100, indexScore];
+
+        const xMin = Math.min(...xValues) * 0.95;
+        const xMax = Math.max(...xValues) * 1.05;
+        const yMin = Math.min(...yValues) - 5;
+        const yMax = Math.max(...yValues) + 10;
+
+        const scaleX = value => margin.left + ((value - xMin) / (xMax - xMin)) * plotWidth;
+        const scaleY = value => margin.top + plotHeight - ((value - yMin) / (yMax - yMin)) * plotHeight;
+
+        productivityChart.innerHTML = '';
+
+        const axes = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        axes.innerHTML = `
+          <line x1="${margin.left}" y1="${margin.top + plotHeight}" x2="${margin.left + plotWidth}" y2="${margin.top + plotHeight}" stroke="${colors.axisLine}" />
+          <line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${margin.top + plotHeight}" stroke="${colors.axisLine}" />
+        `;
+        productivityChart.appendChild(axes);
+
+        const yTicks = 4;
+        for (let i = 0; i <= yTicks; i++) {
+          const value = yMin + ((yMax - yMin) / yTicks) * i;
+          const y = scaleY(value);
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', margin.left - 6);
+          line.setAttribute('x2', margin.left);
+          line.setAttribute('y1', y);
+          line.setAttribute('y2', y);
+          line.setAttribute('stroke', colors.axisTick);
+          productivityChart.appendChild(line);
+
+          const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          label.setAttribute('x', margin.left - 10);
+          label.setAttribute('y', y + 4);
+          label.setAttribute('text-anchor', 'end');
+          label.setAttribute('font-size', '12');
+          setTextStyle(label, fontFamily, colors.axis);
+          label.textContent = Math.round(value);
+          productivityChart.appendChild(label);
+
+          const grid = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          grid.setAttribute('x1', margin.left);
+          grid.setAttribute('x2', margin.left + plotWidth);
+          grid.setAttribute('y1', y);
+          grid.setAttribute('y2', y);
+          grid.setAttribute('stroke', colors.grid);
+          productivityChart.appendChild(grid);
+        }
+
+        const xTicks = 4;
+        for (let i = 0; i <= xTicks; i++) {
+          const value = xMin + ((xMax - xMin) / xTicks) * i;
+          const x = scaleX(value);
+          const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          tick.setAttribute('x1', x);
+          tick.setAttribute('x2', x);
+          tick.setAttribute('y1', margin.top + plotHeight);
+          tick.setAttribute('y2', margin.top + plotHeight + 6);
+          tick.setAttribute('stroke', colors.axisTick);
+          productivityChart.appendChild(tick);
+
+          const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          label.setAttribute('x', x);
+          label.setAttribute('y', margin.top + plotHeight + 24);
+          label.setAttribute('text-anchor', 'middle');
+          label.setAttribute('font-size', '12');
+          setTextStyle(label, fontFamily, colors.axis);
+          label.textContent = `$${Math.round(value)}k`;
+          productivityChart.appendChild(label);
+        }
+
+        const points = [
+          { label: baselineLabel, x: baseline.median[3], y: 100, color: colors.muted },
+          { label: metrics.label, x: metrics.median[3], y: indexScore, color: colors.highlight }
+        ];
+
+        points.forEach(point => {
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', scaleX(point.x));
+          circle.setAttribute('cy', scaleY(point.y));
+          circle.setAttribute('r', point.label === baselineLabel ? 12 : 14);
+          circle.setAttribute('fill', point.color);
+          circle.setAttribute('fill-opacity', point.label === baselineLabel ? '0.85' : '1');
+          circle.setAttribute('stroke', colors.axisStrong);
+          circle.setAttribute('stroke-width', '1');
+          productivityChart.appendChild(circle);
+
+          const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          text.setAttribute('x', scaleX(point.x));
+          text.setAttribute('y', scaleY(point.y) - (point.label === baselineLabel ? 18 : 20));
+          text.setAttribute('text-anchor', 'middle');
+          text.setAttribute('font-size', '12');
+          setTextStyle(text, fontFamily, colors.axisStrong);
+          text.textContent = `${point.label}: ${Math.round(point.y)}`;
+          productivityChart.appendChild(text);
+        });
+      }
+
+      function updateLab() {
+        refreshColors();
+        const styles = getComputedStyle(lab);
+        const fontFamily = (styles.getPropertyValue('--lab-font') || '').trim() || colors.font;
+        [wageChart, shareChart, productivityChart].forEach(svg => { svg.style.fontFamily = fontFamily; });
+
+        const metrics = getScenarioMetrics();
+        const indexScore = computeIndex(metrics);
+        const growthScore = computeGrowth(metrics);
+
+        medianEl.textContent = formatThousands(metrics.median[3]);
+        p10El.textContent = formatThousands(metrics.p10[3]);
+
+        const outsourcerRatio = metrics.outsourcerShare[3] / baseline.outsourcerShare[3];
+        const outsourcerPct = (metrics.outsourcerShare[3] * 100).toFixed(1);
+        const outsourcerDelta = Number(((outsourcerRatio - 1) * 100).toFixed(1));
+        outsourcerEl.textContent = `${outsourcerPct}% (${outsourcerDelta >= 0 ? '+' : ''}${outsourcerDelta.toFixed(1)}%)`;
+
+        innovationEl.textContent = `${indexScore}`;
+        f1El.textContent = `${(metrics.f1Share[3] * 100).toFixed(1)}%`;
+        phdEl.textContent = `${(metrics.phdShare[3] * 100).toFixed(1)}%`;
+
+        drawWageChart(metrics, fontFamily);
+        drawShareChart(metrics, fontFamily);
+        drawProductivityChart(metrics, indexScore, fontFamily);
+
+        const growthText = growthScore >= 0
+          ? `adds an estimated ${(growthScore / 10).toFixed(1)} points to a national productivity composite`
+          : `reduces a national productivity composite by ${Math.abs(growthScore / 10).toFixed(1)} points`;
+
+        summaryEl.innerHTML = `
+          <h3>${metrics.label}</h3>
+          <p class="control-help" style="margin-bottom: 0.75rem;">Compared with ${baselineLabel.toLowerCase()}, here’s how this rule performs.</p>
+          <p>Your configuration lifts the innovation index to <strong>${indexScore}</strong>, ${indexScore >= 100 ? 'outpacing' : 'trailing'} today’s random lottery. Median wages reach <strong>${formatThousands(metrics.median[3])}</strong>, while the 10th percentile rises to <strong>${formatThousands(metrics.p10[3])}</strong>. F-1 graduates capture <strong>${(metrics.f1Share[3] * 100).toFixed(1)}%</strong> of visas and PhDs represent <strong>${(metrics.phdShare[3] * 100).toFixed(1)}%</strong>. Compared with the status quo, outsourcers ${outsourcerDelta >= 0 ? 'expand' : 'lose'} their footprint by <strong>${Math.abs(outsourcerDelta).toFixed(1)}%</strong>, and your mix ${growthText}.`;
+
+        const logItems = [];
+        const baseLine = {
+          wage: 'Weighted lottery leans on DOL Wage Levels to hand out extra entries.',
+          statusquo: 'Random lottery mirrors today’s two-stage draw with no prioritization.',
+          comp: 'Compensation ranking elevates the highest salary offers regardless of Wage Levels.',
+          hybrid: `Hybrid weighting locks in <strong>${compWeightSlider.value}%</strong> emphasis on actual pay.`
+        }[currentPolicy];
+        if (baseLine) {
+          logItems.push(baseLine);
+        }
+
+        if (outsourcerToggle.checked) {
+          logItems.push('Outsourcer guardrails trim large outsourcer wins by roughly <strong>20%</strong> before redistribution.');
+        }
+        if (stemToggle.checked) {
+          logItems.push('STEM boost reserves room for US-trained graduates, adding about <strong>1.5 points</strong> to their share.');
+        }
+        if (phdToggle.checked) {
+          logItems.push('PhD credit rewards research-heavy teams with a <strong>25%</strong> lift in doctoral selections.');
+        }
+        if (!outsourcerToggle.checked && !stemToggle.checked && !phdToggle.checked) {
+          logItems.push('No supplemental levers engaged—results flow entirely from your base template.');
+        }
+        if (lab.classList.contains('civil-war')) {
+          logItems.push('Civil War mode is active for sepia-toned visuals and period typography.');
+        }
+
+        campaignLogEl.innerHTML = `<h4>Lever log</h4><ul>${logItems.map(item => `<li>${item}</li>`).join('')}</ul>`;
+      }
+
+      function setPolicy(policy) {
+        currentPolicy = policy;
+        scenarioButtons.forEach(button => {
+          const isActive = button.dataset.scenario === policy;
+          button.classList.toggle('active', isActive);
+          button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+        hybridRow.hidden = currentPolicy !== 'hybrid';
+        updateLab();
+      }
+
+      themeToggle.addEventListener('click', () => {
+        const isCivil = !lab.classList.contains('civil-war');
+        applyTheme(isCivil);
+        updateLab();
       });
-    }
 
-    function updateLab() {
-      const metrics = getScenarioMetrics();
-      const indexScore = computeIndex(metrics);
-      const growthScore = computeGrowth(metrics);
-
-      medianEl.textContent = formatThousands(metrics.median[3]);
-      p10El.textContent = formatThousands(metrics.p10[3]);
-
-      const outsourcerRatio = metrics.outsourcerShare[3] / baseline.outsourcerShare[3];
-      const outsourcerPct = (metrics.outsourcerShare[3] * 100).toFixed(1);
-      const outsourcerDelta = Number(((outsourcerRatio - 1) * 100).toFixed(1));
-      outsourcerEl.textContent = `${outsourcerPct}% (${outsourcerDelta >= 0 ? '+' : ''}${outsourcerDelta.toFixed(1)}%)`;
-
-      innovationEl.textContent = `${indexScore}`;
-      f1El.textContent = `${(metrics.f1Share[3] * 100).toFixed(1)}%`;
-      phdEl.textContent = `${(metrics.phdShare[3] * 100).toFixed(1)}%`;
-
-      drawWageChart(metrics);
-      drawShareChart(metrics);
-      drawProductivityChart(metrics, indexScore);
-
-      const growthText = growthScore >= 0
-        ? `adds an estimated ${(growthScore / 10).toFixed(1)} points to a national productivity composite`
-        : `reduces a national productivity composite by ${Math.abs(growthScore / 10).toFixed(1)} points`;
-
-      summaryEl.innerHTML = `
-        <h3>${metrics.label}</h3>
-        <p class="control-help" style="margin-bottom: 0.75rem;">Compared with ${baselineLabel.toLowerCase()}, here’s how this rule performs.</p>
-        <p>Your configuration lifts the innovation index to <strong>${indexScore}</strong>, ${indexScore >= 100 ? 'outpacing' : 'trailing'} today’s random lottery. Median wages reach <strong>${formatThousands(metrics.median[3])}</strong>, while the 10th percentile rises to <strong>${formatThousands(metrics.p10[3])}</strong>. F-1 graduates capture <strong>${(metrics.f1Share[3] * 100).toFixed(1)}%</strong> of visas and PhDs represent <strong>${(metrics.phdShare[3] * 100).toFixed(1)}%</strong>. Compared with the status quo, outsourcers ${outsourcerDelta >= 0 ? 'expand' : 'lose'} their footprint by <strong>${Math.abs(outsourcerDelta).toFixed(1)}%</strong>, and your mix ${growthText}.`;
-    }
-
-    function setPolicy(policy) {
-      currentPolicy = policy;
       scenarioButtons.forEach(button => {
-        const isActive = button.dataset.scenario === policy;
-        button.classList.toggle('active', isActive);
-        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        button.addEventListener('click', () => setPolicy(button.dataset.scenario));
       });
-      hybridRow.hidden = currentPolicy !== 'hybrid';
-      updateLab();
-    }
 
-    scenarioButtons.forEach(button => {
-      button.addEventListener('click', () => setPolicy(button.dataset.scenario));
-    });
+      compWeightSlider.addEventListener('input', () => {
+        compWeightValue.textContent = `${compWeightSlider.value}%`;
+        updateLab();
+      });
 
-    compWeightSlider.addEventListener('input', () => {
-      compWeightValue.textContent = `${compWeightSlider.value}%`;
-      updateLab();
-    });
+      [outsourcerToggle, stemToggle, phdToggle].forEach(toggle => toggle.addEventListener('change', updateLab));
 
-    [outsourcerToggle, stemToggle, phdToggle].forEach(toggle => toggle.addEventListener('change', updateLab));
-
-    setPolicy(currentPolicy);
+      setPolicy(currentPolicy);
+    })();
   </script>
 </body>
 </html>
