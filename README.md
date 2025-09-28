@@ -44,3 +44,20 @@ Copyright 2017-present [George Cushen](https://georgecushen.com).
 Released under the [MIT](https://github.com/sourcethemes/academic-kickstart/blob/master/LICENSE.md) license.
 
 [![Analytics](https://ga-beacon.appspot.com/UA-78646709-2/academic-kickstart/readme?pixel)](https://github.com/igrigorik/ga-beacon)
+
+## Local development
+
+Use the bundled `view.sh` helper to preview the site locally. The script will download a pinned Hugo Extended release to `bin/hugo` when no system installation is available, so you can run the preview without additional setup:
+
+```bash
+./view.sh
+```
+
+The preview server binds to `0.0.0.0:1313` with i18n warnings enabled. Pass any extra flags after the command to forward them to Hugo, for example `./view.sh --minify`.
+
+If outbound downloads are blocked, you can still review the H-1B policy lab without Hugo by serving the static preview:
+
+```bash
+python -m http.server 8000
+# visit http://localhost:8000/static/previews/h1b-policy-lab.html
+```
