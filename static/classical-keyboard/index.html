@@ -76,6 +76,33 @@
       line-height: 1.6;
     }
 
+    .now-playing {
+      margin: 1.75rem auto 0;
+      max-width: 680px;
+      background: rgba(255, 255, 255, 0.75);
+      border-radius: 16px;
+      padding: 0.85rem 1.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      box-shadow: 0 8px 24px rgba(30, 30, 60, 0.12);
+    }
+
+    .now-playing .label {
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.85rem;
+      color: rgba(29, 27, 47, 0.7);
+    }
+
+    .now-playing .value {
+      font-weight: 600;
+    }
+
     .keys-grid {
       position: relative;
       z-index: 1;
@@ -87,7 +114,7 @@
     .key-card {
       background: rgba(255, 255, 255, 0.9);
       border-radius: 18px;
-      padding: 1.4rem 1.1rem;
+      padding: 1.4rem 1.1rem 2rem;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -98,6 +125,7 @@
       transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
       border: 3px solid transparent;
       position: relative;
+      --card-color: var(--accent-4);
     }
 
     .key-card span.letter {
@@ -129,6 +157,32 @@
       margin-top: 0.25rem;
       font-size: 0.9rem;
       opacity: 0.7;
+    }
+
+    .key-card .progress-track {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 14px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.7);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .key-card .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: var(--card-color);
+      border-radius: inherit;
+    }
+
+    .key-card[data-active="true"] .progress-track {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .key-card[data-active="true"] {
@@ -207,7 +261,12 @@
       }
 
       .key-card {
-        padding: 1.1rem 0.85rem;
+        padding: 1.1rem 0.85rem 1.7rem;
+      }
+
+      .now-playing {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
       }
 
       .key-card span.letter {
@@ -223,6 +282,10 @@
     <header>
       <h1>Classical Melody Keyboard</h1>
       <p class="lead">Every key on your keyboard lights up with a gentle classical riff—press one key or tap a card, then listen all the way through (or line up a few; they patiently wait their turn!).</p>
+      <div class="now-playing" role="status" aria-live="polite">
+        <span class="label">Now playing</span>
+        <span class="value">Press any key or tap a card to begin!</span>
+      </div>
     </header>
 
     <section class="keys-grid" aria-label="Keyboard melody options"></section>
@@ -638,6 +701,7 @@
     const melodies = {};
     const keyMatcher = {};
     const keysGrid = document.querySelector('.keys-grid');
+    const nowPlayingValue = document.querySelector('.now-playing .value');
 
     const keyEntries = [];
     KEY_ROWS.forEach(row => {
@@ -654,8 +718,9 @@
       const color = COLOR_POOL[index % COLOR_POOL.length];
 
       melodies[entry.datasetKey] = {
-        name: `${pattern.title} (${entry.display})`,
+        title: pattern.title,
         composer: pattern.composer,
+        keyLabel: entry.display,
         notes: pattern.notes
       };
 
@@ -663,10 +728,14 @@
       card.className = 'key-card';
       card.dataset.key = entry.datasetKey;
       card.dataset.color = color;
+      card.style.setProperty('--card-color', color);
       card.innerHTML = `
         <span class="letter" aria-hidden="true">${entry.display}</span>
         <span class="title">${pattern.title}</span>
         <span class="subtitle">${pattern.composer}</span>
+        <div class="progress-track" aria-hidden="true">
+          <div class="progress-bar"></div>
+        </div>
       `;
       card.setAttribute('title', `${entry.display} key · ${pattern.title}`);
       card.setAttribute('aria-label', `${entry.display} key plays ${pattern.title}`);
@@ -734,6 +803,78 @@
     let activeNodes = [];
     let currentCard = null;
 
+    function totalDurationForMelody(melody) {
+      if (!melody || !Array.isArray(melody.notes)) {
+        return 0;
+      }
+      const base = melody.notes.reduce((total, segment) => {
+        const duration = typeof segment.duration === 'number' ? segment.duration : 0;
+        return total + Math.max(duration, 0);
+      }, 0);
+      const padding = melody.notes.length * 60;
+      return base + padding;
+    }
+
+    function startProgress(card, durationMs) {
+      if (!card) {
+        return;
+      }
+      const bar = card.querySelector('.progress-bar');
+      if (!bar) {
+        return;
+      }
+      const safeDuration = Math.max(durationMs || 0, 400);
+      bar.style.transition = 'none';
+      bar.style.width = '0%';
+      requestAnimationFrame(() => {
+        bar.style.transition = `width ${safeDuration}ms linear`;
+        bar.style.width = '100%';
+      });
+    }
+
+    function clearProgress(card) {
+      if (!card) {
+        return;
+      }
+      const bar = card.querySelector('.progress-bar');
+      if (!bar) {
+        return;
+      }
+      requestAnimationFrame(() => {
+        bar.style.transition = 'width 220ms ease';
+        bar.style.width = '0%';
+      });
+    }
+
+    function describeMelody(key) {
+      const melody = melodies[key];
+      if (!melody) {
+        return null;
+      }
+      return `${melody.title} — ${melody.composer} (${melody.keyLabel} key)`;
+    }
+
+    function refreshNowPlayingStatus() {
+      if (!nowPlayingValue) {
+        return;
+      }
+      if (currentCard && currentCard.dataset && currentCard.dataset.key) {
+        const description = describeMelody(currentCard.dataset.key);
+        if (description) {
+          nowPlayingValue.textContent = description;
+          return;
+        }
+      }
+      if (playbackQueue.length > 0) {
+        const nextDescription = describeMelody(playbackQueue[0]);
+        if (nextDescription) {
+          nowPlayingValue.textContent = `Queued: ${nextDescription}`;
+          return;
+        }
+      }
+      nowPlayingValue.textContent = 'Press any key or tap a card to begin!';
+    }
+
     function wait(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -749,21 +890,28 @@
           delete card.dataset.queued;
         }
       });
+      refreshNowPlayingStatus();
     }
 
-    function setActiveCard(key) {
+    function setActiveCard(key, totalDuration) {
       unsetActiveCard();
       const card = document.querySelector(`.key-card[data-key="${key}"]`);
       if (card) {
         currentCard = card;
         card.dataset.active = 'true';
         delete card.dataset.queued;
+        if (typeof totalDuration === 'number' && totalDuration > 0) {
+          startProgress(card, totalDuration);
+        }
+        refreshNowPlayingStatus();
       }
     }
 
     function unsetActiveCard() {
       if (currentCard) {
-        currentCard.dataset.active = 'false';
+        const previous = currentCard;
+        previous.dataset.active = 'false';
+        clearProgress(previous);
         currentCard = null;
         updateQueueIndicators();
       }
@@ -863,7 +1011,8 @@
       }
 
       await audioContext.resume();
-      setActiveCard(key);
+      const totalDuration = totalDurationForMelody(melody);
+      setActiveCard(key, totalDuration);
 
       for (const segment of melody.notes) {
         if (cancelCurrent) {
@@ -876,6 +1025,7 @@
         await wait(140);
         unsetActiveCard();
       }
+      refreshNowPlayingStatus();
     }
 
     async function processQueue() {
@@ -956,6 +1106,8 @@
     document.getElementById('stopButton').addEventListener('click', () => {
       stopPlayback();
     });
+
+    refreshNowPlayingStatus();
 
     setTimeout(() => {
       const cards = document.querySelectorAll('.key-card');
