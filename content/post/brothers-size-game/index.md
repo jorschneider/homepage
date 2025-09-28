@@ -19,10 +19,12 @@ Experience a small slice of the road trip, dreams, and brotherhood at the heart 
 ## How to play
 
 - **Pick a guiding principle** on the start screen to tweak the brothers' starting momentum.
+- **Hit play on Otis Redding's "Try a Little Tenderness"** right from the intro overlay to loop the track while you guide the night.
 - **Click a choice** (or press the matching number key) in each scene to respond to the latest twist in the brothers' journey.
 - **Watch the meters** *and* the new live deltas to see how every decision nudges the trio.
 - **Note the roadside flashes** that surface between scenes—quick vignettes that nudge stats before the next decision.
 - **Read the memory ledger** at the bottom of the card to recap the actions you took.
+- **Review the Dawn Reckoning recap** after the finale to see every choice, roadside flash, dream sign, and final stat line before you replay.
 - **Reach dawn** and see how your stewardship shapes the final outcome. Press **Enter** to advance, **R** to restart, and experiment with different routes.
 
 ## What's new in this build
@@ -30,6 +32,8 @@ Experience a small slice of the road trip, dreams, and brotherhood at the heart 
 - A **Set the Driftline** start screen now lets you choose between balanced, guardian, or dreamer loadouts—each reshapes opening stats.
 - The **journey timeline** stretches to six chapters, adding the outlet escape and blue-light pursuit with fresh choices and consequences.
 - **Reactive roadside flashes** join the dream interludes, surfacing between scenes to nudge the meters based on how the run is going.
+- A looping **"Try a Little Tenderness" soundtrack controller** cues the Otis Redding track (or your own upload) so the game always rides with music.
+- A **Dawn Reckoning finale screen** summarizes every scene choice, roadside moment, dream sign, and the final stat state for easy debriefs.
 - Keyboard shortcuts, selectable approaches, and richer log entries make replaying routes faster and clearer.
 
 ## Design notes

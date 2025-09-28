@@ -556,6 +556,106 @@
       text-transform: uppercase;
     }
 
+    .soundtrack {
+      margin: 1.8rem 0 2.2rem;
+      padding: 1.25rem 1.4rem 1.6rem;
+      border-radius: 18px;
+      background: rgba(6, 27, 32, 0.85);
+      border: 1px solid rgba(155, 233, 214, 0.22);
+      box-shadow: 0 26px 60px rgba(3, 10, 18, 0.4);
+    }
+
+    .soundtrack h3 {
+      margin: 0 0 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.9rem;
+      color: rgba(155, 233, 214, 0.85);
+    }
+
+    .soundtrack p {
+      margin: 0 0 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .soundtrack-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .soundtrack-button,
+    .soundtrack-upload {
+      background: rgba(18, 55, 57, 0.9);
+      border: 1px solid rgba(241, 179, 75, 0.35);
+      color: var(--sand);
+      border-radius: 999px;
+      padding: 0.55rem 1.4rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: transform 200ms ease, box-shadow 200ms ease;
+    }
+
+    .soundtrack-button:hover,
+    .soundtrack-upload:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 32px rgba(155, 233, 214, 0.18);
+    }
+
+    .soundtrack-button.secondary {
+      background: rgba(11, 34, 39, 0.82);
+      border-color: rgba(155, 233, 214, 0.28);
+      color: rgba(245, 240, 230, 0.82);
+    }
+
+    .soundtrack-upload {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .soundtrack-upload input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .soundtrack-status {
+      margin: 0 0 0.6rem;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      color: rgba(241, 179, 75, 0.8);
+    }
+
+    .soundtrack-status[data-state="error"] {
+      color: rgba(255, 114, 94, 0.85);
+    }
+
+    .soundtrack a {
+      color: rgba(155, 233, 214, 0.85);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(155, 233, 214, 0.35);
+      padding-bottom: 0.1rem;
+    }
+
+    .soundtrack a:hover {
+      color: rgba(241, 179, 75, 0.85);
+      border-color: rgba(241, 179, 75, 0.45);
+    }
+
+    .soundtrack-inline-player {
+      width: 100%;
+      margin-top: 0.6rem;
+      display: block;
+    }
+
     .moment {
       margin-top: 1.3rem;
       padding: 1.1rem 1.3rem;
@@ -619,6 +719,89 @@
       background: linear-gradient(150deg, rgba(241, 179, 75, 0.18), transparent 60%);
       opacity: 0.75;
       pointer-events: none;
+    }
+
+    .finale-card {
+      max-width: 720px;
+    }
+
+    .finale-card h3 {
+      margin: 1.2rem 0 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.86rem;
+      color: rgba(241, 179, 75, 0.8);
+    }
+
+    .finale-lede {
+      margin: 0 0 1.1rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+
+    .finale-stats {
+      margin: 0 0 1.3rem;
+      display: grid;
+      gap: 0.45rem;
+      color: rgba(245, 240, 230, 0.85);
+      font-size: 0.95rem;
+    }
+
+    .finale-grid {
+      display: grid;
+      gap: 1.1rem;
+    }
+
+    .finale-list {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: grid;
+      gap: 0.75rem;
+      color: rgba(245, 240, 230, 0.85);
+      line-height: 1.55;
+    }
+
+    .finale-list li strong {
+      display: block;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.82rem;
+      color: rgba(155, 233, 214, 0.85);
+    }
+
+    .finale-choice-text {
+      margin: 0.25rem 0 0.2rem;
+      color: var(--text-muted);
+    }
+
+    .finale-choice-impact {
+      margin: 0;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      color: rgba(241, 179, 75, 0.75);
+    }
+
+    .finale-stats-line {
+      margin: 0.2rem 0 0;
+      font-size: 0.82rem;
+      color: rgba(221, 210, 194, 0.8);
+    }
+
+    .finale-empty {
+      font-style: italic;
+      color: rgba(221, 210, 194, 0.7);
+    }
+
+    .finale-actions {
+      margin-top: 1.6rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .finale-actions .continue-btn,
+    .finale-actions .restart-btn {
+      margin-top: 0;
     }
 
     .overlay-card h2 {
@@ -737,6 +920,14 @@
       }
 
       .hero-badges {
+        justify-content: center;
+      }
+
+      .soundtrack-controls {
+        justify-content: center;
+      }
+
+      .finale-actions {
         justify-content: center;
       }
     }
@@ -925,6 +1116,39 @@
         <li><strong>Heat</strong> tracks the police pressure closing in.</li>
         <li><strong>Spirit</strong> flows from dream logic, ritual, and song.</li>
       </ul>
+      <section class="soundtrack" aria-labelledby="soundtrack-title">
+        <h3 id="soundtrack-title">Soundtrack</h3>
+        <p>
+          Loop Otis Redding's "Try a Little Tenderness" while you play. We'll try to start it automatically once you give the
+          go-ahead—if the browser blocks it, use the buttons below or open the song in a new tab.
+        </p>
+        <div class="soundtrack-controls">
+          <button type="button" class="soundtrack-button" id="soundtrack-play">Play on loop</button>
+          <button type="button" class="soundtrack-button secondary" id="soundtrack-pause">Pause</button>
+          <label class="soundtrack-upload">
+            <span>Use your own audio</span>
+            <input type="file" id="soundtrack-file" accept="audio/*" />
+          </label>
+        </div>
+        <p class="soundtrack-status" id="soundtrack-status" role="status">Click play to spin Otis on repeat.</p>
+        <p>
+          Need a quick link?
+          <a
+            id="soundtrack-link"
+            href="https://open.spotify.com/track/7wsmIIm5H1rP0LhQ89g3nn"
+            target="_blank"
+            rel="noreferrer noopener"
+            >Open “Try a Little Tenderness” in a new tab</a
+          >.
+        </p>
+        <audio
+          id="soundtrack"
+          loop
+          preload="none"
+          class="visually-hidden"
+          data-default-src="https://archive.org/download/otis-redding-try-a-little-tenderness/05%20Try%20a%20Little%20Tenderness.mp3"
+        ></audio>
+      </section>
       <fieldset class="approach-fieldset">
         <legend class="visually-hidden">Choose a guiding principle for this run</legend>
         <div class="approach-options">
@@ -974,6 +1198,32 @@
     </article>
   </section>
 
+  <section
+    class="overlay"
+    id="finale-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="finale-heading"
+    aria-describedby="finale-lede"
+    hidden
+  >
+    <article class="overlay-card finale-card">
+      <h2 id="finale-heading">Dawn Reckoning</h2>
+      <p class="finale-lede" id="finale-lede"></p>
+      <div class="finale-stats" id="finale-stats"></div>
+      <h3>Journey beats</h3>
+      <ol class="finale-list" id="finale-choices"></ol>
+      <h3>Roadside moments</h3>
+      <ul class="finale-list" id="finale-moments"></ul>
+      <h3>Dream &amp; memory signs</h3>
+      <ul class="finale-list" id="finale-interludes"></ul>
+      <div class="finale-actions">
+        <button class="continue-btn" id="finale-replay">Run it back</button>
+        <button class="restart-btn" id="finale-close">Stay on this night</button>
+      </div>
+    </article>
+  </section>
+
   <script>
     const baseStats = {
       bond: 58,
@@ -996,6 +1246,12 @@
     let selectedLoadout = "balanced";
 
     const stats = { ...baseStats };
+
+    let startingSnapshot = { ...baseStats };
+    let soundtrackObjectUrl = null;
+    const journeyHistory = [];
+    const momentHistory = [];
+    const interludeHistory = [];
 
     function getStartingStats() {
       const start = { ...baseStats };
@@ -1304,6 +1560,23 @@
     const interludeDescription = document.getElementById("interlude-description");
     const interludeBtn = document.getElementById("interlude-btn");
     const mainCard = document.querySelector(".game-card");
+    const finaleOverlay = document.getElementById("finale-overlay");
+    const finaleHeading = document.getElementById("finale-heading");
+    const finaleLede = document.getElementById("finale-lede");
+    const finaleStatsEl = document.getElementById("finale-stats");
+    const finaleChoicesEl = document.getElementById("finale-choices");
+    const finaleMomentsEl = document.getElementById("finale-moments");
+    const finaleInterludesEl = document.getElementById("finale-interludes");
+    const finaleReplayBtn = document.getElementById("finale-replay");
+    const finaleCloseBtn = document.getElementById("finale-close");
+    const soundtrack = document.getElementById("soundtrack");
+    const soundtrackPlayBtn = document.getElementById("soundtrack-play");
+    const soundtrackPauseBtn = document.getElementById("soundtrack-pause");
+    const soundtrackFileInput = document.getElementById("soundtrack-file");
+    const soundtrackStatus = document.getElementById("soundtrack-status");
+    if (soundtrackStatus) {
+      soundtrackStatus.dataset.state = "info";
+    }
 
     const statElements = {
       bond: {
@@ -1422,6 +1695,7 @@
       if (awaitingContinue) return;
       awaitingContinue = true;
       hideMoment();
+      const scene = scenes[sceneIndex];
 
       Array.from(optionsEl.children).forEach((child) => {
         child.disabled = true;
@@ -1435,7 +1709,24 @@
       stats.spirit += option.impact.spirit || 0;
       updateStatsDisplay();
 
-      logEvent(`<strong>${scenes[sceneIndex].title}:</strong> ${option.log}`);
+      const snapshot = {
+        bond: clampStat(stats.bond),
+        heat: clampStat(stats.heat),
+        spirit: clampStat(stats.spirit),
+      };
+
+      journeyHistory.push({
+        id: scene.id,
+        title: scene.title,
+        choice: option.text,
+        impact: option.impact,
+        log: option.log,
+        outcome: option.outcome,
+        stats: snapshot,
+        index: sceneIndex,
+      });
+
+      logEvent(`<strong>${scene.title}:</strong> ${option.log}`);
 
       outcomeEl.textContent = option.outcome;
       outcomeEl.hidden = false;
@@ -1456,6 +1747,141 @@
         .filter(([, value]) => value !== 0)
         .map(([key, value]) => `${value > 0 ? "+" : ""}${value} ${key.charAt(0).toUpperCase() + key.slice(1)}`)
         .join(" · ");
+    }
+
+    function formatStatsSummary(snapshot) {
+      return `Bond ${snapshot.bond} · Heat ${snapshot.heat} · Spirit ${snapshot.spirit}`;
+    }
+
+    function renderSummaryList(collection, element, renderItem, emptyMessage) {
+      if (!element) return;
+      element.innerHTML = "";
+      if (!collection.length) {
+        const li = document.createElement("li");
+        li.className = "finale-empty";
+        li.textContent = emptyMessage;
+        element.appendChild(li);
+        return;
+      }
+
+      collection.forEach((item, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = renderItem(item, index);
+        element.appendChild(li);
+      });
+    }
+
+    function renderFinaleSummary(finale, immediateOutcome) {
+      if (!finaleOverlay) return;
+
+      const finalSnapshot = {
+        bond: clampStat(stats.bond),
+        heat: clampStat(stats.heat),
+        spirit: clampStat(stats.spirit),
+      };
+
+      finaleHeading.textContent = finale.label;
+      finaleLede.textContent = finale.summary;
+
+      const statsSegments = [
+        `<p><strong>Opening pulse:</strong> ${escapeHTML(formatStatsSummary(startingSnapshot))}</p>`,
+        `<p><strong>Closing state:</strong> ${escapeHTML(formatStatsSummary(finalSnapshot))}</p>`,
+      ];
+
+      if (immediateOutcome) {
+        statsSegments.push(
+          `<p><strong>Last move:</strong> ${escapeHTML(immediateOutcome)}</p>`
+        );
+      }
+
+      finaleStatsEl.innerHTML = statsSegments.join("");
+
+      renderSummaryList(
+        journeyHistory,
+        finaleChoicesEl,
+        (entry, index) => {
+          const segments = [
+            `<strong>${index + 1}. ${escapeHTML(entry.title)}</strong>`,
+            `<p class="finale-choice-text">${escapeHTML(entry.choice)}</p>`,
+          ];
+          const impactText = formatEffect(entry.impact);
+          if (impactText) {
+            segments.push(`<p class="finale-choice-impact">${escapeHTML(impactText)}</p>`);
+          }
+          segments.push(
+            `<p class="finale-stats-line">${escapeHTML(formatStatsSummary(entry.stats))}</p>`
+          );
+          return segments.join("");
+        },
+        "No choices recorded this run."
+      );
+
+      renderSummaryList(
+        momentHistory,
+        finaleMomentsEl,
+        (entry) => {
+          const segments = [
+            `<strong>${escapeHTML(entry.title)}</strong>`,
+            `<p class="finale-choice-text">${escapeHTML(entry.description)}</p>`,
+          ];
+          const effectText = formatEffect(entry.impact);
+          if (effectText) {
+            segments.push(`<p class="finale-choice-impact">${escapeHTML(effectText)}</p>`);
+          }
+          segments.push(
+            `<p class="finale-stats-line">${escapeHTML(formatStatsSummary(entry.stats))}</p>`
+          );
+          return segments.join("");
+        },
+        "No roadside flashes surfaced this time."
+      );
+
+      renderSummaryList(
+        interludeHistory,
+        finaleInterludesEl,
+        (entry) => {
+          const segments = [
+            `<strong>${escapeHTML(entry.title)}</strong>`,
+            `<p class="finale-choice-text">${escapeHTML(entry.description)}</p>`,
+          ];
+          if (entry.log) {
+            segments.push(`<p class="finale-choice-impact">${escapeHTML(entry.log)}</p>`);
+          }
+          const effectText = formatEffect(entry.effect);
+          if (effectText) {
+            segments.push(`<p class="finale-choice-impact">${escapeHTML(effectText)}</p>`);
+          }
+          segments.push(
+            `<p class="finale-stats-line">${escapeHTML(formatStatsSummary(entry.stats))}</p>`
+          );
+          return segments.join("");
+        },
+        "Dreams stayed quiet on this route."
+      );
+    }
+
+    function updateSoundtrackStatus(message, state = "info") {
+      if (!soundtrackStatus) return;
+      soundtrackStatus.textContent = message;
+      soundtrackStatus.dataset.state = state;
+    }
+
+    function ensureSoundtrackSource() {
+      if (!soundtrack) return null;
+      if (soundtrack.src) {
+        return soundtrack.src;
+      }
+      const defaultSrc = soundtrack.dataset.defaultSrc;
+      if (defaultSrc) {
+        soundtrack.src = defaultSrc;
+      }
+      return soundtrack.src;
+    }
+
+    function announceSoundtrackPlaying() {
+      if (!soundtrack) return;
+      const label = soundtrack.dataset.trackLabel || '"Try a Little Tenderness"';
+      updateSoundtrackStatus(`Playing ${label} on loop.`);
     }
 
     function showMoment(moment) {
@@ -1494,6 +1920,17 @@
       });
 
       updateStatsDisplay();
+      momentHistory.push({
+        id: moment.id,
+        title: moment.title,
+        description: moment.description,
+        impact: moment.impact,
+        stats: {
+          bond: clampStat(stats.bond),
+          heat: clampStat(stats.heat),
+          spirit: clampStat(stats.spirit),
+        },
+      });
       showMoment(moment);
       const effectText = formatEffect(moment.impact);
       logEvent(
@@ -1531,6 +1968,7 @@
         finale.label
       )}:</strong> ${escapeHTML(finale.summary)}</p>`;
       logEvent(`<strong>Finale:</strong> ${escapeHTML(finale.label)}`);
+      renderFinaleSummary(finale, immediate);
       updateProgress();
       const currentStep = progressSteps[sceneIndex];
       if (currentStep) {
@@ -1539,7 +1977,10 @@
       }
       continueBtn.hidden = true;
       restartBtn.hidden = false;
-      restartBtn.focus({ preventScroll: true });
+      finaleOverlay.hidden = false;
+      if (finaleReplayBtn) {
+        finaleReplayBtn.focus({ preventScroll: true });
+      }
     }
 
     function determineFinale() {
@@ -1600,6 +2041,18 @@
       });
 
       updateStatsDisplay();
+      interludeHistory.push({
+        id: interludeActive.id,
+        title: interludeActive.title,
+        description: interludeActive.description,
+        effect: interludeActive.effect,
+        log: interludeActive.log,
+        stats: {
+          bond: clampStat(stats.bond),
+          heat: clampStat(stats.heat),
+          spirit: clampStat(stats.spirit),
+        },
+      });
       logEvent(
         `<em>${escapeHTML(interludeActive.title)}:</em> ${escapeHTML(interludeActive.log)}`
       );
@@ -1619,6 +2072,21 @@
       resetGame();
     });
 
+    if (finaleReplayBtn) {
+      finaleReplayBtn.addEventListener("click", () => {
+        finaleOverlay.hidden = true;
+        resetGame();
+      });
+    }
+
+    if (finaleCloseBtn) {
+      finaleCloseBtn.addEventListener("click", () => {
+        finaleOverlay.hidden = true;
+        restartBtn.hidden = false;
+        restartBtn.focus({ preventScroll: true });
+      });
+    }
+
     startBtn.addEventListener("click", () => {
       const checked = approachInputs.find((input) => input.checked);
       if (checked) {
@@ -1626,10 +2094,95 @@
       }
       introOverlay.hidden = true;
       resetGame();
+      if (soundtrack && soundtrack.dataset.autostart === "true") {
+        soundtrack.play().catch(() => {
+          updateSoundtrackStatus(
+            "Autoplay was blocked—press play above or open the song in a new tab.",
+            "error"
+          );
+        });
+      }
     });
 
+    if (soundtrackPlayBtn) {
+      soundtrackPlayBtn.addEventListener("click", () => {
+        if (!soundtrack) return;
+        ensureSoundtrackSource();
+        soundtrack.dataset.autostart = "true";
+        soundtrack.play()
+          .then(() => {
+            soundtrack.dataset.trackLabel = '"Try a Little Tenderness"';
+            announceSoundtrackPlaying();
+          })
+          .catch(() => {
+            updateSoundtrackStatus(
+              "Press play in the on-page controls to start the track.",
+              "error"
+            );
+            soundtrack.controls = true;
+            soundtrack.classList.remove("visually-hidden");
+            soundtrack.classList.add("soundtrack-inline-player");
+          });
+      });
+    }
+
+    if (soundtrackPauseBtn) {
+      soundtrackPauseBtn.addEventListener("click", () => {
+        if (!soundtrack) return;
+        soundtrack.pause();
+        updateSoundtrackStatus("Music paused. Bring Otis back whenever you're ready.");
+      });
+    }
+
+    if (soundtrackFileInput) {
+      soundtrackFileInput.addEventListener("change", () => {
+        if (!soundtrack) return;
+        const file = soundtrackFileInput.files && soundtrackFileInput.files[0];
+        if (!file) {
+          return;
+        }
+        if (soundtrackObjectUrl) {
+          URL.revokeObjectURL(soundtrackObjectUrl);
+        }
+        soundtrackObjectUrl = URL.createObjectURL(file);
+        soundtrack.src = soundtrackObjectUrl;
+        soundtrack.dataset.autostart = "true";
+        soundtrack.play()
+          .then(() => {
+            soundtrack.dataset.trackLabel = file.name;
+            announceSoundtrackPlaying();
+          })
+          .catch(() => {
+            updateSoundtrackStatus(
+              "Browser blocked playback—use the visible controls to start your upload.",
+              "error"
+            );
+            soundtrack.controls = true;
+            soundtrack.classList.remove("visually-hidden");
+            soundtrack.classList.add("soundtrack-inline-player");
+          });
+      });
+    }
+
+    if (soundtrack) {
+      soundtrack.addEventListener("playing", () => {
+        announceSoundtrackPlaying();
+      });
+      soundtrack.addEventListener("pause", () => {
+        if (soundtrack.currentTime > 0 && !soundtrack.ended) {
+          updateSoundtrackStatus("Music paused. Bring Otis back whenever you're ready.");
+        }
+      });
+      soundtrack.addEventListener("error", () => {
+        updateSoundtrackStatus(
+          "Couldn't load the track—use the link above or upload your own file.",
+          "error"
+        );
+      });
+    }
+
     document.addEventListener("keydown", (event) => {
-      if (!introOverlay.hidden || !interludeOverlay.hidden) {
+      if (!introOverlay.hidden || !interludeOverlay.hidden || !finaleOverlay.hidden) {
         return;
       }
 
@@ -1662,13 +2215,25 @@
     });
 
     function resetGame({ preserveIntro = false } = {}) {
-      Object.assign(stats, getStartingStats());
+      const starting = getStartingStats();
+      startingSnapshot = {
+        bond: clampStat(starting.bond),
+        heat: clampStat(starting.heat),
+        spirit: clampStat(starting.spirit),
+      };
+      Object.assign(stats, starting);
       sceneIndex = 0;
       awaitingContinue = false;
       interludeActive = null;
       seenInterludes.clear();
       usedMoments.clear();
+      journeyHistory.length = 0;
+      momentHistory.length = 0;
+      interludeHistory.length = 0;
       interludeOverlay.hidden = true;
+      if (finaleOverlay) {
+        finaleOverlay.hidden = true;
+      }
       logEl.innerHTML = "";
       restartBtn.hidden = true;
       outcomeEl.hidden = true;
