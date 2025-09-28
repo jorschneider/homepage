@@ -682,6 +682,20 @@
       border-color: rgba(241, 179, 75, 0.45);
     }
 
+    .soundtrack-embed {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .soundtrack-embed iframe {
+      width: 0;
+      height: 0;
+      border: 0;
+    }
+
     .soundtrack-inline-player {
       width: 100%;
       margin-top: 0.6rem;
@@ -1200,9 +1214,17 @@
       <section class="soundtrack" aria-labelledby="soundtrack-title">
         <h3 id="soundtrack-title">Soundtrack</h3>
         <p>
-          Loop Otis Redding's "Try a Little Tenderness" while you play. We'll try to start it automatically once you give the
-          go-ahead—if the browser blocks it, use the buttons below or open the song in a new tab.
+          Otis Redding's "Try a Little Tenderness" should start looping from a hidden YouTube embed as soon as the page loads.
+          If autoplay gets blocked, tap play below or open the song in a new tab.
         </p>
+        <div class="soundtrack-embed" aria-hidden="true">
+          <iframe
+            id="soundtrack-youtube"
+            src="https://www.youtube.com/embed/UnPMoAb4y8U?autoplay=1&amp;loop=1&amp;playlist=UnPMoAb4y8U&amp;controls=0&amp;modestbranding=1&amp;playsinline=1&amp;enablejsapi=1"
+            title="Otis Redding - Try a Little Tenderness soundtrack"
+            allow="autoplay; encrypted-media"
+          ></iframe>
+        </div>
         <div class="soundtrack-controls">
           <button type="button" class="soundtrack-button" id="soundtrack-play">Play on loop</button>
           <button type="button" class="soundtrack-button secondary" id="soundtrack-pause">Pause</button>
@@ -1211,7 +1233,9 @@
             <input type="file" id="soundtrack-file" accept="audio/*" />
           </label>
         </div>
-        <p class="soundtrack-status" id="soundtrack-status" role="status">Click play to spin Otis on repeat.</p>
+        <p class="soundtrack-status" id="soundtrack-status" role="status">
+          Trying to spin Otis automatically—if you don't hear him, tap play.
+        </p>
         <p>
           Need a quick link?
           <a
@@ -1655,6 +1679,8 @@
     const soundtrackPauseBtn = document.getElementById("soundtrack-pause");
     const soundtrackFileInput = document.getElementById("soundtrack-file");
     const soundtrackStatus = document.getElementById("soundtrack-status");
+    const soundtrackYoutubeFrame = document.getElementById("soundtrack-youtube");
+    let soundtrackMode = soundtrackYoutubeFrame ? "youtube" : "audio";
     if (soundtrackStatus) {
       soundtrackStatus.dataset.state = "info";
     }
@@ -1970,9 +1996,54 @@
     }
 
     function announceSoundtrackPlaying() {
-      if (!soundtrack) return;
+      if (!soundtrack || soundtrackMode !== "audio") return;
       const label = soundtrack.dataset.trackLabel || '"Try a Little Tenderness"';
       updateSoundtrackStatus(`Playing ${label} on loop.`);
+    }
+
+    function sendYouTubeCommand(func, args = []) {
+      if (!soundtrackYoutubeFrame || !soundtrackYoutubeFrame.contentWindow) {
+        return false;
+      }
+      soundtrackYoutubeFrame.contentWindow.postMessage(
+        JSON.stringify({ event: "command", func, args }),
+        "*"
+      );
+      return true;
+    }
+
+    function playYouTube(autostart = false) {
+      if (!soundtrackYoutubeFrame) return false;
+      if (autostart && soundtrackMode === "audio") {
+        return false;
+      }
+      soundtrackMode = "youtube";
+      const success = sendYouTubeCommand("playVideo");
+      if (!autostart && success) {
+        updateSoundtrackStatus('Playing "Try a Little Tenderness" on loop from YouTube.');
+      }
+      return success;
+    }
+
+    function pauseYouTube() {
+      if (!soundtrackYoutubeFrame) return false;
+      const success = sendYouTubeCommand("pauseVideo");
+      if (success && soundtrackMode === "youtube") {
+        updateSoundtrackStatus("Music paused. Bring Otis back whenever you're ready.");
+      }
+      return success;
+    }
+
+    if (soundtrackYoutubeFrame) {
+      const attemptYouTubeAutoplay = () => {
+        playYouTube(true);
+      };
+      soundtrackYoutubeFrame.addEventListener("load", attemptYouTubeAutoplay, { once: true });
+      window.setTimeout(() => {
+        if (soundtrackMode === "youtube") {
+          playYouTube(true);
+        }
+      }, 1500);
     }
 
     function showMoment(moment) {
@@ -2185,7 +2256,11 @@
       }
       introOverlay.hidden = true;
       resetGame();
-      if (soundtrack && soundtrack.dataset.autostart === "true") {
+      let youtubeStarted = false;
+      if (soundtrackMode !== "audio" && soundtrackYoutubeFrame) {
+        youtubeStarted = playYouTube();
+      }
+      if (!youtubeStarted && soundtrack && soundtrack.dataset.autostart === "true") {
         soundtrack.play().catch(() => {
           updateSoundtrackStatus(
             "Autoplay was blocked—press play above or open the song in a new tab.",
@@ -2197,12 +2272,22 @@
 
     if (soundtrackPlayBtn) {
       soundtrackPlayBtn.addEventListener("click", () => {
+        if (soundtrackMode !== "audio" && soundtrackYoutubeFrame) {
+          const success = playYouTube();
+          if (success) {
+            return;
+          }
+        }
         if (!soundtrack) return;
+        soundtrackMode = "audio";
+        pauseYouTube();
         ensureSoundtrackSource();
         soundtrack.dataset.autostart = "true";
+        if (!soundtrack.dataset.trackLabel) {
+          soundtrack.dataset.trackLabel = '"Try a Little Tenderness"';
+        }
         soundtrack.play()
           .then(() => {
-            soundtrack.dataset.trackLabel = '"Try a Little Tenderness"';
             announceSoundtrackPlaying();
           })
           .catch(() => {
@@ -2219,9 +2304,16 @@
 
     if (soundtrackPauseBtn) {
       soundtrackPauseBtn.addEventListener("click", () => {
+        if (soundtrackMode !== "audio" && soundtrackYoutubeFrame) {
+          if (pauseYouTube()) {
+            return;
+          }
+        }
         if (!soundtrack) return;
         soundtrack.pause();
-        updateSoundtrackStatus("Music paused. Bring Otis back whenever you're ready.");
+        if (soundtrackMode === "audio") {
+          updateSoundtrackStatus("Music paused. Bring Otis back whenever you're ready.");
+        }
       });
     }
 
@@ -2237,6 +2329,8 @@
         }
         soundtrackObjectUrl = URL.createObjectURL(file);
         soundtrack.src = soundtrackObjectUrl;
+        soundtrackMode = "audio";
+        pauseYouTube();
         soundtrack.dataset.autostart = "true";
         soundtrack.play()
           .then(() => {
@@ -2260,11 +2354,13 @@
         announceSoundtrackPlaying();
       });
       soundtrack.addEventListener("pause", () => {
+        if (soundtrackMode !== "audio") return;
         if (soundtrack.currentTime > 0 && !soundtrack.ended) {
           updateSoundtrackStatus("Music paused. Bring Otis back whenever you're ready.");
         }
       });
       soundtrack.addEventListener("error", () => {
+        if (soundtrackMode !== "audio") return;
         updateSoundtrackStatus(
           "Couldn't load the track—use the link above or upload your own file.",
           "error"

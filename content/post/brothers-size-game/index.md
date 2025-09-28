@@ -19,7 +19,7 @@ Experience a small slice of the road trip, dreams, and brotherhood at the heart 
 ## How to play
 
 - **Pick a guiding principle** on the start screen to tweak the brothers' starting momentum.
-- **Hit play on Otis Redding's "Try a Little Tenderness"** right from the intro overlay to loop the track while you guide the night.
+- **Let Otis Redding's "Try a Little Tenderness" wash over the run automatically**—a hidden YouTube embed starts looping it on load, and the intro overlay buttons are there if autoplay gets blocked.
 - **Glance at the quick control panel** on the intro overlay—the keyboard shortcuts are now surfaced before you begin.
 - **Click a choice** (or tap the glowing number badge) in each scene to respond to the latest twist in the brothers' journey.
 - **Watch the meters** *and* the new live deltas to see how every decision nudges the trio.
