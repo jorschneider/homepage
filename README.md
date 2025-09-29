@@ -44,3 +44,15 @@ Copyright 2017-present [George Cushen](https://georgecushen.com).
 Released under the [MIT](https://github.com/sourcethemes/academic-kickstart/blob/master/LICENSE.md) license.
 
 [![Analytics](https://ga-beacon.appspot.com/UA-78646709-2/academic-kickstart/readme?pixel)](https://github.com/igrigorik/ga-beacon)
+
+## Quick tank arena preview (no Hugo required)
+
+If you just want to smoke test the Tank Bragging Rights Arena without installing Hugo, use the lightweight HTML mirror in
+[`preview/arena.html`](preview/arena.html):
+
+1. From the repository root run `python -m http.server 8000`.
+2. Visit [http://localhost:8000/preview/arena.html](http://localhost:8000/preview/arena.html) in your browser.
+3. The page pulls in the same `/static/css/tank-battle.css` and `/static/js/tank-battle.js` assets that power the Hugo article, so
+   you can play the duel, test doctrines, and confirm scoreboard persistence locally.
+
+Stop the server with <kbd>Ctrl</kbd> + <kbd>C</kbd> when you are done.
