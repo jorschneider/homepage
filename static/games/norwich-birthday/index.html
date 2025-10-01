@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Norwich & Dartmouth Field Day</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --background: #f4f6f3;
+      --canvas-border: #d5ded2;
+      --ink: #1f2a25;
+      --ink-muted: #4f6056;
+      --accent: #00693e;
+      --accent-soft: #3b7a57;
+      --water: #9ab9cc;
+      --path: #c9d4c4;
+      --land: #dfe7dc;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #e9f1ea 0%, var(--background) 60%, #eef3ef 100%);
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      align-items: center;
+      padding: clamp(1.5rem, 2vw, 2.5rem);
+      gap: 1.5rem;
+    }
+
+    header {
+      max-width: 880px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: clamp(2.1rem, 4vw, 3.1rem);
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    p.lede {
+      margin: 0 auto;
+      max-width: 680px;
+      line-height: 1.6;
+      color: var(--ink-muted);
+    }
+
+    .game-shell {
+      position: relative;
+      width: min(94vw, 960px);
+      background: #ffffffd9;
+      border-radius: 20px;
+      padding: clamp(1.25rem, 2vw, 1.75rem);
+      box-shadow: 0 24px 80px rgba(19, 34, 26, 0.14);
+      border: 1px solid rgba(0, 105, 62, 0.12);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      border-radius: 16px;
+      border: 2px solid var(--canvas-border);
+      background: #fff;
+    }
+
+    .hud {
+      margin-top: 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      font-weight: 500;
+    }
+
+    .badge {
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 105, 62, 0.18);
+      background: rgba(0, 105, 62, 0.08);
+      font-size: 0.95rem;
+    }
+
+    .instructions {
+      flex: 1 1 280px;
+      border-radius: 14px;
+      border: 1px solid rgba(79, 96, 86, 0.15);
+      padding: 0.85rem 1rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--ink-muted);
+      background: linear-gradient(135deg, rgba(223, 231, 220, 0.5), rgba(255, 255, 255, 0.6));
+    }
+
+    .instructions strong {
+      display: block;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.35rem;
+    }
+
+    #message {
+      position: absolute;
+      left: 50%;
+      bottom: clamp(1.1rem, 3vw, 1.8rem);
+      transform: translateX(-50%);
+      padding: 0.8rem 1.25rem;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 105, 62, 0.14);
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--ink);
+      font-weight: 500;
+      box-shadow: 0 14px 32px rgba(21, 37, 28, 0.12);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+      text-align: center;
+      max-width: min(90vw, 520px);
+      line-height: 1.5;
+    }
+
+    #message.visible {
+      opacity: 1;
+    }
+
+    footer {
+      margin-top: auto;
+      padding-bottom: 1rem;
+      font-size: 0.85rem;
+      color: rgba(31, 42, 37, 0.65);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Norwich &amp; Dartmouth Field Day</h1>
+    <p class="lede">Guide the birthday traveler through a set of favorite Upper Valley stops. Stroll between Norwich mainstays, cross the river to Dartmouth, and collect thoughtful moments along the way.</p>
+  </header>
+
+  <div class="game-shell">
+    <div id="message" role="status" aria-live="polite"></div>
+    <canvas id="map" width="900" height="600" aria-label="Stylized map of Norwich and Dartmouth with interactive stops"></canvas>
+    <div class="hud">
+      <div class="badges">
+        <span class="badge" id="progress">Experiences visited: 0/0</span>
+        <span class="badge" id="pace">Stroll pace: steady</span>
+        <span class="badge">Celebrating 32 years</span>
+      </div>
+      <div class="instructions">
+        <strong>How to explore</strong>
+        <ul>
+          <li>Use the arrow keys or WASD to move between stops.</li>
+          <li>Walk into a marker to log an experience.</li>
+          <li>Visit every stop to complete the birthday field notes.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <footer>Designed for an easygoing birthday adventure around Norwich and Dartmouth.</footer>
+
+  <script>
+    const canvas = document.getElementById('map');
+    const ctx = canvas.getContext('2d');
+    const message = document.getElementById('message');
+    const progressEl = document.getElementById('progress');
+    const paceEl = document.getElementById('pace');
+
+    const map = { width: canvas.width, height: canvas.height };
+
+    const player = {
+      x: map.width * 0.18,
+      y: map.height * 0.72,
+      radius: 14,
+      speed: 2.9,
+      dx: 0,
+      dy: 0,
+    };
+
+    const controls = new Set();
+
+    const experiences = [
+      {
+        name: 'King Arthur Baking',
+        note: 'An early-morning pastry run and a loaf tucked under your arm for later.',
+        x: map.width * 0.78,
+        y: map.height * 0.28,
+        color: '#b9875b',
+        radius: 28,
+        visited: false,
+      },
+      {
+        name: 'Norwich Farmers Market',
+        note: 'Fresh greens, local cheese, and neighbors comparing weekend plans.',
+        x: map.width * 0.3,
+        y: map.height * 0.24,
+        color: '#7aa661',
+        radius: 28,
+        visited: false,
+      },
+      {
+        name: 'Montshire River Loop',
+        note: 'A quiet walk along the Connecticut, science center peeking through the trees.',
+        x: map.width * 0.56,
+        y: map.height * 0.58,
+        color: '#89a9bc',
+        radius: 26,
+        visited: false,
+      },
+      {
+        name: 'Dartmouth Green',
+        note: 'Stretch out on the lawn, watch campus life orbit around Baker Tower.',
+        x: map.width * 0.62,
+        y: map.height * 0.42,
+        color: '#00693e',
+        radius: 30,
+        visited: false,
+      },
+      {
+        name: 'Baker-Berry Library',
+        note: 'A detour for a favorite reading nook and the sound of the clock striking the hour.',
+        x: map.width * 0.68,
+        y: map.height * 0.52,
+        color: '#24503b',
+        radius: 26,
+        visited: false,
+      },
+      {
+        name: 'Ledyard Bridge',
+        note: 'Sunset light across the river, a perfect handrail lean before heading back to Norwich.',
+        x: map.width * 0.48,
+        y: map.height * 0.66,
+        color: '#8f8165',
+        radius: 24,
+        visited: false,
+      },
+    ];
+
+    progressEl.textContent = `Experiences visited: 0/${experiences.length}`;
+
+    function drawBackground() {
+      ctx.clearRect(0, 0, map.width, map.height);
+
+      const backgroundGradient = ctx.createLinearGradient(0, 0, 0, map.height);
+      backgroundGradient.addColorStop(0, '#f3f7f1');
+      backgroundGradient.addColorStop(1, '#eef3ef');
+      ctx.fillStyle = backgroundGradient;
+      ctx.fillRect(0, 0, map.width, map.height);
+
+      ctx.fillStyle = 'rgba(154, 185, 204, 0.35)';
+      ctx.beginPath();
+      ctx.ellipse(map.width * 0.55, map.height * 0.7, 200, 110, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(223, 231, 220, 0.9)';
+      ctx.beginPath();
+      ctx.moveTo(map.width * 0.12, map.height * 0.82);
+      ctx.lineTo(map.width * 0.86, map.height * 0.18);
+      ctx.lineTo(map.width * 0.92, map.height * 0.24);
+      ctx.lineTo(map.width * 0.18, map.height * 0.88);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(201, 212, 196, 0.9)';
+      ctx.lineWidth = 24;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(player.x, player.y);
+      experiences.forEach((stop) => {
+        ctx.lineTo(stop.x, stop.y);
+      });
+      ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(0, 105, 62, 0.18)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([14, 10]);
+      ctx.beginPath();
+      ctx.moveTo(player.x, player.y);
+      experiences.forEach((stop) => {
+        ctx.lineTo(stop.x, stop.y);
+      });
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    function drawExperiences() {
+      experiences.forEach((stop) => {
+        ctx.save();
+        ctx.fillStyle = stop.visited ? 'rgba(0, 105, 62, 0.9)' : stop.color;
+        ctx.shadowColor = 'rgba(31, 42, 37, 0.18)';
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(stop.x, stop.y, stop.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.fillStyle = 'rgba(31, 42, 37, 0.85)';
+        ctx.font = '600 16px "Inter", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(stop.name, stop.x, stop.y + stop.radius + 22);
+      });
+    }
+
+    function drawPlayer() {
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, player.radius + 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      ctx.fillStyle = varAccent();
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, player.radius - 4, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    function varAccent() {
+      return '#0f5f3d';
+    }
+
+    function updatePlayer() {
+      player.x += player.dx;
+      player.y += player.dy;
+      player.x = Math.max(player.radius, Math.min(map.width - player.radius, player.x));
+      player.y = Math.max(player.radius, Math.min(map.height - player.radius, player.y));
+    }
+
+    function handleControls() {
+      const speed = player.speed;
+      player.dx = 0;
+      player.dy = 0;
+      if (controls.has('ArrowLeft') || controls.has('a')) player.dx -= speed;
+      if (controls.has('ArrowRight') || controls.has('d')) player.dx += speed;
+      if (controls.has('ArrowUp') || controls.has('w')) player.dy -= speed;
+      if (controls.has('ArrowDown') || controls.has('s')) player.dy += speed;
+      if (player.dx && player.dy) {
+        player.dx *= Math.SQRT1_2;
+        player.dy *= Math.SQRT1_2;
+      }
+
+      if (player.dx === 0 && player.dy === 0) {
+        paceEl.textContent = 'Stroll pace: paused';
+      } else {
+        paceEl.textContent = 'Stroll pace: steady';
+      }
+    }
+
+    function distance(a, b) {
+      return Math.hypot(a.x - b.x, a.y - b.y);
+    }
+
+    function checkExperiences() {
+      let visitedCount = 0;
+      experiences.forEach((stop) => {
+        if (!stop.visited && distance(player, stop) <= player.radius + stop.radius) {
+          stop.visited = true;
+          showMessage(`${stop.name}: ${stop.note}`);
+        }
+        if (stop.visited) visitedCount += 1;
+      });
+
+      progressEl.textContent = `Experiences visited: ${visitedCount}/${experiences.length}`;
+
+      if (visitedCount === experiences.length && !checkExperiences.complete) {
+        checkExperiences.complete = true;
+        showMessage('Field notes complete. Wishing you a grounded, happy 32nd.');
+        paceEl.textContent = 'Stroll pace: accomplished';
+      }
+    }
+
+    function showMessage(text) {
+      message.textContent = text;
+      message.classList.add('visible');
+      clearTimeout(showMessage.timeout);
+      showMessage.timeout = setTimeout(() => {
+        message.classList.remove('visible');
+      }, 4200);
+    }
+
+    function loop() {
+      requestAnimationFrame(loop);
+      drawBackground();
+      drawExperiences();
+      drawPlayer();
+      handleControls();
+      updatePlayer();
+      checkExperiences();
+    }
+
+    loop();
+    showMessage('Use the arrow keys to chart your birthday field day.');
+
+    window.addEventListener('keydown', (event) => {
+      controls.add(event.key);
+      if ([
+        'ArrowUp',
+        'ArrowDown',
+        'ArrowLeft',
+        'ArrowRight',
+        ' ',
+      ].includes(event.key)) {
+        event.preventDefault();
+      }
+    });
+
+    window.addEventListener('keyup', (event) => {
+      controls.delete(event.key);
+    });
+  </script>
+</body>
+</html>
