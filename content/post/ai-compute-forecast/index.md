@@ -22,7 +22,6 @@ All effective compute metrics translate each side’s production into GB200 NVL7
   </div>
   <div class="control-group">
     <label for="yield">Huawei effective yield (across SMIC + Huawei fabs)</label>
-    <input type="range" id="yield" min="40" max="90" value="55" step="1">
     <span class="value" id="yield-value">55%</span>
   </div>
   <div class="control-group">
@@ -42,7 +41,6 @@ All effective compute metrics translate each side’s production into GB200 NVL7
   </div>
   <div class="control-group">
     <label for="performance-ratio">Relative compute per chip (NVIDIA ÷ Huawei)</label>
-    <input type="range" id="performance-ratio" min="80" max="180" value="130" step="5">
     <span class="value" id="performance-ratio-value">1.30×</span>
   </div>
 </div>
