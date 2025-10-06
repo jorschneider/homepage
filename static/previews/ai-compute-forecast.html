@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AI Compute Supply Scenario Explorer Preview</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background: #f5f7fb;
+      color: #111827;
+    }
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 24px 48px rgba(15, 23, 42, 0.12);
+      padding: 2.5rem 3rem;
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 2rem;
+      color: #0f172a;
+    }
+    p.lede {
+      font-size: 1.1rem;
+      color: #334155;
+      line-height: 1.6;
+    }
+    .ai-compute-controls {
+      background: linear-gradient(135deg, rgba(221, 232, 255, 0.6), rgba(199, 210, 254, 0.4));
+      border-radius: 1rem;
+      padding: 1.75rem;
+      margin: 2rem 0 1.5rem;
+    }
+    .ai-compute-controls h2 {
+      margin-top: 0;
+      font-size: 1.25rem;
+    }
+    .control-group {
+      display: grid;
+      grid-template-columns: minmax(220px, 2fr) minmax(160px, 3fr) auto;
+      align-items: center;
+      gap: 0.75rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .control-group label {
+      font-weight: 600;
+    }
+    .control-group input[type="range"] {
+      width: 100%;
+    }
+    .control-group .value {
+      font-weight: 600;
+      color: #0f172a;
+    }
+    #ai-compute-chart {
+      min-height: 420px;
+    }
+    #ai-constraint-chart {
+      min-height: 320px;
+      margin: 1.5rem 0 0;
+    }
+    .ai-compute-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin: 1.75rem 0 1rem;
+    }
+    .metric-card {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(99, 102, 241, 0.16));
+      border-radius: 1rem;
+      padding: 1.1rem 1.25rem;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+    .metric-card h4 {
+      margin: 0 0 0.35rem;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #1d4ed8;
+    }
+    .metric-value {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .metric-footnote {
+      margin: 0.35rem 0 0;
+      color: #334155;
+      font-size: 0.85rem;
+    }
+    #ai-compute-table table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+    }
+    #ai-compute-table th,
+    #ai-compute-table td {
+      padding: 0.75rem 0.5rem;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+      text-align: left;
+    }
+    #ai-compute-table th {
+      font-size: 0.85rem;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: #475569;
+    }
+    .ai-compute-sophgo {
+      margin: 1.75rem 0;
+      padding: 1.25rem 1.5rem;
+      border-radius: 0.75rem;
+      background: rgba(12, 74, 110, 0.06);
+      border-left: 4px solid rgba(12, 74, 110, 0.65);
+    }
+    .ai-compute-sophgo h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+    .ai-compute-sophgo-note {
+      margin: 0 0 0.75rem;
+      color: rgba(15, 23, 42, 0.75);
+    }
+    #sophgo-die-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    #sophgo-die-table th,
+    #sophgo-die-table td {
+      padding: 0.65rem 0.5rem;
+      border-bottom: 1px solid rgba(12, 74, 110, 0.16);
+      text-align: left;
+    }
+    #sophgo-die-table th {
+      font-size: 0.8rem;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: rgba(12, 74, 110, 0.8);
+    }
+    .ai-compute-summary {
+      margin-top: 2rem;
+      padding: 1.25rem 1.5rem;
+      border-left: 4px solid #2563eb;
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 0.75rem;
+    }
+    .ai-compute-summary h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+    .ai-compute-notes {
+      margin-top: 2.5rem;
+      background: rgba(148, 163, 184, 0.16);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      color: #1f2937;
+    }
+    .ai-compute-notes ul {
+      padding-left: 1.25rem;
+      margin: 1rem 0 0;
+    }
+    .ai-compute-notes li {
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
+    }
+    .ai-compute-context {
+      margin-top: 2rem;
+      background: rgba(148, 163, 184, 0.12);
+      border-radius: 1rem;
+      padding: 1.5rem 1.75rem;
+      color: #1f2937;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+    .ai-compute-context h2 {
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      font-size: 1.15rem;
+      color: #0f172a;
+    }
+    .ai-compute-context h2:first-child {
+      margin-top: 0;
+    }
+    .ai-compute-context ul {
+      margin: 0 0 1rem;
+      padding-left: 1.25rem;
+    }
+    .ai-compute-context li {
+      margin-bottom: 0.65rem;
+      line-height: 1.55;
+    }
+    .ai-compute-context-summary {
+      margin: 1.25rem 0 0;
+      font-weight: 600;
+      color: #1d4ed8;
+    }
+    @media (max-width: 720px) {
+      body {
+        padding: 1rem;
+      }
+      main {
+        padding: 1.5rem;
+      }
+      .control-group {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+      .control-group .value {
+        justify-self: flex-end;
+      }
+      .ai-compute-metrics {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>AI Compute Supply Scenario Explorer</h1>
+    <p>China’s push for self-reliance in AI hardware hinges on Huawei’s Ascend accelerators. SemiAnalysis estimates that Huawei shipped <strong>507,000</strong> Ascend units in 2024 thanks to a bank of TSMC-produced die, and is on track for <strong>805,000</strong> units in 2025 as SMIC improves yields. Roughly <strong>481,000–500,000</strong> of those 2024 die were Ascend 910Cs; because each 910C package uses two dies and averages about <strong>75 dies per 300 mm wafer</strong> at ~665 mm², the bank translates into <strong>240,000–250,000</strong> dual-die 910C packages before new SMIC output lands. Yet Huawei will hit a hard wall once its stockpile of foreign high-bandwidth memory (HBM) is depleted—Samsung alone provided <strong>11.4 million</strong> HBM stacks, part of the <strong>13 million</strong> total stacks that can feed roughly <strong>1.6 million</strong> Ascend 910C packages. Domestic supplier CXMT is racing to fill the gap but is expected to ship only about <strong>2 million</strong> HBM stacks next year, enough for <strong>250,000–300,000</strong> Ascend 910Cs even if SMIC can fabricate more die.</p>
+    <p>Advanced packaging is unlikely to be the binding constraint for the current Ascend generation: thermocompression bonding gear for 910C assembly is already stockpiled domestically, while the hybrid bonding techniques expected for 910D-class parts remain the more challenging frontier.</p>
+    <p>Meanwhile, SemiAnalysis reports that NVIDIA is driving toward multi-million-unit annual run rates—including roughly <strong>350,000</strong> H20-class units from existing inventory in 2025 and a planned <strong>4 million</strong>-unit run rate for RTX PRO 6000 derivatives that serve as China-compliant accelerators—before layering in potential Blackwell-based SKUs such as the rumored B30A. The GB200 NVL72 comparison is scoped specifically to <strong>910C-class dual-die packages</strong> so the gap is framed in full-rack deployments of Huawei’s flagship parts rather than blended averages across 910B and 910C generations.</p>
+    <p class="lede">Adjust the assumptions behind Huawei's 910C production ramp and NVIDIA's total fabrication capacity to see how HBM availability, wafer yields, and capital allocation shape effective compute—expressed as GB200 NVL72-equivalent systems—through 2027.</p>
+
+    <div class="ai-compute-controls">
+      <h2>Adjust the supply-side assumptions</h2>
+      <div class="control-group">
+        <label for="scenario">Start from a scenario template</label>
+        <select id="scenario">
+          <option value="baseline">Baseline: controls hold, domestic HBM ramps slowly</option>
+          <option value="tight-controls">Tight controls: enforcement squeezes HBM to 1.5M stacks next year.</option>
+          <option value="export-surge">Export surge: accelerated capex boosts NVIDIA fab output</option>
+        </select>
+        <span class="value">&nbsp;</span>
+      </div>
+      <div class="control-group">
+        <label for="yield">Huawei 910C effective yield (across SMIC + Huawei fabs)</label>
+        <input type="range" id="yield" min="10" max="90" value="55" step="1">
+        <span class="value" id="yield-value">55%</span>
+      </div>
+      <div class="control-group">
+        <label for="hbm-2026">HBM available to Huawei in 2026 (million stacks)</label>
+        <input type="range" id="hbm-2026" min="1" max="10" value="2" step="0.5">
+        <span class="value" id="hbm-2026-value">2.0M</span>
+      </div>
+      <div class="control-group">
+        <label for="hbm-2027">HBM available to Huawei in 2027 (million stacks)</label>
+        <input type="range" id="hbm-2027" min="1" max="15" value="4" step="0.5">
+        <span class="value" id="hbm-2027-value">4.0M</span>
+      </div>
+      <div class="control-group">
+        <label for="nvidia-factor">NVIDIA fab output factor</label>
+        <input type="range" id="nvidia-factor" min="60" max="140" value="100" step="5">
+        <span class="value" id="nvidia-factor-value">100%</span>
+      </div>
+      <div class="control-group">
+        <label for="performance-ratio">Relative compute per chip (NVIDIA ÷ Huawei 910C)</label>
+        <input type="range" id="performance-ratio" min="80" max="400" value="130" step="5">
+        <span class="value" id="performance-ratio-value">1.30×</span>
+      </div>
+    </div>
+
+    <div id="ai-compute-chart"></div>
+
+    <div class="ai-compute-metrics">
+      <div class="metric-card">
+        <h4>2027 compute gap</h4>
+        <p class="metric-value" id="metric-gap">--</p>
+        <p class="metric-footnote">NVIDIA minus Huawei GB200 NVL72 equivalents</p>
+      </div>
+      <div class="metric-card">
+        <h4>Huawei 910C output in 2026</h4>
+        <p class="metric-value" id="metric-huawei">--</p>
+        <p class="metric-footnote">Dual-die 910C packages</p>
+      </div>
+      <div class="metric-card">
+        <h4>Constraint mix</h4>
+        <p class="metric-value" id="metric-constraint">--</p>
+        <p class="metric-footnote">Years limited by HBM vs. wafers</p>
+      </div>
+    </div>
+
+    <div id="ai-constraint-chart"></div>
+
+    <div id="ai-compute-table"></div>
+
+    <div class="ai-compute-sophgo">
+      <h3>Sophgo-packaged Ascend die mix</h3>
+      <p class="ai-compute-sophgo-note">Forecast keeps 910B output roughly an order of magnitude higher than 910C through 2027—tens of thousands of 910Bs versus only a few thousand 910Cs each year.</p>
+      <div id="sophgo-die-table"></div>
+    </div>
+    <div id="ai-compute-summary" class="ai-compute-summary"></div>
+
+    <div class="ai-compute-notes">
+      <h3>How the model works</h3>
+      <ul>
+        <li>Huawei's potential 910C output blends die availability (up to 0.65&nbsp;million dual-die packages in 2025 and 5+&nbsp;million by 2026) with an HBM constraint that assumes eight stacks per package.</li>
+        <li>HBM sliders control the domestic supply Huawei can count on once Samsung's stockpiled memory is exhausted.</li>
+        <li>NVIDIA's baseline assumes total accelerator output of roughly 3.6&nbsp;million units in 2025, 4.8&nbsp;million in 2026, and 5.5&nbsp;million in 2027 as supplier plans like the 4&nbsp;million-unit RTX PRO 6000 run rate come online. Use the fab output factor to flex those volumes up or down.</li>
+        <li>Metric cards and the dedicated HBM chart make the binding constraint and NVIDIA compute gap—expressed in GB200 NVL72 equivalents—visible at a glance for each scenario.</li>
+        <li>The performance ratio captures software and FLOP differentials between NVIDIA and Huawei's 910C accelerators.</li>
+      </ul>
+    </div>
+
+    <section class="ai-compute-context">
+      <h2>Key Huawei supply assumptions</h2>
+      <ul>
+        <li><strong>Die banks bridge the gap to SMIC maturity.</strong> Huawei tapped roughly 2.9&nbsp;million Ascend die fabricated at TSMC to ship 507k accelerators in 2024—about 240k–250k of which were dual-die 910C packages—and retains stockpiles to support the 805k-unit 2025 baseline.</li>
+        <li><strong>SMIC allocation is no longer the binding constraint.</strong> SemiAnalysis models SMIC's advanced-node capacity rising from 45k wspm in 2025 to 80k by 2027, enabling millions of die if HBM were unconstrained.</li>
+        <li><strong>HBM availability caps short-term output.</strong> About 13&nbsp;million imported HBM stacks—enough for 1.6&nbsp;million Ascend 910C packages—will be exhausted, leaving Huawei dependent on domestic supply from 2026 onward.</li>
+        <li><strong>Sophgo packaging stays 910B-heavy.</strong> Internal forecasts hold Sophgo’s 910B builds at roughly ten times its 910C output—tens of thousands of 910Bs versus only a few thousand 910Cs—slowing the mix shift to newer parts.</li>
+        <li><strong>Packaging tools are already stockpiled.</strong> Thermocompression bonding capabilities for 910C assembly are widely available inside China, so near-term constraints stem more from HBM availability than from access to advanced packaging gear; hybrid bonding hurdles bite harder with the upcoming 910D.</li>
+        <li><strong>Domestic memory ramp is gradual.</strong> CXMT is expected to produce only ~2&nbsp;million HBM stacks next year (enough for roughly 250k–300k 910C packages) before expanding later in the decade; use the sliders to test alternative conversion speeds.</li>
+      </ul>
+
+      <h2>NVIDIA fab outlook</h2>
+      <ul>
+        <li><strong>Licenses unlock near-term shipments.</strong> NVIDIA can move roughly 350k H20/H20E-class units from inventory in 2025, adding close to $10B of revenue even before fresh production ramps.</li>
+        <li><strong>RTX PRO 6000 derivatives extend coverage.</strong> Supply chain plans call for a 4M-unit annual run rate for RTX PRO 6000 variants that comply with export limits.</li>
+        <li><strong>Blackwell-based B30A is the swing factor.</strong> Approval of a B30A-class SKU would narrow the compute gap dramatically; tweak the NVIDIA output slider to represent accelerated fab ramps.</li>
+      </ul>
+
+      <h2>Why enforcement on HBM matters</h2>
+      <ul>
+        <li><strong>Controls triggered a stockpile sprint.</strong> Samsung reportedly shipped 7M HBM stacks in the month between new export controls being announced and enforced, front-loading the current cache.</li>
+        <li><strong>Smuggling routes remain under scrutiny.</strong> Investigations into intermediaries such as CoAsia and Faraday underscore the need for coordination with Korean and Japanese suppliers.</li>
+        <li><strong>Domestic buildout spans the full stack.</strong> CXMT's TSV packaging partnerships plus Huawei-backed tooling efforts (SiCarrier) show how China is localizing memory, packaging, and logic capabilities despite controls.</li>
+      </ul>
+
+      <p class="ai-compute-context-summary">Collectively, these drivers explain why the model shows Huawei’s packaged 910C output dipping in 2026 before rebounding as domestic HBM capacity materializes—and why NVIDIA maintains a lead unless Chinese memory output or export approvals shift materially.</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.30.0"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const stacksPerHuaweiChip = 8;
+      const sophgoYears = [2024, 2025, 2026, 2027];
+      const sophgoDieForecast = {
+        2024: { '910B': 0.032, '910C': 0.003 },
+        2025: { '910B': 0.045, '910C': 0.004 },
+        2026: { '910B': 0.055, '910C': 0.005 },
+        2027: { '910B': 0.060, '910C': 0.006 }
+      };
+      const baseHuawei910cPotential = {
+        2024: 0.25,
+        2025: 0.65,
+        2026: 5.2,
+        2027: 6.0
+      };
+      const baseHBMStacks = {
+        2024: 13,
+        2025: 13,
+        2026: 2,
+        2027: 4
+      };
+      const baseNvidiaShipments = {
+        2024: 2.1,
+        2025: 3.6,
+        2026: 4.8,
+        2027: 5.5
+      };
+
+      const gpusPerNVL72 = 72;
+
+      const yieldSlider = document.getElementById('yield');
+      const hbm2026Slider = document.getElementById('hbm-2026');
+      const hbm2027Slider = document.getElementById('hbm-2027');
+      const nvidiaFactorSlider = document.getElementById('nvidia-factor');
+      const performanceRatioSlider = document.getElementById('performance-ratio');
+
+      const yieldValue = document.getElementById('yield-value');
+      const hbm2026Value = document.getElementById('hbm-2026-value');
+      const hbm2027Value = document.getElementById('hbm-2027-value');
+      const nvidiaFactorValue = document.getElementById('nvidia-factor-value');
+      const performanceRatioValue = document.getElementById('performance-ratio-value');
+
+      const scenarioSelect = document.getElementById('scenario');
+
+      const chartEl = document.getElementById('ai-compute-chart');
+      const constraintChartEl = document.getElementById('ai-constraint-chart');
+      const tableEl = document.getElementById('ai-compute-table');
+      const sophgoTableEl = document.getElementById('sophgo-die-table');
+      const summaryEl = document.getElementById('ai-compute-summary');
+
+      const metricGapEl = document.getElementById('metric-gap');
+      const metricHuaweiEl = document.getElementById('metric-huawei');
+      const metricConstraintEl = document.getElementById('metric-constraint');
+
+      const years = [2024, 2025, 2026, 2027];
+
+      const scenarios = {
+        baseline: {
+          label: 'Baseline: Huawei is capped by domestic HBM while NVIDIA holds to planned fab ramps.',
+          values: { yield: 55, hbm2026: 2, hbm2027: 4, nvidiaFactor: 100, performanceRatio: 130 }
+        },
+        'tight-controls': {
+          label: 'Tight controls: stricter enforcement squeezes HBM to 1.5M stacks next year.',
+          values: { yield: 52, hbm2026: 1.5, hbm2027: 2.5, nvidiaFactor: 90, performanceRatio: 135 }
+        },
+        'export-surge': {
+          label: 'Export surge: additional capex accelerates NVIDIA’s total output ramp.',
+          values: { yield: 60, hbm2026: 3.5, hbm2027: 6, nvidiaFactor: 125, performanceRatio: 145 }
+        }
+      };
+
+      function computeHuaweiYear(year, effectiveYield, hbmOverride) {
+        const waferPotential = baseHuawei910cPotential[year] * (effectiveYield / 100);
+        const hbmStacks = year === 2025 ? baseHBMStacks[year] : hbmOverride;
+        const hbmLimited = hbmStacks / stacksPerHuaweiChip;
+        const output = Math.min(waferPotential, hbmLimited);
+        const constraint = waferPotential <= hbmLimited ? 'Wafer capacity' : 'HBM supply';
+        return {
+          output,
+          waferPotential,
+          hbmStacks,
+          hbmDemand: output * stacksPerHuaweiChip,
+          constraint
+        };
+      }
+
+      function formatPackages(value) {
+        if (value >= 1) {
+          const formatted = value.toFixed(2);
+          return `${formatted.endsWith('.00') ? formatted.slice(0, -3) : formatted}M packages`;
+        }
+        return `${Math.round(value * 1000)}k packages`;
+      }
+
+      function formatAccelerators(value) {
+        if (value >= 1) {
+          const formatted = value.toFixed(2);
+          return `${formatted.endsWith('.00') ? formatted.slice(0, -3) : formatted}M accelerators`;
+        }
+        return `${Math.round(value * 1000)}k accelerators`;
+      }
+
+    function formatStacks(value) {
+      if (value >= 1) {
+        return `${value.toFixed(1)}M stacks`;
+      }
+      return `${Math.round(value * 1000)}k stacks`;
+    }
+
+    function formatMillions(value, decimals = 2) {
+      const formatted = value.toFixed(decimals);
+      return formatted.replace(/\.0+$/, '').replace(/(\.\d*[1-9])0+$/, '$1') + 'M';
+    }
+
+    function formatNVL72(valueMillions) {
+      const actual = valueMillions * 1_000_000;
+      if (actual >= 1_000_000) {
+        const millions = actual / 1_000_000;
+        const formatted = millions.toFixed(2).replace(/\.0+$/, '').replace(/(\.\d*[1-9])0+$/, '$1');
+        return `${formatted}M GB200 NVL72`;
+      }
+      if (actual >= 1_000) {
+        const thousands = actual / 1_000;
+        const formatted = thousands.toFixed(1).replace(/\.0+$/, '').replace(/(\.\d*[1-9])0+$/, '$1');
+        return `${formatted}k GB200 NVL72`;
+      }
+      return `${Math.round(actual)} GB200 NVL72`;
+    }
+
+      function applyScenarioValues(key) {
+        const scenario = scenarios[key];
+        if (!scenario) return;
+        const { yield: yieldSetting, hbm2026, hbm2027, nvidiaFactor, performanceRatio } = scenario.values;
+        yieldSlider.value = yieldSetting;
+        hbm2026Slider.value = hbm2026;
+        hbm2027Slider.value = hbm2027;
+        nvidiaFactorSlider.value = nvidiaFactor;
+        performanceRatioSlider.value = performanceRatio;
+      }
+
+      function updateModel() {
+        const effectiveYield = parseFloat(yieldSlider.value);
+        const hbm2026 = parseFloat(hbm2026Slider.value);
+        const hbm2027 = parseFloat(hbm2027Slider.value);
+        const nvidiaFactor = parseFloat(nvidiaFactorSlider.value) / 100;
+        const performanceRatio = parseFloat(performanceRatioSlider.value) / 100;
+
+        yieldValue.textContent = effectiveYield.toFixed(0) + '%';
+        hbm2026Value.textContent = hbm2026.toFixed(1) + 'M';
+        hbm2027Value.textContent = hbm2027.toFixed(1) + 'M';
+        nvidiaFactorValue.textContent = (nvidiaFactor * 100).toFixed(0) + '%';
+        performanceRatioValue.textContent = performanceRatio.toFixed(2) + '×';
+
+        const huaweiDetails = years.map(year => {
+          const hbmOverride = year === 2026 ? hbm2026 : (year === 2027 ? hbm2027 : baseHBMStacks[year]);
+        return computeHuaweiYear(year, effectiveYield, hbmOverride);
+      });
+
+      const huaweiOutputs = huaweiDetails.map(detail => detail.output);
+        const nvidiaOutputs = years.map(year => (baseNvidiaShipments[year] || 0) * nvidiaFactor);
+
+        const huaweiNVL72Series = huaweiOutputs.map(output => (output / performanceRatio) / gpusPerNVL72);
+        const nvidiaNVL72Series = nvidiaOutputs.map(output => output / gpusPerNVL72);
+        const hbmAvailableSeries = huaweiDetails.map(detail => detail.hbmStacks);
+        const hbmDemandSeries = huaweiDetails.map(detail => detail.hbmDemand);
+        const combinedNVL72Series = huaweiNVL72Series.map((value, idx) => value + nvidiaNVL72Series[idx]);
+        const computeGapSeries = nvidiaNVL72Series.map((value, idx) => value - huaweiNVL72Series[idx]);
+
+        Plotly.react(chartEl, [
+        {
+          x: years,
+          y: huaweiOutputs,
+          name: 'Huawei 910C packages (millions)',
+            type: 'bar',
+            marker: { color: '#c41e3a' }
+          },
+          {
+            x: years,
+            y: nvidiaOutputs,
+            name: 'NVIDIA total accelerator output (millions)',
+            type: 'bar',
+            marker: { color: '#76b900' }
+          },
+          {
+            x: years,
+            y: huaweiNVL72Series,
+            name: 'Huawei effective compute (GB200 NVL72 equivalents)',
+            type: 'scatter',
+            mode: 'lines+markers',
+            yaxis: 'y2',
+            line: { color: '#8b1a1a' },
+            marker: { symbol: 'circle' }
+          },
+          {
+            x: years,
+            y: nvidiaNVL72Series,
+            name: 'NVIDIA effective compute (GB200 NVL72 equivalents)',
+            type: 'scatter',
+            mode: 'lines+markers',
+            yaxis: 'y2',
+            line: { color: '#2d572c' },
+            marker: { symbol: 'square' }
+          }
+        ], {
+          barmode: 'group',
+          title: 'AI accelerator supply under different assumptions',
+          xaxis: { title: 'Year' },
+          yaxis: { title: 'Physical units (millions)', rangemode: 'tozero' },
+          yaxis2: {
+            title: 'Effective compute (GB200 NVL72 equivalents)',
+            overlaying: 'y',
+            side: 'right',
+            rangemode: 'tozero'
+          },
+        legend: { orientation: 'h', y: -0.2 }
+      });
+
+        Plotly.react(constraintChartEl, [
+          {
+            x: years,
+            y: hbmAvailableSeries,
+            name: 'HBM available',
+            type: 'scatter',
+            mode: 'lines+markers',
+            fill: 'tozeroy',
+            line: { color: '#60a5fa' },
+            marker: { symbol: 'circle' }
+          },
+          {
+            x: years,
+            y: hbmDemandSeries,
+            name: 'HBM required for Huawei output',
+            type: 'scatter',
+            mode: 'lines+markers',
+            fill: 'tozeroy',
+            line: { color: '#1d4ed8' },
+            marker: { symbol: 'square' }
+          }
+        ], {
+          title: 'HBM demand versus available supply',
+          xaxis: { title: 'Year' },
+          yaxis: { title: 'HBM stacks (millions)', rangemode: 'tozero' },
+          legend: { orientation: 'h', y: -0.2 }
+        });
+
+      const terminalIndex = years.length - 1;
+      const computeGap = computeGapSeries[terminalIndex];
+      const huawei2026Index = years.indexOf(2026);
+      const hbmLimitedYears = huaweiDetails.filter(detail => detail.constraint === 'HBM supply').length;
+      const waferLimitedYears = huaweiDetails.length - hbmLimitedYears;
+
+      if (metricGapEl) {
+        const prefix = computeGap >= 0 ? '+' : '−';
+        metricGapEl.textContent = `${prefix}${formatNVL72(Math.abs(computeGap))}`;
+      }
+
+      if (metricHuaweiEl && huawei2026Index !== -1) {
+        metricHuaweiEl.textContent = formatPackages(huaweiOutputs[huawei2026Index]);
+      }
+
+      if (metricConstraintEl) {
+        metricConstraintEl.textContent = `HBM ${hbmLimitedYears} · Wafers ${waferLimitedYears}`;
+      }
+
+      const tableRows = years.map((year, index) => {
+        const detail = huaweiDetails[index];
+        const nvidiaUnits = nvidiaOutputs[index];
+        const totalCompute = combinedNVL72Series[index];
+        return `<tr>
+          <td>${year}</td>
+          <td>${formatPackages(detail.output)}</td>
+          <td>${detail.constraint}</td>
+          <td>${formatStacks(detail.hbmDemand)} / ${formatStacks(detail.hbmStacks)}</td>
+          <td>${formatAccelerators(nvidiaUnits)}</td>
+          <td>${formatNVL72(totalCompute)}</td>
+          <td>${computeGapSeries[index] >= 0 ? '+' : '−'}${formatNVL72(Math.abs(computeGapSeries[index]))}</td>
+        </tr>`;
+      }).join('');
+
+      tableEl.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Huawei 910C packages</th>
+              <th>Binding constraint</th>
+              <th>HBM demand vs. available</th>
+              <th>NVIDIA shipments</th>
+              <th>Total effective compute</th>
+              <th>Compute gap (NVIDIA − Huawei)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>`;
+
+      if (sophgoTableEl) {
+        const sophgoRows = sophgoYears.map(year => {
+          const mix = sophgoDieForecast[year];
+          if (!mix) return '';
+          return `<tr>
+            <td>${year}</td>
+            <td>${formatPackages(mix['910B'])}</td>
+            <td>${formatPackages(mix['910C'])}</td>
+            <td>${(mix['910B'] / Math.max(mix['910C'], 0.0001)).toFixed(1)}×</td>
+          </tr>`;
+        }).join('');
+
+        sophgoTableEl.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th>910B packaged units</th>
+                <th>910C packaged units</th>
+                <th>Ratio (910B ÷ 910C)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${sophgoRows}
+            </tbody>
+          </table>`;
+      }
+
+      const scenario = scenarios[scenarioSelect.value];
+      const latestYearDetail = huaweiDetails[terminalIndex];
+      const latestNvidiaUnits = nvidiaOutputs[terminalIndex];
+      const narrative = scenario ? scenario.label : '';
+      const slack = latestYearDetail.hbmStacks - latestYearDetail.hbmDemand;
+      const slackText = slack >= 0
+        ? `${slack.toFixed(2)}M stacks of headroom`
+        : `${Math.abs(slack).toFixed(2)}M stack shortfall`;
+
+      const bulletPoints = [];
+      if (huawei2026Index !== -1) {
+        const diff2026 = hbmAvailableSeries[huawei2026Index] - hbmDemandSeries[huawei2026Index];
+        const diffText2026 = diff2026 >= 0
+          ? `${diff2026.toFixed(2)}M stacks spare`
+          : `${Math.abs(diff2026).toFixed(2)}M stack shortfall`;
+        bulletPoints.push(`2026: ${huaweiDetails[huawei2026Index].constraint} with ${formatStacks(hbmDemandSeries[huawei2026Index])} needed vs. ${formatStacks(hbmAvailableSeries[huawei2026Index])} available (${diffText2026}).`);
+      }
+      const diff2027 = latestYearDetail.hbmStacks - latestYearDetail.hbmDemand;
+      const diffText2027 = diff2027 >= 0
+        ? `${diff2027.toFixed(2)}M stacks spare`
+        : `${Math.abs(diff2027).toFixed(2)}M stack shortfall`;
+      bulletPoints.push(`2027: ${latestYearDetail.constraint} with ${formatStacks(latestYearDetail.hbmDemand)} needed vs. ${formatStacks(latestYearDetail.hbmStacks)} available (${diffText2027}).`);
+      bulletPoints.push(`Compute gap: NVIDIA ${computeGap >= 0 ? 'leads' : 'trails'} by ${formatNVL72(Math.abs(computeGap))}.`);
+
+      summaryEl.innerHTML = `
+        <h3>Scenario takeaway</h3>
+        <p>${narrative}</p>
+        <p>By ${years[terminalIndex]}, Huawei ships <strong>${formatPackages(latestYearDetail.output)}</strong> 910C packages with <strong>${slackText}</strong>, while NVIDIA delivers <strong>${formatAccelerators(latestNvidiaUnits)}</strong>. Combined, that is <strong>${formatNVL72(combinedNVL72Series[terminalIndex])}</strong> of effective compute.</p>
+        <ul>
+          ${bulletPoints.map(point => `<li>${point}</li>`).join('')}
+        </ul>
+      `;
+      }
+
+      updateModel();
+
+      [yieldSlider, hbm2026Slider, hbm2027Slider, nvidiaFactorSlider, performanceRatioSlider].forEach(slider => {
+        slider.addEventListener('input', updateModel);
+      });
+
+      scenarioSelect.addEventListener('change', event => {
+        applyScenarioValues(event.target.value);
+        updateModel();
+      });
+    });
+  </script>
+</body>
+</html>
