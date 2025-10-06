@@ -228,6 +228,7 @@
     <p>Advanced packaging is unlikely to be the binding constraint for the current Ascend generation: thermocompression bonding gear for 910C assembly is already stockpiled domestically, while the hybrid bonding techniques expected for 910D-class parts remain the more challenging frontier.</p>
     <p>Meanwhile, SemiAnalysis reports that NVIDIA is driving toward multi-million-unit annual run rates—including roughly <strong>350,000</strong> H20-class units from existing inventory in 2025 and a planned <strong>4 million</strong>-unit run rate for RTX PRO 6000 derivatives that serve as China-compliant accelerators—before layering in potential Blackwell-based SKUs such as the rumored B30A. The GB200 NVL72 comparison is scoped specifically to <strong>910C-class dual-die packages</strong> so the gap is framed in full-rack deployments of Huawei’s flagship parts rather than blended averages across 910B and 910C generations.</p>
     <p class="lede">Adjust the assumptions behind Huawei's 910C production ramp and NVIDIA's total fabrication capacity to see how HBM availability, wafer yields, and capital allocation shape effective compute—expressed as GB200 NVL72-equivalent systems—through 2027.</p>
+    <p class="lede">Adjust the assumptions behind Huawei's Ascend production ramp and NVIDIA's total fabrication capacity to see how HBM availability, wafer yields, and capital allocation shape effective compute—expressed as GB200 NVL72-equivalent systems—through 2027.</p>
 
     <div class="ai-compute-controls">
       <h2>Adjust the supply-side assumptions</h2>
@@ -243,6 +244,7 @@
       <div class="control-group">
         <label for="yield">Huawei 910C effective yield (across SMIC + Huawei fabs)</label>
         <input type="range" id="yield" min="10" max="90" value="55" step="1">
+        <label for="yield">Huawei effective yield (across SMIC + Huawei fabs)</label>
         <span class="value" id="yield-value">55%</span>
       </div>
       <div class="control-group">
@@ -263,6 +265,7 @@
       <div class="control-group">
         <label for="performance-ratio">Relative compute per chip (NVIDIA ÷ Huawei 910C)</label>
         <input type="range" id="performance-ratio" min="80" max="400" value="130" step="5">
+        <label for="performance-ratio">Relative compute per chip (NVIDIA ÷ Huawei)</label>
         <span class="value" id="performance-ratio-value">1.30×</span>
       </div>
     </div>
@@ -279,6 +282,9 @@
         <h4>Huawei 910C output in 2026</h4>
         <p class="metric-value" id="metric-huawei">--</p>
         <p class="metric-footnote">Dual-die 910C packages</p>
+        <h4>Huawei output in 2026</h4>
+        <p class="metric-value" id="metric-huawei">--</p>
+        <p class="metric-footnote">Packaged Ascend units</p>
       </div>
       <div class="metric-card">
         <h4>Constraint mix</h4>
@@ -306,6 +312,11 @@
         <li>NVIDIA's baseline assumes total accelerator output of roughly 3.6&nbsp;million units in 2025, 4.8&nbsp;million in 2026, and 5.5&nbsp;million in 2027 as supplier plans like the 4&nbsp;million-unit RTX PRO 6000 run rate come online. Use the fab output factor to flex those volumes up or down.</li>
         <li>Metric cards and the dedicated HBM chart make the binding constraint and NVIDIA compute gap—expressed in GB200 NVL72 equivalents—visible at a glance for each scenario.</li>
         <li>The performance ratio captures software and FLOP differentials between NVIDIA and Huawei's 910C accelerators.</li>
+        <li>Huawei's potential Ascend output blends die availability with an HBM constraint that assumes eight stacks per 910C-equivalent package.</li>
+        <li>HBM sliders control the domestic supply Huawei can count on once Samsung's stockpiled memory is exhausted.</li>
+        <li>NVIDIA's baseline assumes total accelerator output of roughly 3.6M units in 2025, 4.8M in 2026, and 5.5M in 2027 as supplier plans like the 4M-unit RTX PRO 6000 run rate come online. Use the fab output factor to flex those volumes up or down.</li>
+        <li>Metric cards and the dedicated HBM chart make the binding constraint and NVIDIA compute gap—expressed in GB200 NVL72 equivalents—visible at a glance for each scenario.</li>
+        <li>The performance ratio captures software and FLOP differentials between NVIDIA and Huawei accelerators.</li>
       </ul>
     </div>
 
@@ -318,6 +329,10 @@
         <li><strong>Sophgo packaging stays 910B-heavy.</strong> Internal forecasts hold Sophgo’s 910B builds at roughly ten times its 910C output—tens of thousands of 910Bs versus only a few thousand 910Cs—slowing the mix shift to newer parts.</li>
         <li><strong>Packaging tools are already stockpiled.</strong> Thermocompression bonding capabilities for 910C assembly are widely available inside China, so near-term constraints stem more from HBM availability than from access to advanced packaging gear; hybrid bonding hurdles bite harder with the upcoming 910D.</li>
         <li><strong>Domestic memory ramp is gradual.</strong> CXMT is expected to produce only ~2&nbsp;million HBM stacks next year (enough for roughly 250k–300k 910C packages) before expanding later in the decade; use the sliders to test alternative conversion speeds.</li>
+        <li><strong>Die banks bridge the gap to SMIC maturity.</strong> Huawei tapped roughly 2.9&nbsp;million Ascend die fabricated at TSMC to ship 507k accelerators in 2024 and still has stockpiles to support the 805k-unit 2025 baseline.</li>
+        <li><strong>SMIC allocation is no longer the binding constraint.</strong> SemiAnalysis models SMIC's advanced-node capacity rising from 45k wspm in 2025 to 80k by 2027, enabling millions of die if HBM were unconstrained.</li>
+        <li><strong>HBM availability caps short-term output.</strong> About 13&nbsp;million imported HBM stacks—enough for 1.6&nbsp;million Ascend 910Cs—will be exhausted, leaving Huawei dependent on domestic supply from 2026 onward.</li>
+        <li><strong>Domestic memory ramp is gradual.</strong> CXMT is expected to produce only ~2&nbsp;million HBM stacks next year (250k–300k Ascend packages) before expanding later in the decade; use the sliders to test alternative conversion speeds.</li>
       </ul>
 
       <h2>NVIDIA fab outlook</h2>
@@ -335,6 +350,7 @@
       </ul>
 
       <p class="ai-compute-context-summary">Collectively, these drivers explain why the model shows Huawei’s packaged 910C output dipping in 2026 before rebounding as domestic HBM capacity materializes—and why NVIDIA maintains a lead unless Chinese memory output or export approvals shift materially.</p>
+      <p class="ai-compute-context-summary">Collectively, these drivers explain why the model shows Huawei dipping in 2026 before rebounding as domestic HBM capacity materializes—and why NVIDIA maintains a lead unless Chinese memory output or export approvals shift materially.</p>
     </section>
   </main>
 
@@ -352,6 +368,9 @@
       const baseHuawei910cPotential = {
         2024: 0.25,
         2025: 0.65,
+      const baseHuaweiWaferCapacity = {
+        2024: 0.9,
+        2025: 1.5,
         2026: 5.2,
         2027: 6.0
       };
@@ -413,6 +432,7 @@
 
       function computeHuaweiYear(year, effectiveYield, hbmOverride) {
         const waferPotential = baseHuawei910cPotential[year] * (effectiveYield / 100);
+        const waferPotential = baseHuaweiWaferCapacity[year] * (effectiveYield / 100);
         const hbmStacks = year === 2025 ? baseHBMStacks[year] : hbmOverride;
         const hbmLimited = hbmStacks / stacksPerHuaweiChip;
         const output = Math.min(waferPotential, hbmLimited);
@@ -440,6 +460,12 @@
           return `${formatted.endsWith('.00') ? formatted.slice(0, -3) : formatted}M accelerators`;
         }
         return `${Math.round(value * 1000)}k accelerators`;
+      function formatUnits(value) {
+        if (value >= 1) {
+          const formatted = value.toFixed(2);
+          return `${formatted.endsWith('.00') ? formatted.slice(0, -3) : formatted}M units`;
+        }
+        return `${Math.round(value * 1000)}k units`;
       }
 
     function formatStacks(value) {
@@ -499,6 +525,10 @@
       });
 
       const huaweiOutputs = huaweiDetails.map(detail => detail.output);
+          return computeHuaweiYear(year, effectiveYield, hbmOverride);
+        });
+
+        const huaweiOutputs = huaweiDetails.map(detail => detail.output);
         const nvidiaOutputs = years.map(year => (baseNvidiaShipments[year] || 0) * nvidiaFactor);
 
         const huaweiNVL72Series = huaweiOutputs.map(output => (output / performanceRatio) / gpusPerNVL72);
@@ -513,6 +543,10 @@
           x: years,
           y: huaweiOutputs,
           name: 'Huawei 910C packages (millions)',
+          {
+            x: years,
+            y: huaweiOutputs,
+            name: 'Huawei Ascend units (millions)',
             type: 'bar',
             marker: { color: '#c41e3a' }
           },
@@ -598,6 +632,7 @@
 
       if (metricHuaweiEl && huawei2026Index !== -1) {
         metricHuaweiEl.textContent = formatPackages(huaweiOutputs[huawei2026Index]);
+        metricHuaweiEl.textContent = formatUnits(huaweiOutputs[huawei2026Index]);
       }
 
       if (metricConstraintEl) {
@@ -614,6 +649,10 @@
           <td>${detail.constraint}</td>
           <td>${formatStacks(detail.hbmDemand)} / ${formatStacks(detail.hbmStacks)}</td>
           <td>${formatAccelerators(nvidiaUnits)}</td>
+          <td>${formatUnits(detail.output)}</td>
+          <td>${detail.constraint}</td>
+          <td>${formatStacks(detail.hbmDemand)} / ${formatStacks(detail.hbmStacks)}</td>
+          <td>${formatUnits(nvidiaUnits)}</td>
           <td>${formatNVL72(totalCompute)}</td>
           <td>${computeGapSeries[index] >= 0 ? '+' : '−'}${formatNVL72(Math.abs(computeGapSeries[index]))}</td>
         </tr>`;
@@ -625,6 +664,7 @@
             <tr>
               <th>Year</th>
               <th>Huawei 910C packages</th>
+              <th>Huawei packaged output</th>
               <th>Binding constraint</th>
               <th>HBM demand vs. available</th>
               <th>NVIDIA shipments</th>
@@ -664,6 +704,10 @@
             </tbody>
           </table>`;
       }
+            <tbody>
+              ${tableRows}
+            </tbody>
+          </table>`;
 
       const scenario = scenarios[scenarioSelect.value];
       const latestYearDetail = huaweiDetails[terminalIndex];
@@ -693,6 +737,7 @@
         <h3>Scenario takeaway</h3>
         <p>${narrative}</p>
         <p>By ${years[terminalIndex]}, Huawei ships <strong>${formatPackages(latestYearDetail.output)}</strong> 910C packages with <strong>${slackText}</strong>, while NVIDIA delivers <strong>${formatAccelerators(latestNvidiaUnits)}</strong>. Combined, that is <strong>${formatNVL72(combinedNVL72Series[terminalIndex])}</strong> of effective compute.</p>
+        <p>By ${years[terminalIndex]}, Huawei ships <strong>${formatUnits(latestYearDetail.output)}</strong> with <strong>${slackText}</strong>, while NVIDIA delivers <strong>${formatUnits(latestNvidiaUnits)}</strong>. Combined, that is <strong>${formatNVL72(combinedNVL72Series[terminalIndex])}</strong> of effective compute.</p>
         <ul>
           ${bulletPoints.map(point => `<li>${point}</li>`).join('')}
         </ul>
