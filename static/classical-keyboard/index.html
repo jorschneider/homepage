@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Classical Melody Keyboard</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f3f1ff;
+      --panel: #ffffff;
+      --text: #1d1b2f;
+      --accent-1: #ff9f1c;
+      --accent-2: #ff595e;
+      --accent-3: #8ac926;
+      --accent-4: #1982c4;
+      --accent-5: #6a4c93;
+      --accent-6: #ffca3a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Nunito', 'Helvetica Neue', Arial, sans-serif;
+      background: radial-gradient(circle at top, #ffffff 0%, var(--bg) 60%, #e2ddff 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    main {
+      max-width: 1040px;
+      width: 100%;
+      background: var(--panel);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(40, 24, 80, 0.25);
+      padding: 2.5rem 2rem 2.75rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    main::after {
+      content: "";
+      position: absolute;
+      inset: -120px -160px auto auto;
+      width: 280px;
+      height: 280px;
+      background: linear-gradient(135deg, rgba(255, 153, 0, 0.4), rgba(25, 130, 196, 0.35));
+      border-radius: 50%;
+      z-index: 0;
+      filter: blur(0.5px);
+    }
+
+    header {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    h1 {
+      margin: 0 0 0.75rem;
+      font-size: clamp(2.1rem, 4vw, 2.8rem);
+    }
+
+    p.lead {
+      margin: 0 auto;
+      max-width: 640px;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .now-playing {
+      margin: 1.75rem auto 0;
+      max-width: 680px;
+      background: rgba(255, 255, 255, 0.75);
+      border-radius: 16px;
+      padding: 0.85rem 1.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      box-shadow: 0 8px 24px rgba(30, 30, 60, 0.12);
+    }
+
+    .now-playing .label {
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.85rem;
+      color: rgba(29, 27, 47, 0.7);
+    }
+
+    .now-playing .value {
+      font-weight: 600;
+    }
+
+    .keys-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+
+    .key-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 18px;
+      padding: 1.4rem 1.1rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(30, 30, 60, 0.18);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      border: 3px solid transparent;
+      position: relative;
+      --card-color: var(--accent-4);
+    }
+
+    .key-card span.letter {
+      font-size: clamp(2.1rem, 5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.55rem;
+      display: inline-flex;
+      flex-wrap: wrap;
+      width: 68px;
+      height: 68px;
+      border-radius: 18px;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.1;
+      text-align: center;
+      white-space: normal;
+      color: white;
+    }
+
+    .key-card span.title {
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .key-card span.subtitle {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+
+    .key-card .progress-track {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 14px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.7);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .key-card .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: var(--card-color);
+      border-radius: inherit;
+    }
+
+    .key-card[data-active="true"] .progress-track {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .key-card[data-active="true"] {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 16px 32px rgba(30, 30, 60, 0.25);
+      border-color: rgba(106, 76, 147, 0.6);
+    }
+
+    .key-card[data-queued="true"] {
+      border-color: rgba(106, 76, 147, 0.35);
+      box-shadow: 0 12px 26px rgba(30, 30, 60, 0.18);
+    }
+
+    .key-card[data-queued="true"]::after {
+      content: 'Next';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(106, 76, 147, 0.16);
+      color: var(--text);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.55rem;
+      border-radius: 999px;
+    }
+
+    .key-card:active {
+      transform: translateY(2px) scale(0.99);
+    }
+
+    .controls {
+      margin-top: 2.5rem;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+    }
+
+    button.stop {
+      background: var(--accent-4);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.05rem;
+      border: none;
+      border-radius: 999px;
+      padding: 0.9rem 2.4rem;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(25, 130, 196, 0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    }
+
+    button.stop:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 36px rgba(25, 130, 196, 0.35);
+      filter: brightness(1.05);
+    }
+
+    button.stop:active {
+      transform: translateY(1px);
+    }
+
+    footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: rgba(29, 27, 47, 0.7);
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 2rem 1.4rem;
+      }
+
+      .key-card {
+        padding: 1.1rem 0.85rem 1.7rem;
+      }
+
+      .now-playing {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+      }
+
+      .key-card span.letter {
+        width: 60px;
+        height: 60px;
+        font-size: 2.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Classical Melody Keyboard</h1>
+      <p class="lead">Every key on your keyboard lights up with a gentle classical riff—press one key or tap a card, then listen all the way through (or line up a few; they patiently wait their turn!).</p>
+      <div class="now-playing" role="status" aria-live="polite">
+        <span class="label">Now playing</span>
+        <span class="value">Press any key or tap a card to begin!</span>
+      </div>
+    </header>
+
+    <section class="keys-grid" aria-label="Keyboard melody options"></section>
+
+    <div class="controls">
+      <button class="stop" type="button" id="stopButton">Stop the music</button>
+    </div>
+
+    <footer>
+      Tip: Turn the volume to a comfy level, then explore the melodies together—line up as many keys as you like and they'll take turns.
+    </footer>
+  </main>
+
+  <script>
+    const NOTE_FREQUENCIES = {
+      'C3': 130.81,
+      'D3': 146.83,
+      'E3': 164.81,
+      'F3': 174.61,
+      'G3': 196.0,
+      'A3': 220.0,
+      'Bb3': 233.08,
+      'B3': 246.94,
+      'C4': 261.63,
+      'Cs4': 277.18,
+      'D4': 293.66,
+      'Ds4': 311.13,
+      'E4': 329.63,
+      'F4': 349.23,
+      'Fs4': 369.99,
+      'G4': 392.0,
+      'Gs4': 415.3,
+      'A4': 440.0,
+      'As4': 466.16,
+      'B4': 493.88,
+      'C5': 523.25,
+      'Cs5': 554.37,
+      'D5': 587.33,
+      'Ds5': 622.25,
+      'E5': 659.26,
+      'F5': 698.46,
+      'Fs5': 739.99,
+      'G5': 783.99,
+      'Gs5': 830.61,
+      'A5': 880.0,
+      'B5': 987.77,
+      'C6': 1046.5
+    };
+
+    const PATTERN_LIBRARY = {
+      ode: {
+        title: 'Ode to Joy',
+        composer: 'L. v. Beethoven',
+        notes: [
+          { note: 'E4', duration: 420 },
+          { note: 'E4', duration: 420 },
+          { note: 'F4', duration: 420 },
+          { note: 'G4', duration: 620 },
+          { note: 'G4', duration: 420 },
+          { note: 'F4', duration: 420 },
+          { note: 'E4', duration: 420 },
+          { note: 'D4', duration: 620 },
+          { note: 'C4', duration: 420 },
+          { note: 'C4', duration: 420 },
+          { note: 'D4', duration: 420 },
+          { note: 'E4', duration: 620 },
+          { note: 'E4', duration: 420 },
+          { note: 'D4', duration: 420 },
+          { note: 'D4', duration: 840 }
+        ]
+      },
+      mozart: {
+        title: 'Eine Kleine Nachtmusik',
+        composer: 'W. A. Mozart',
+        notes: [
+          { note: 'G4', duration: 420 },
+          { note: 'G4', duration: 420 },
+          { note: 'D4', duration: 420 },
+          { note: 'E4', duration: 420 },
+          { note: 'F4', duration: 420 },
+          { note: 'F4', duration: 420 },
+          { note: 'E4', duration: 420 },
+          { note: 'D4', duration: 420 },
+          { note: 'C4', duration: 420 },
+          { note: 'E4', duration: 420 },
+          { note: 'G4', duration: 840 },
+          { note: 'G4', duration: 420 },
+          { note: 'F4', duration: 420 },
+          { note: 'E4', duration: 420 },
+          { note: 'D4', duration: 840 }
+        ]
+      },
+      minuet: {
+        title: 'Minuet in G',
+        composer: 'J. S. Bach',
+        notes: [
+          { note: 'G4', duration: 420 },
+          { note: 'A4', duration: 420 },
+          { note: 'B4', duration: 420 },
+          { note: 'C5', duration: 420 },
+          { note: 'D5', duration: 840 },
+          { note: 'B4', duration: 420 },
+          { note: 'C5', duration: 420 },
+          { note: 'D5', duration: 420 },
+          { note: 'E5', duration: 420 },
+          { note: 'C5', duration: 840 },
+          { note: 'A4', duration: 420 },
+          { note: 'B4', duration: 420 },
+          { note: 'C5', duration: 420 },
+          { note: 'D5', duration: 420 },
+          { note: 'B4', duration: 840 }
+        ]
+      },
+      canon: {
+        title: 'Canon in D',
+        composer: 'J. Pachelbel',
+        notes: [
+          { note: 'Fs4', duration: 420 },
+          { note: 'E4', duration: 420 },
+          { note: 'Ds4', duration: 420 },
+          { note: 'Cs4', duration: 420 },
+          { note: 'B3', duration: 420 },
+          { note: 'Cs4', duration: 420 },
+          { note: 'Ds4', duration: 420 },
+          { note: 'E4', duration: 420 },
+          { note: 'Fs4', duration: 420 },
+          { note: 'E4', duration: 420 },
+          { note: 'Ds4', duration: 420 },
+          { note: 'Cs4', duration: 420 },
+          { note: 'B3', duration: 420 },
+          { note: 'Cs4', duration: 420 },
+          { note: 'Ds4', duration: 840 }
+        ]
+      },
+      sugarPlum: {
+        title: 'Dance of the Sugar Plum Fairy',
+        composer: 'P. I. Tchaikovsky',
+        notes: [
+          { note: 'G4', duration: 420 },
+          { note: 'REST', duration: 210 },
+          { note: 'G4', duration: 420 },
+          { note: 'REST', duration: 210 },
+          { note: 'G4', duration: 420 },
+          { note: 'Ds5', duration: 420 },
+          { note: 'Gs4', duration: 420 },
+          { note: 'G4', duration: 420 },
+          { note: 'Ds5', duration: 420 },
+          { note: 'Gs4', duration: 420 },
+          { note: 'G4', duration: 420 },
+          { note: 'Ds5', duration: 420 },
+          { note: 'Gs4', duration: 420 },
+          { note: 'G4', duration: 420 },
+          { note: 'Ds5', duration: 840 }
+        ]
+      },
+      morning: {
+        title: 'Morning Mood',
+        composer: 'E. Grieg',
+        notes: [
+          { note: 'E4', duration: 420 },
+          { note: 'G4', duration: 420 },
+          { note: 'A4', duration: 420 },
+          { note: 'B4', duration: 420 },
+          { note: 'C5', duration: 840 },
+          { note: 'B4', duration: 420 },
+          { note: 'A4', duration: 420 },
+          { note: 'G4', duration: 420 },
+          { note: 'E4', duration: 420 },
+          { note: 'G4', duration: 420 },
+          { note: 'A4', duration: 420 },
+          { note: 'B4', duration: 420 },
+          { note: 'C5', duration: 840 },
+          { note: 'B4', duration: 420 },
+          { note: 'A4', duration: 840 }
+        ]
+      },
+      twinkle: {
+        title: 'Twinkle, Twinkle Little Star',
+        composer: 'W. A. Mozart',
+        notes: [
+          { note: 'C4', duration: 420 },
+          { note: 'C4', duration: 420 },
+          { note: 'G4', duration: 420 },
+          { note: 'G4', duration: 420 },
+          { note: 'A4', duration: 420 },
+          { note: 'A4', duration: 420 },
+          { note: 'G4', duration: 840 },
+          { note: 'F4', duration: 420 },
+          { note: 'F4', duration: 420 },
+          { note: 'E4', duration: 420 },
+          { note: 'E4', duration: 420 },
+          { note: 'D4', duration: 420 },
+          { note: 'D4', duration: 420 },
+          { note: 'C4', duration: 840 }
+        ]
+      },
+      clair: {
+        title: 'Clair de Lune',
+        composer: 'C. Debussy',
+        notes: [
+          { note: 'D4', duration: 420 },
+          { note: 'Fs4', duration: 420 },
+          { note: 'A4', duration: 620 },
+          { note: 'D5', duration: 420 },
+          { note: 'Cs5', duration: 420 },
+          { note: 'A4', duration: 620 },
+          { note: 'Fs4', duration: 420 },
+          { note: 'D4', duration: 840 }
+        ]
+      },
+      swan: {
+        title: 'Swan Lake',
+        composer: 'P. I. Tchaikovsky',
+        notes: [
+          { note: 'A4', duration: 420 },
+          { note: 'E5', duration: 420 },
+          { note: 'F5', duration: 420 },
+          { note: 'E5', duration: 420 },
+          { note: 'D5', duration: 420 },
+          { note: 'B4', duration: 420 },
+          { note: 'A4', duration: 420 },
+          { note: 'Fs4', duration: 420 },
+          { note: 'E4', duration: 840 }
+        ]
+      },
+      blueDanube: {
+        title: 'The Blue Danube',
+        composer: 'J. Strauss II',
+        notes: [
+          { note: 'D4', duration: 420 },
+          { note: 'Fs4', duration: 420 },
+          { note: 'A4', duration: 420 },
+          { note: 'D5', duration: 620 },
+          { note: 'A4', duration: 420 },
+          { note: 'Fs4', duration: 420 },
+          { note: 'D4', duration: 620 },
+          { note: 'Fs4', duration: 420 },
+          { note: 'A4', duration: 420 },
+          { note: 'D5', duration: 840 }
+        ]
+      },
+      spring: {
+        title: 'Spring',
+        composer: 'A. Vivaldi',
+        notes: [
+          { note: 'E5', duration: 420 },
+          { note: 'E5', duration: 420 },
+          { note: 'E5', duration: 420 },
+          { note: 'C5', duration: 420 },
+          { note: 'E5', duration: 420 },
+          { note: 'Fs5', duration: 420 },
+          { note: 'G5', duration: 840 },
+          { note: 'E5', duration: 420 },
+          { note: 'C5', duration: 420 },
+          { note: 'E5', duration: 420 },
+          { note: 'G5', duration: 840 }
+        ]
+      },
+      gymno: {
+        title: 'Gymnopédie No. 1',
+        composer: 'E. Satie',
+        notes: [
+          { note: 'D4', duration: 420 },
+          { note: 'A4', duration: 620 },
+          { note: 'Fs4', duration: 420 },
+          { note: 'D4', duration: 420 },
+          { note: 'G4', duration: 420 },
+          { note: 'B4', duration: 620 },
+          { note: 'A4', duration: 420 },
+          { note: 'Fs4', duration: 840 }
+        ]
+      },
+      lullaby: {
+        title: 'Brahms' Lullaby',
+        composer: 'J. Brahms',
+        notes: [
+          { note: 'G4', duration: 420 },
+          { note: 'E4', duration: 420 },
+          { note: 'G4', duration: 420 },
+          { note: 'E4', duration: 420 },
+          { note: 'G4', duration: 420 },
+          { note: 'B4', duration: 420 },
+          { note: 'A4', duration: 840 },
+          { note: 'A4', duration: 420 },
+          { note: 'Fs4', duration: 420 },
+          { note: 'A4', duration: 420 },
+          { note: 'Fs4', duration: 420 },
+          { note: 'A4', duration: 420 },
+          { note: 'D5', duration: 420 },
+          { note: 'B4', duration: 840 }
+        ]
+      }
+    };
+
+    const KEY_ROWS = [
+      ['Escape', '`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
+      ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\'],
+      ['CapsLock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", 'Enter'],
+      ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/'],
+      ['Control', 'Alt', 'Space', 'AltGraph', 'Meta'],
+      ['Insert', 'Home', 'PageUp', 'Delete', 'End', 'PageDown', 'ArrowLeft', 'ArrowDown', 'ArrowUp', 'ArrowRight']
+    ];
+
+    const COLOR_POOL = [
+      'var(--accent-1)',
+      'var(--accent-2)',
+      'var(--accent-3)',
+      'var(--accent-4)',
+      'var(--accent-5)',
+      'var(--accent-6)'
+    ];
+
+    const PATTERN_SEQUENCE = [
+      'ode',
+      'mozart',
+      'minuet',
+      'canon',
+      'sugarPlum',
+      'morning',
+      'twinkle',
+      'clair',
+      'swan',
+      'blueDanube',
+      'spring',
+      'gymno',
+      'lullaby'
+    ];
+
+    const FRIENDLY_NAMES = {
+      'Escape': 'Esc',
+      '`': 'Backtick',
+      '-': 'Minus',
+      '=': 'Equals',
+      'Backspace': 'Backspace',
+      'Tab': 'Tab',
+      '[': 'Left Bracket',
+      ']': 'Right Bracket',
+      '\': 'Backslash',
+      'CapsLock': 'Caps Lock',
+      ';': 'Semicolon',
+      "'": 'Apostrophe',
+      'Enter': 'Enter',
+      'Shift': 'Shift',
+      ',': 'Comma',
+      '.': 'Period',
+      '/': 'Slash',
+      'Control': 'Ctrl',
+      'Alt': 'Alt',
+      'Space': 'Space',
+      'AltGraph': 'AltGr',
+      'Meta': 'Meta',
+      'Insert': 'Insert',
+      'Home': 'Home',
+      'PageUp': 'Pg Up',
+      'Delete': 'Delete',
+      'End': 'End',
+      'PageDown': 'Pg Dn',
+      'ArrowLeft': '←',
+      'ArrowDown': '↓',
+      'ArrowUp': '↑',
+      'ArrowRight': '→'
+    };
+
+    function datasetKeyFor(key) {
+      switch (key) {
+        case 'Escape': return 'escape';
+        case ' ': return 'space';
+        case '`': return 'backtick';
+        case '-': return 'minus';
+        case '=': return 'equals';
+        case 'Backspace': return 'backspace';
+        case 'Tab': return 'tab';
+        case '[': return 'leftbracket';
+        case ']': return 'rightbracket';
+        case '\': return 'backslash';
+        case 'CapsLock': return 'capslock';
+        case ';': return 'semicolon';
+        case "'": return 'apostrophe';
+        case 'Enter': return 'enter';
+        case 'Shift': return 'shift';
+        case ',': return 'comma';
+        case '.': return 'period';
+        case '/': return 'slash';
+        case 'Control': return 'control';
+        case 'Alt': return 'alt';
+        case 'Space': return 'space';
+        case 'AltGraph': return 'altgraph';
+        case 'Meta': return 'meta';
+        case 'Insert': return 'insert';
+        case 'Home': return 'home';
+        case 'PageUp': return 'pageup';
+        case 'Delete': return 'delete';
+        case 'End': return 'end';
+        case 'PageDown': return 'pagedown';
+        case 'ArrowLeft': return 'arrowleft';
+        case 'ArrowDown': return 'arrowdown';
+        case 'ArrowUp': return 'arrowup';
+        case 'ArrowRight': return 'arrowright';
+        default: return key;
+      }
+    }
+
+    function displayLabelFor(key) {
+      if (key === ' ') {
+        return 'Space';
+      }
+      if (FRIENDLY_NAMES[key]) {
+        return FRIENDLY_NAMES[key];
+      }
+      return key.length === 1 ? key.toUpperCase() : key;
+    }
+
+    const melodies = {};
+    const keyMatcher = {};
+    const keysGrid = document.querySelector('.keys-grid');
+    const nowPlayingValue = document.querySelector('.now-playing .value');
+
+    const keyEntries = [];
+    KEY_ROWS.forEach(row => {
+      row.forEach(key => {
+        const datasetKey = datasetKeyFor(key);
+        const display = displayLabelFor(key);
+        keyEntries.push({ key, datasetKey, display });
+      });
+    });
+
+    keyEntries.forEach((entry, index) => {
+      const patternId = PATTERN_SEQUENCE[index % PATTERN_SEQUENCE.length];
+      const pattern = PATTERN_LIBRARY[patternId];
+      const color = COLOR_POOL[index % COLOR_POOL.length];
+
+      melodies[entry.datasetKey] = {
+        title: pattern.title,
+        composer: pattern.composer,
+        keyLabel: entry.display,
+        notes: pattern.notes
+      };
+
+      const card = document.createElement('article');
+      card.className = 'key-card';
+      card.dataset.key = entry.datasetKey;
+      card.dataset.color = color;
+      card.style.setProperty('--card-color', color);
+      card.innerHTML = `
+        <span class="letter" aria-hidden="true">${entry.display}</span>
+        <span class="title">${pattern.title}</span>
+        <span class="subtitle">${pattern.composer}</span>
+        <div class="progress-track" aria-hidden="true">
+          <div class="progress-bar"></div>
+        </div>
+      `;
+      card.setAttribute('title', `${entry.display} key · ${pattern.title}`);
+      card.setAttribute('aria-label', `${entry.display} key plays ${pattern.title}`);
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      keysGrid.appendChild(card);
+
+      const letterSpan = card.querySelector('.letter');
+      if (entry.display.length > 2) {
+        letterSpan.style.fontSize = 'clamp(1.1rem, 2.4vw, 1.5rem)';
+        letterSpan.style.padding = '0 0.45rem';
+        letterSpan.style.letterSpacing = '0.02em';
+      }
+      if (entry.display.length > 7) {
+        letterSpan.style.fontSize = 'clamp(0.95rem, 2vw, 1.2rem)';
+      }
+
+      const gradient = `linear-gradient(145deg, ${color}33, #ffffff)`;
+      letterSpan.style.background = color;
+      card.style.background = gradient;
+
+      const activate = () => enqueueMelody(entry.datasetKey);
+
+      card.addEventListener('click', activate);
+      card.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          event.stopPropagation();
+          activate();
+        }
+      });
+
+      keyMatcher[entry.key] = entry.datasetKey;
+      keyMatcher[entry.key.toLowerCase()] = entry.datasetKey;
+      if (entry.key.length === 1) {
+        keyMatcher[entry.key.toUpperCase()] = entry.datasetKey;
+      }
+      if (entry.key === ' ' || entry.key === 'Space') {
+        keyMatcher[' '] = entry.datasetKey;
+        keyMatcher['Spacebar'] = entry.datasetKey;
+      }
+      if (entry.key === 'Escape') {
+        keyMatcher['Esc'] = entry.datasetKey;
+      }
+      if (entry.key === 'Enter') {
+        keyMatcher['Return'] = entry.datasetKey;
+      }
+      if (entry.key === 'Meta') {
+        keyMatcher['OS'] = entry.datasetKey;
+        keyMatcher['Win'] = entry.datasetKey;
+      }
+      if (entry.key === 'AltGraph') {
+        keyMatcher['AltGr'] = entry.datasetKey;
+      }
+    });
+
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const masterGain = audioContext.createGain();
+    masterGain.gain.value = 0.28;
+    masterGain.connect(audioContext.destination);
+
+    const playbackQueue = [];
+    let isProcessingQueue = false;
+    let cancelCurrent = false;
+    let activeNodes = [];
+    let currentCard = null;
+
+    function totalDurationForMelody(melody) {
+      if (!melody || !Array.isArray(melody.notes)) {
+        return 0;
+      }
+      const base = melody.notes.reduce((total, segment) => {
+        const duration = typeof segment.duration === 'number' ? segment.duration : 0;
+        return total + Math.max(duration, 0);
+      }, 0);
+      const padding = melody.notes.length * 60;
+      return base + padding;
+    }
+
+    function startProgress(card, durationMs) {
+      if (!card) {
+        return;
+      }
+      const bar = card.querySelector('.progress-bar');
+      if (!bar) {
+        return;
+      }
+      const safeDuration = Math.max(durationMs || 0, 400);
+      bar.style.transition = 'none';
+      bar.style.width = '0%';
+      requestAnimationFrame(() => {
+        bar.style.transition = `width ${safeDuration}ms linear`;
+        bar.style.width = '100%';
+      });
+    }
+
+    function clearProgress(card) {
+      if (!card) {
+        return;
+      }
+      const bar = card.querySelector('.progress-bar');
+      if (!bar) {
+        return;
+      }
+      requestAnimationFrame(() => {
+        bar.style.transition = 'width 220ms ease';
+        bar.style.width = '0%';
+      });
+    }
+
+    function describeMelody(key) {
+      const melody = melodies[key];
+      if (!melody) {
+        return null;
+      }
+      return `${melody.title} — ${melody.composer} (${melody.keyLabel} key)`;
+    }
+
+    function refreshNowPlayingStatus() {
+      if (!nowPlayingValue) {
+        return;
+      }
+      if (currentCard && currentCard.dataset && currentCard.dataset.key) {
+        const description = describeMelody(currentCard.dataset.key);
+        if (description) {
+          nowPlayingValue.textContent = description;
+          return;
+        }
+      }
+      if (playbackQueue.length > 0) {
+        const nextDescription = describeMelody(playbackQueue[0]);
+        if (nextDescription) {
+          nowPlayingValue.textContent = `Queued: ${nextDescription}`;
+          return;
+        }
+      }
+      nowPlayingValue.textContent = 'Press any key or tap a card to begin!';
+    }
+
+    function wait(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function updateQueueIndicators() {
+      const cards = document.querySelectorAll('.key-card');
+      const queuedSet = new Set(playbackQueue);
+      const currentKey = currentCard ? currentCard.dataset.key : null;
+      cards.forEach((card) => {
+        if (queuedSet.has(card.dataset.key) && card.dataset.key !== currentKey) {
+          card.dataset.queued = 'true';
+        } else {
+          delete card.dataset.queued;
+        }
+      });
+      refreshNowPlayingStatus();
+    }
+
+    function setActiveCard(key, totalDuration) {
+      unsetActiveCard();
+      const card = document.querySelector(`.key-card[data-key="${key}"]`);
+      if (card) {
+        currentCard = card;
+        card.dataset.active = 'true';
+        delete card.dataset.queued;
+        if (typeof totalDuration === 'number' && totalDuration > 0) {
+          startProgress(card, totalDuration);
+        }
+        refreshNowPlayingStatus();
+      }
+    }
+
+    function unsetActiveCard() {
+      if (currentCard) {
+        const previous = currentCard;
+        previous.dataset.active = 'false';
+        clearProgress(previous);
+        currentCard = null;
+        updateQueueIndicators();
+      }
+    }
+
+    async function playSegment(segment) {
+      if (cancelCurrent) {
+        return;
+      }
+
+      const durationMs = typeof segment.duration === 'number' ? segment.duration : 0;
+      const frequency = NOTE_FREQUENCIES[segment.note];
+      if (!frequency) {
+        await wait(durationMs);
+        return;
+      }
+
+      const now = audioContext.currentTime;
+      const oscillator = audioContext.createOscillator();
+      const overtone = audioContext.createOscillator();
+      const vibrato = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      const overtoneGain = audioContext.createGain();
+      const vibratoGain = audioContext.createGain();
+
+      oscillator.type = 'triangle';
+      oscillator.frequency.setValueAtTime(frequency, now);
+
+      overtone.type = 'sine';
+      overtone.frequency.setValueAtTime(frequency * 2, now);
+      overtoneGain.gain.value = 0.18;
+
+      vibrato.type = 'sine';
+      vibrato.frequency.value = 5.5;
+      vibratoGain.gain.value = Math.max(frequency * 0.008, 1.5);
+
+      oscillator.connect(gainNode);
+      overtone.connect(overtoneGain);
+      overtoneGain.connect(gainNode);
+      vibrato.connect(vibratoGain);
+      vibratoGain.connect(oscillator.frequency);
+      gainNode.connect(masterGain);
+
+      const totalSeconds = Math.max(durationMs / 1000, 0.12);
+      const attack = Math.min(0.09, totalSeconds * 0.3);
+      const decay = Math.min(0.1, totalSeconds * 0.2);
+      const sustainLevel = 0.42;
+      const release = Math.min(0.2, totalSeconds * 0.35);
+      const sustain = Math.max(totalSeconds - attack - decay - release, 0.02);
+
+      gainNode.gain.cancelScheduledValues(now);
+      gainNode.gain.setValueAtTime(0.0001, now);
+      gainNode.gain.exponentialRampToValueAtTime(0.9, now + attack);
+      gainNode.gain.setTargetAtTime(sustainLevel, now + attack, decay);
+      gainNode.gain.setTargetAtTime(0.0001, now + attack + sustain, release);
+
+      oscillator.start(now);
+      overtone.start(now);
+      vibrato.start(now);
+
+      const nodeGroup = { gainNode, oscillators: [oscillator, overtone, vibrato] };
+      activeNodes.push(nodeGroup);
+
+      await wait(Math.max(durationMs - 40, 10));
+      if (!cancelCurrent) {
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.05);
+        await wait(60);
+      }
+
+      nodeGroup.oscillators.forEach((node) => {
+        try {
+          node.stop();
+        } catch (err) {
+          /* oscillator may already be stopped */
+        }
+        try {
+          node.disconnect();
+        } catch (err) {
+          /* ignore */
+        }
+      });
+      [gainNode, overtoneGain, vibratoGain].forEach((node) => {
+        try {
+          node.disconnect();
+        } catch (err) {
+          /* ignore */
+        }
+      });
+
+      activeNodes = activeNodes.filter((entry) => entry !== nodeGroup);
+    }
+
+    async function runMelody(key) {
+      const melody = melodies[key];
+      if (!melody) {
+        return;
+      }
+
+      await audioContext.resume();
+      const totalDuration = totalDurationForMelody(melody);
+      setActiveCard(key, totalDuration);
+
+      for (const segment of melody.notes) {
+        if (cancelCurrent) {
+          break;
+        }
+        await playSegment(segment);
+      }
+
+      if (!cancelCurrent) {
+        await wait(140);
+        unsetActiveCard();
+      }
+      refreshNowPlayingStatus();
+    }
+
+    async function processQueue() {
+      if (isProcessingQueue) {
+        return;
+      }
+      isProcessingQueue = true;
+      try {
+        while (playbackQueue.length > 0) {
+          if (cancelCurrent) {
+            playbackQueue.length = 0;
+            break;
+          }
+          const nextKey = playbackQueue.shift();
+          updateQueueIndicators();
+          await runMelody(nextKey);
+        }
+      } finally {
+        isProcessingQueue = false;
+        if (!cancelCurrent) {
+          unsetActiveCard();
+        }
+        cancelCurrent = false;
+        updateQueueIndicators();
+      }
+    }
+
+    function enqueueMelody(key) {
+      if (!melodies[key]) {
+        return;
+      }
+      playbackQueue.push(key);
+      updateQueueIndicators();
+      if (!isProcessingQueue) {
+        cancelCurrent = false;
+        processQueue();
+      }
+    }
+
+    function stopPlayback() {
+      if (!isProcessingQueue && activeNodes.length === 0) {
+        return;
+      }
+      cancelCurrent = true;
+      playbackQueue.length = 0;
+      updateQueueIndicators();
+      const now = audioContext.currentTime;
+      activeNodes.forEach(({ gainNode, oscillators }) => {
+        try {
+          gainNode.gain.cancelScheduledValues(now);
+          gainNode.gain.setTargetAtTime(0.0001, now, 0.05);
+        } catch (err) {
+          /* ignore */
+        }
+        oscillators.forEach((node) => {
+          try {
+            node.stop(now + 0.05);
+          } catch (err) {
+            /* ignore */
+          }
+        });
+      });
+      activeNodes = [];
+      unsetActiveCard();
+    }
+
+    document.addEventListener('keydown', (event) => {
+      const rawKey = event.key;
+      const lowerKey = typeof rawKey === 'string' ? rawKey.toLowerCase() : rawKey;
+      const upperKey = typeof rawKey === 'string' ? rawKey.toUpperCase() : rawKey;
+      const datasetKey = keyMatcher[rawKey] || keyMatcher[lowerKey] || keyMatcher[upperKey];
+      if (datasetKey) {
+        event.preventDefault();
+        enqueueMelody(datasetKey);
+      }
+    });
+
+    document.getElementById('stopButton').addEventListener('click', () => {
+      stopPlayback();
+    });
+
+    refreshNowPlayingStatus();
+
+    setTimeout(() => {
+      const cards = document.querySelectorAll('.key-card');
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.dataset.active = 'true';
+          setTimeout(() => {
+            if (card !== currentCard) {
+              card.dataset.active = 'false';
+            }
+          }, 320);
+        }, index * 60);
+      });
+    }, 300);
+  </script>
+</body>
+</html>
