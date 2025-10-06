@@ -5,6 +5,12 @@ summary = "Interactively explore how HBM supply, yields, and export controls sha
 draft = false
 +++
 
+China’s push for self-reliance in AI hardware hinges on Huawei’s Ascend accelerators. SemiAnalysis estimates that Huawei shipped **507,000** Ascend units in 2024 thanks to a bank of TSMC-produced die, and is on track for **805,000** units in 2025 as SMIC improves yields.【F:content/post/ai-compute-forecast/index.md†L9-L12】 Roughly **481,000–500,000** of those 2024 die were Ascend 910Cs; because each 910C package uses two dies and averages about **75 dies per 300 mm wafer** at ~665 mm², the bank translates into **240,000–250,000** dual-die 910C packages before new SMIC output lands.【F:content/post/ai-compute-forecast/index.md†L12-L18】 Yet Huawei will hit a hard wall once its stockpile of foreign high-bandwidth memory (HBM) is depleted—Samsung alone provided **11.4 million** HBM stacks, part of the **13 million** total stacks that can feed roughly **1.6 million** Ascend 910C packages.【F:content/post/ai-compute-forecast/index.md†L18-L22】 Domestic supplier CXMT is racing to fill the gap but is expected to ship only about **2 million** HBM stacks next year, enough for **250,000–300,000** Ascend 910Cs even if SMIC can fabricate more die.【F:content/post/ai-compute-forecast/index.md†L22-L24】 The chart now anchors on the 2024 delivery data so you can see how those die-bank shipments compare with forward-looking scenarios.
+
+Advanced packaging is unlikely to be the binding constraint for the current Ascend generation: thermocompression bonding gear for 910C assembly is already stockpiled domestically, while the hybrid bonding techniques expected for 910D-class parts remain the more challenging frontier.【F:content/post/ai-compute-forecast/index.md†L24-L28】
+
+Meanwhile, SemiAnalysis reports that NVIDIA is driving toward multi-million-unit annual run rates—including roughly **350,000** H20-class units from existing inventory in 2025 and a planned **4 million**-unit run rate for RTX PRO 6000 derivatives that serve as China-compliant accelerators—before layering in potential Blackwell-based SKUs such as the rumored B30A.【F:content/post/ai-compute-forecast/index.md†L17-L19】【F:content/post/ai-compute-forecast/index.md†L211-L225】 To compare Huawei’s ramp against NVIDIA’s total fabrication capability, this interactive model now tracks NVIDIA’s global accelerator output and lets you explore how HBM availability, yield improvements, and policy-driven allocation assumptions shape effective compute through 2027.
+All effective compute metrics translate each side’s production into GB200 NVL72-equivalent systems, scoped specifically to dual-die 910C packages so the gap reflects Huawei’s flagship accelerators rather than a blend with 910B volumes.
 China’s push for self-reliance in AI hardware hinges on Huawei’s Ascend accelerators. SemiAnalysis estimates that Huawei shipped **507,000** Ascend units in 2024 thanks to a bank of TSMC-produced die, and is on track for **805,000** units in 2025 as SMIC improves yields.【F:content/post/ai-compute-forecast/index.md†L9-L12】 Yet Huawei will hit a hard wall once its stockpile of foreign high-bandwidth memory (HBM) is depleted—Samsung alone provided **11.4 million** HBM stacks, part of the **13 million** total stacks that can feed roughly **1.6 million** Ascend 910C packages.【F:content/post/ai-compute-forecast/index.md†L12-L15】 Domestic supplier CXMT is racing to fill the gap but is expected to ship only about **2 million** HBM stacks next year, enough for **250,000–300,000** Ascend 910Cs even if SMIC can fabricate more die.【F:content/post/ai-compute-forecast/index.md†L15-L17】 The chart now anchors on the 2024 delivery data so you can see how those die-bank shipments compare with forward-looking scenarios.
 
 Meanwhile, SemiAnalysis reports that NVIDIA is driving toward multi-million-unit annual run rates—including roughly **350,000** H20-class units from existing inventory in 2025 and a planned **4 million**-unit run rate for RTX PRO 6000 derivatives that serve as China-compliant accelerators—before layering in potential Blackwell-based SKUs such as the rumored B30A.【F:content/post/ai-compute-forecast/index.md†L17-L19】【F:content/post/ai-compute-forecast/index.md†L211-L225】 To compare Huawei’s ramp against NVIDIA’s total fabrication capability, this interactive model now tracks NVIDIA’s global accelerator output and lets you explore how HBM availability, yield improvements, and policy-driven allocation assumptions shape effective compute through 2027.
@@ -21,6 +27,8 @@ All effective compute metrics translate each side’s production into GB200 NVL7
     </select>
   </div>
   <div class="control-group">
+    <label for="yield">Huawei 910C effective yield (across SMIC + Huawei fabs)</label>
+    <input type="range" id="yield" min="10" max="90" value="55" step="1">
     <label for="yield">Huawei effective yield (across SMIC + Huawei fabs)</label>
     <span class="value" id="yield-value">55%</span>
   </div>
@@ -40,6 +48,8 @@ All effective compute metrics translate each side’s production into GB200 NVL7
     <span class="value" id="nvidia-factor-value">100%</span>
   </div>
   <div class="control-group">
+    <label for="performance-ratio">Relative compute per chip (NVIDIA ÷ Huawei 910C)</label>
+    <input type="range" id="performance-ratio" min="80" max="400" value="130" step="5">
     <label for="performance-ratio">Relative compute per chip (NVIDIA ÷ Huawei)</label>
     <span class="value" id="performance-ratio-value">1.30×</span>
   </div>
@@ -54,6 +64,9 @@ All effective compute metrics translate each side’s production into GB200 NVL7
     <p class="metric-footnote">NVIDIA minus Huawei GB200 NVL72 equivalents</p>
   </div>
   <div class="metric-card">
+    <h4>Huawei 910C output in 2026</h4>
+    <p class="metric-value" id="metric-huawei">--</p>
+    <p class="metric-footnote">Dual-die 910C packages</p>
     <h4>Huawei output in 2026</h4>
     <p class="metric-value" id="metric-huawei">--</p>
     <p class="metric-footnote">Packaged Ascend units</p>
@@ -69,11 +82,18 @@ All effective compute metrics translate each side’s production into GB200 NVL7
 
 <div id="ai-compute-table"></div>
 
+<div class="ai-compute-sophgo">
+  <h3>Sophgo-packaged Ascend die mix</h3>
+  <p class="ai-compute-sophgo-note">Forecast shows 910B output remaining roughly an order of magnitude higher than 910C through 2027—tens of thousands of 910Bs versus only a few thousand 910Cs.</p>
+  <div id="sophgo-die-table"></div>
+</div>
+
 <div id="ai-compute-summary" class="ai-compute-summary"></div>
 
 <div class="ai-compute-notes">
   <h3>How the model works</h3>
   <ul>
+    <li>Huawei’s potential 910C output blends die availability (up to 0.65 million dual-die packages in 2025 and 5+ million in 2026 as SMIC scales) with an HBM constraint that assumes eight stacks per 910C-equivalent package. Adjust the yield slider to represent ramp progress in SMIC and Huawei-owned fabs.</li>
     <li>Huawei’s potential Ascend output blends die availability (up to 1.5 million units in 2025 and 5+ million in 2026 as SMIC scales) with an HBM constraint that assumes eight stacks per 910C-equivalent package. Adjust the yield slider to represent ramp progress in SMIC and Huawei-owned fabs.</li>
     <li>HBM sliders control the domestic supply Huawei can count on once Samsung’s stockpiled memory is exhausted. Keeping the default values reproduces SemiAnalysis’ base case of roughly 300,000 Ascend units in 2026 before HBM capacity ramps.</li>
     <li>NVIDIA’s baseline assumes total accelerator output of roughly 3.6 million units in 2025, rising to 4.8 million in 2026 and 5.5 million in 2027 as supply chain plans like the 4 million-unit RTX PRO 6000 run rate come online. The fab output factor lets you scale those volumes to reflect upside or downside in capital deployment and supplier execution.</li>
@@ -88,6 +108,8 @@ All effective compute metrics translate each side’s production into GB200 NVL7
     <li><strong>Die banks bridge the gap to SMIC maturity.</strong> Huawei drew on roughly 2.9 million Ascend die fabricated at TSMC to ship 507,000 accelerators in 2024 while SMIC’s yields climbed, and retains enough inventory to support 805,000 units in 2025 before stockpiles deplete.【F:content/post/ai-compute-forecast/index.md†L9-L15】【F:content/post/ai-compute-forecast/index.md†L49-L54】</li>
     <li><strong>SMIC allocation is no longer the binding constraint.</strong> SemiAnalysis expects SMIC’s advanced-node capacity to reach 45,000 wafers per month by the end of 2025, rising to 60,000 in 2026 and 80,000 in 2027, leaving wafer availability sufficient to support millions of Ascend die if memory were available.【F:content/post/ai-compute-forecast/index.md†L54-L63】</li>
     <li><strong>HBM availability caps short-term output.</strong> Samsung and other suppliers shipped an estimated 13 million HBM stacks into China—enough for 1.6 million Ascend 910C packages—but those inventories will run dry, leaving Huawei reliant on domestic supply for 2026 onward.【F:content/post/ai-compute-forecast/index.md†L12-L17】【F:content/post/ai-compute-forecast/index.md†L83-L95】</li>
+    <li><strong>Sophgo packaging stays 910B-heavy.</strong> Internal forecasts keep Sophgo’s 910B builds at roughly ten times the 910C output—tens of thousands of 910Bs versus only a few thousand 910Cs—limiting how quickly the newer parts can displace prior generations.【F:content/post/ai-compute-forecast/index.md†L47-L57】【F:content/post/ai-compute-forecast/index.md†L135-L150】</li>
+    <li><strong>Packaging tools are already stockpiled.</strong> Thermocompression bonding capabilities for 910C assembly are widely available inside China, so near-term constraints stem more from HBM supply than from access to advanced packaging gear; hybrid bonding hurdles bite harder with the upcoming 910D.【F:content/post/ai-compute-forecast/index.md†L12-L28】</li>
     <li><strong>Domestic memory ramp is gradual.</strong> CXMT is forecast to produce only ~2 million HBM stacks next year, sufficient for 250,000–300,000 Ascend 910Cs, before expanding capacity toward the back half of the decade; the sliders let you test alternative conversion speeds and yields.【F:content/post/ai-compute-forecast/index.md†L95-L109】</li>
   </ul>
 
@@ -105,6 +127,7 @@ All effective compute metrics translate each side’s production into GB200 NVL7
     <li><strong>Domestic buildout spans the full stack.</strong> CXMT’s TSV packaging partnerships with JCET and Tong Fu, along with Huawei-owned toolmaker SiCarrier and expanding cleanroom footprints, demonstrate how multiple players are racing to localize each supply chain stage despite controls.【F:content/post/ai-compute-forecast/index.md†L37-L49】【F:content/post/ai-compute-forecast/index.md†L95-L109】</li>
   </ul>
 
+  <p class="ai-compute-context-summary">Taken together, these dynamics explain why SemiAnalysis expects Huawei’s packaged 910C output to sag in 2026 before rebounding as domestic HBM comes online—and why NVIDIA retains a sizable compute lead absent a breakthrough in Chinese memory capacity or policy-driven approvals for high-end Blackwell exports.</p>
   <p class="ai-compute-context-summary">Taken together, these dynamics explain why SemiAnalysis expects Huawei’s packaged Ascend output to sag in 2026 before rebounding as domestic HBM comes online—and why NVIDIA retains a sizable compute lead absent a breakthrough in Chinese memory capacity or policy-driven approvals for high-end Blackwell exports.</p>
 </div>
 
@@ -112,6 +135,16 @@ All effective compute metrics translate each side’s production into GB200 NVL7
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const stacksPerHuaweiChip = 8;
+    const sophgoYears = [2024, 2025, 2026, 2027];
+    const sophgoDieForecast = {
+      2024: { '910B': 0.032, '910C': 0.003 },
+      2025: { '910B': 0.045, '910C': 0.004 },
+      2026: { '910B': 0.055, '910C': 0.005 },
+      2027: { '910B': 0.060, '910C': 0.006 }
+    };
+    const baseHuawei910cPotential = {
+      2024: 0.25, // ~240k dual-die packages from the TSMC die bank
+      2025: 0.65, // SemiAnalysis outlook for 653k 910C shipments
     const baseHuaweiWaferCapacity = {
       2024: 0.9, // die bank + early SMIC ramp yielded ~0.5M packaged Ascends in 2024
       2025: 1.5, // millions of die Huawei + SMIC could package if memory were unconstrained
@@ -150,6 +183,7 @@ All effective compute metrics translate each side’s production into GB200 NVL7
     const chartEl = document.getElementById('ai-compute-chart');
     const constraintChartEl = document.getElementById('ai-constraint-chart');
     const tableEl = document.getElementById('ai-compute-table');
+    const sophgoTableEl = document.getElementById('sophgo-die-table');
     const summaryEl = document.getElementById('ai-compute-summary');
 
     const metricGapEl = document.getElementById('metric-gap');
@@ -174,6 +208,7 @@ All effective compute metrics translate each side’s production into GB200 NVL7
     };
 
     function computeHuaweiYear(year, effectiveYield, hbmOverride) {
+      const waferPotential = baseHuawei910cPotential[year] * (effectiveYield / 100);
       const waferPotential = baseHuaweiWaferCapacity[year] * (effectiveYield / 100);
       const hbmStacks = year === 2025 ? baseHBMStacks[year] : hbmOverride;
       const hbmLimited = hbmStacks / stacksPerHuaweiChip;
@@ -188,6 +223,20 @@ All effective compute metrics translate each side’s production into GB200 NVL7
       };
     }
 
+    function formatPackages(value) {
+      if (value >= 1) {
+        const formatted = value.toFixed(2);
+        return `${formatted.endsWith('.00') ? formatted.slice(0, -3) : formatted}M packages`;
+      }
+      return `${Math.round(value * 1000)}k packages`;
+    }
+
+    function formatAccelerators(value) {
+      if (value >= 1) {
+        const formatted = value.toFixed(2);
+        return `${formatted.endsWith('.00') ? formatted.slice(0, -3) : formatted}M accelerators`;
+      }
+      return `${Math.round(value * 1000)}k accelerators`;
     function formatUnits(value) {
       if (value >= 1) {
         const formatted = value.toFixed(2);
@@ -266,6 +315,7 @@ All effective compute metrics translate each side’s production into GB200 NVL7
         {
           x: years,
           y: huaweiOutputs,
+          name: 'Huawei 910C packages (millions)',
           name: 'Huawei Ascend units (millions)',
           type: 'bar',
           marker: { color: '#c41e3a' }
@@ -351,6 +401,7 @@ All effective compute metrics translate each side’s production into GB200 NVL7
       }
 
       if (metricHuaweiEl && huawei2026Index !== -1) {
+        metricHuaweiEl.textContent = formatPackages(huaweiOutputs[huawei2026Index]);
         metricHuaweiEl.textContent = formatUnits(huaweiOutputs[huawei2026Index]);
       }
 
@@ -364,6 +415,10 @@ All effective compute metrics translate each side’s production into GB200 NVL7
         const totalCompute = combinedNVL72Series[index];
         return `<tr>
           <td>${year}</td>
+          <td>${formatPackages(detail.output)}</td>
+          <td>${detail.constraint}</td>
+          <td>${formatStacks(detail.hbmDemand)} / ${formatStacks(detail.hbmStacks)}</td>
+          <td>${formatAccelerators(nvidiaUnits)}</td>
           <td>${formatUnits(detail.output)}</td>
           <td>${detail.constraint}</td>
           <td>${formatStacks(detail.hbmDemand)} / ${formatStacks(detail.hbmStacks)}</td>
@@ -378,6 +433,7 @@ All effective compute metrics translate each side’s production into GB200 NVL7
           <thead>
             <tr>
               <th>Year</th>
+              <th>Huawei 910C packages</th>
               <th>Huawei packaged output</th>
               <th>Binding constraint</th>
               <th>HBM demand vs. available</th>
@@ -390,6 +446,34 @@ All effective compute metrics translate each side’s production into GB200 NVL7
             ${tableRows}
           </tbody>
         </table>`;
+
+      if (sophgoTableEl) {
+        const sophgoRows = sophgoYears.map(year => {
+          const mix = sophgoDieForecast[year];
+          if (!mix) return '';
+          return `<tr>
+            <td>${year}</td>
+            <td>${formatPackages(mix['910B'])}</td>
+            <td>${formatPackages(mix['910C'])}</td>
+            <td>${(mix['910B'] / Math.max(mix['910C'], 0.0001)).toFixed(1)}×</td>
+          </tr>`;
+        }).join('');
+
+        sophgoTableEl.innerHTML = `
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th>910B packaged units</th>
+                <th>910C packaged units</th>
+                <th>Ratio (910B ÷ 910C)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${sophgoRows}
+            </tbody>
+          </table>`;
+      }
 
       const scenario = scenarios[scenarioSelect.value];
       const latestYearDetail = huaweiDetails[terminalIndex];
@@ -418,6 +502,7 @@ All effective compute metrics translate each side’s production into GB200 NVL7
       summaryEl.innerHTML = `
         <h3>Scenario takeaway</h3>
         <p>${narrative}</p>
+        <p>By ${years[terminalIndex]}, Huawei ships <strong>${formatPackages(latestYearDetail.output)}</strong> 910C packages with <strong>${slackText}</strong>, while NVIDIA delivers <strong>${formatAccelerators(latestNvidiaUnits)}</strong>. Combined, that is <strong>${formatNVL72(combinedNVL72Series[terminalIndex])}</strong> of effective compute.</p>
         <p>By ${years[terminalIndex]}, Huawei ships <strong>${formatUnits(latestYearDetail.output)}</strong> with <strong>${slackText}</strong>, while NVIDIA delivers <strong>${formatUnits(latestNvidiaUnits)}</strong>. Combined, that is <strong>${formatNVL72(combinedNVL72Series[terminalIndex])}</strong> of effective compute.</p>
         <ul>
           ${bulletPoints.map(point => `<li>${point}</li>`).join('')}
@@ -538,6 +623,28 @@ All effective compute metrics translate each side’s production into GB200 NVL7
   #ai-compute-table td, #ai-compute-table th {
     padding: 0.75rem 0.5rem;
     border-bottom: 1px solid rgba(0,0,0,0.1);
+  }
+  .ai-compute-sophgo {
+    margin: 1.75rem 0;
+    padding: 1.25rem 1.5rem;
+    border-radius: 0.75rem;
+    background: rgba(12, 74, 110, 0.06);
+    border-left: 4px solid rgba(12, 74, 110, 0.65);
+  }
+  .ai-compute-sophgo h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+  .ai-compute-sophgo-note {
+    margin: 0 0 0.75rem;
+    color: rgba(0, 0, 0, 0.7);
+  }
+  #sophgo-die-table table {
+    width: 100%;
+  }
+  #sophgo-die-table td, #sophgo-die-table th {
+    padding: 0.65rem 0.5rem;
+    border-bottom: 1px solid rgba(12, 74, 110, 0.12);
   }
   @media (max-width: 600px) {
     .control-group {
